@@ -221,7 +221,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
         viewPager.post(() -> viewPager.setCurrentItem(step, true));
         stepCounts.setText((step+1)+"/5 - "+cahootsMessage.getType()+" "+cahootsMessage.getTypeUser().name());
 
-        if (cahootsMessage.isLastStep()) {
+        if (cahootsMessage.isLastMessage()) {
             // review last step
             cahootReviewFragment.setCahoots(cahootsMessage.getCahoots());
         } else {
@@ -250,7 +250,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
     private void shareCahootsPayload() throws Exception {
 
-        String strCahoots = this.cahootsMessage.getPayload();
+        String strCahoots = this.cahootsMessage.toPayload();
         final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
         dialog = new AppCompatDialog(this, R.style.stowaway_dialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
