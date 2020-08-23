@@ -699,7 +699,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
                     Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                     cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                    cahootIntent.putExtra("account",account);
+                    cahootIntent.putExtra("_account",account);
                     startActivity(cahootIntent);
                 }else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();

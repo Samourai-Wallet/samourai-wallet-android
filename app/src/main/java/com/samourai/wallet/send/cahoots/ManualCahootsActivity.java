@@ -97,7 +97,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
         if (getIntent().hasExtra("payload")) {
 
             String cahootsPayload = getIntent().getStringExtra("payload");
-            account = getIntent().getIntExtra("account", 0);
+            account = getIntent().getIntExtra("_account", 0);
 
             if (Cahoots.isCahoots(cahootsPayload.trim())) {
                 try {
