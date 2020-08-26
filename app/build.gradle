@@ -113,7 +113,7 @@ dependencies {
     implementation 'org.hibernate:hibernate-validator:5.4.3.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.budiyev.android:code-scanner:2.1.0'
-    implementation ('io.samourai.code.whirlpool:whirlpool-client:0.23.20') {
+    implementation ('io.samourai.code.whirlpool:whirlpool-client:develop-SNAPSHOT') {
         exclude group:'org.hibernate', module:'hibernate-validator'
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
@@ -124,7 +124,7 @@ dependencies {
         exclude group:'org.json', module:'json'
         exclude group:'io.samourai.code.wallet', module:'extlibj'
     }
-    implementation ('io.samourai.code.wallet:extlibj:develop-20200731-SNAPSHOT') {
+    implementation ('io.samourai.code.wallet:extlibj:develop-SNAPSHOT') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'

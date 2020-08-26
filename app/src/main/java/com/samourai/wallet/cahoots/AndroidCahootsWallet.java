@@ -7,6 +7,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.BIP84Wallet;
+import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
@@ -27,6 +28,12 @@ public class AndroidCahootsWallet extends CahootsWallet {
         super(computeBip84Wallet(ctx), SamouraiWallet.getInstance().getCurrentNetworkParams());
         this.apiFactory = APIFactory.getInstance(ctx);
         this.addressFactory = AddressFactory.getInstance(ctx);
+    }
+
+    @Override
+    public long fetchFeePerB() {
+        long feePerB = FeeUtil.getInstance().getSuggestedFeeDefaultPerB();
+        return feePerB;
     }
 
     @Override
