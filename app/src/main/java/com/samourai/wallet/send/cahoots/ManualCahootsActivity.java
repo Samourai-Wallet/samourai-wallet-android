@@ -28,16 +28,14 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+import com.samourai.soroban.client.SorobanClientService;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
-import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.cahoots.AndroidCahootsWallet;
+import com.samourai.wallet.cahoots.AndroidSorobanClientService;
 import com.samourai.wallet.cahoots.CahootsMessage;
 import com.samourai.wallet.cahoots.CahootsService;
 import com.samourai.wallet.cahoots.CahootsType;
-import com.samourai.wallet.cahoots.CahootsWallet;
 import com.samourai.wallet.cahoots.psbt.PSBT;
-import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
 import com.samourai.wallet.widgets.ViewPager;
@@ -86,10 +84,6 @@ public class ManualCahootsActivity extends SamouraiActivity {
         steps.add(cahootReviewFragment);
         viewPager.setAdapter(new StepAdapter(getSupportFragmentManager()));
 
-        CahootsWallet cahootsWallet = new AndroidCahootsWallet(getApplicationContext());
-        long feePerB = FeeUtil.getInstance().getSuggestedFeeDefaultPerB();
-        cahootsService = new CahootsService(SamouraiWallet.getInstance().getCurrentNetworkParams(), cahootsWallet, feePerB, account);
-
         if (getIntent().hasExtra("amount")) {
             amount = getIntent().getLongExtra("amount", 0);
         }
@@ -100,6 +94,11 @@ public class ManualCahootsActivity extends SamouraiActivity {
         if (getIntent().hasExtra("address")) {
             address = getIntent().getStringExtra("address");
         }
+
+        // setup cahoots
+        SorobanClientService sorobanClientService = AndroidSorobanClientService.getInstance(getApplicationContext());
+        cahootsService = sorobanClientService.getCahootsService();
+
         if (getIntent().hasExtra("payload")) {
             // continue cahoots
             String cahootsPayload = getIntent().getStringExtra("payload");
@@ -109,18 +108,17 @@ public class ManualCahootsActivity extends SamouraiActivity {
             try {
                 switch (cahootsType) {
                     case STONEWALLX2:
-                        cahootsMessage = cahootsService.newStonewallx2(amount, address);
+                        setCahootsMessage(cahootsService.newStonewallx2(amount, address));
                         break;
                     case STOWAWAY:
-                        cahootsMessage = cahootsService.newStowaway(amount);
+                        setCahootsMessage(cahootsService.newStowaway(amount));
                         break;
                     default:
                         throw new Exception("Unknown #Cahoots");
                 }
-                setCahootsMessage();
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else {
             finish();
@@ -203,8 +201,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
         try {
             // continue cahoots
-            cahootsMessage = cahootsService.reply(qrData);
-            setCahootsMessage();
+            setCahootsMessage(cahootsService.reply(qrData));
         } catch(Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
@@ -212,14 +209,14 @@ public class ManualCahootsActivity extends SamouraiActivity {
         }
     }
 
-    private void setCahootsMessage() {
-        int step = cahootsMessage.getStep();
-        Log.d("ManualCahootsActivity", "# Cahoots => " + cahootsMessage.toString());
+    private void setCahootsMessage(CahootsMessage msg) {
+        cahootsMessage = msg;
+        int step;
+        String stepTitle = "";
 
-        // show current step
-        stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 1));
-        viewPager.post(() -> viewPager.setCurrentItem(step, true));
-        stepCounts.setText((step+1)+"/5 - "+cahootsMessage.getType()+" "+cahootsMessage.getTypeUser().name());
+        Log.d("ManualCahootsActivity", "# Cahoots => " + cahootsMessage.toString());
+        step = cahootsMessage.getStep();
+        stepTitle = cahootsMessage.getType() + " " + cahootsMessage.getTypeUser().name();
 
         if (cahootsMessage.isLastMessage()) {
             // review last step
@@ -228,6 +225,13 @@ public class ManualCahootsActivity extends SamouraiActivity {
             // show cahoots progress
             ((CahootsStepFragment) steps.get(step)).setCahootsMessage(cahootsMessage);
         }
+
+
+        // show current step
+        final int myStep = step;
+        stepsViewGroup.post(() -> stepsViewGroup.setStep(myStep + 1));
+        viewPager.post(() -> viewPager.setCurrentItem(myStep, true));
+        stepCounts.setText((step + 1) + "/5 - " + stepTitle);
     }
 
     private class StepAdapter extends FragmentPagerAdapter {
@@ -395,5 +399,4 @@ public class ManualCahootsActivity extends SamouraiActivity {
         }
 
     }
-
 }

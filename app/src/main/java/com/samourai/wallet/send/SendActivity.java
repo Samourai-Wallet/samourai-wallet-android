@@ -63,6 +63,7 @@ import com.samourai.wallet.bip47.SendNotifTxFactory;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
+import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
@@ -77,6 +78,7 @@ import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
+import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -100,14 +102,12 @@ import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
-import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -192,6 +192,7 @@ public class SendActivity extends SamouraiActivity {
     public static String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
+    private String sorobanSendToPCode;
 
     private List<UTXOCoin> preselectedUTXOs = null;
 
@@ -343,6 +344,13 @@ public class SendActivity extends SamouraiActivity {
                 cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
                     @Override
                     public void onSelect(SelectCahootsType.type type) {
+                        if (CahootsMode.SOROBAN.equals(type.getCahootsMode())) {
+                            // require Paynym counterparty selection
+                            PaynymSelectModalFragment paynymSelectModalFragment =
+                                    PaynymSelectModalFragment.newInstance(code -> sorobanSendToPCode = code);
+                            paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select_soroban");
+                        }
+
                         chosen[0] = true;
                         selectedCahootsType = type;
 
@@ -363,7 +371,11 @@ public class SendActivity extends SamouraiActivity {
                             case STONEWALLX2_MANUAL: {
                                 cahootsStatusText.setText("StonewallX2 Manual");
                                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
-
+                                break;
+                            }
+                            case STONEWALLX2_SOROBAN: {
+                                cahootsStatusText.setText("StonewallX2 Online");
+                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
                                 break;
                             }
                             case STONEWALLX2_SAMOURAI: {
@@ -382,6 +394,7 @@ public class SendActivity extends SamouraiActivity {
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
                             hideToAddressForStowaway();
+                            sorobanSendToPCode = null;
                         }
                         validateSpend();
                     }
@@ -1616,6 +1629,12 @@ public class SendActivity extends SamouraiActivity {
                     sendTransactionDetailsView.showStonewallX2Layout("Samourai Wallet", 1000);
                     break;
                 }
+                case STONEWALLX2_SOROBAN: {
+                    sendTransactionDetailsView.showStonewallX2Layout("Online over Tor", 1000);
+                    btnSend.setBackgroundResource(R.drawable.button_blue);
+                    btnSend.setText(getString(R.string.begin_stonewallx2));
+                    break;
+                }
                 case STOWAWAY: {
 //                            mixingPartner.setText("Samourai Wallet");
                     sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
@@ -1701,12 +1720,29 @@ public class SendActivity extends SamouraiActivity {
 
     private void initiateSpend() {
 
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL) {
+        if (CahootsMode.MANUAL.equals(selectedCahootsType.getCahootsMode())) {
+            // Cahoots manual
             Intent intent = new Intent(this, ManualCahootsActivity.class);
             intent.putExtra("amount", amount);
             intent.putExtra("_account", account);
             intent.putExtra("address", address);
             intent.putExtra("type", selectedCahootsType.getCahootsType().getValue());
+            startActivity(intent);
+            return;
+        }
+        if (CahootsMode.SOROBAN.equals(selectedCahootsType.getCahootsMode())) {
+            // require PaymentCode counterparty
+            if (sorobanSendToPCode == null) {
+                Toast.makeText(this,"Select a paynym as Cahoots counterparty",Toast.LENGTH_LONG).show();
+                return;
+            }
+            // Cahoots / Soroban
+            Intent intent = new Intent(this, SorobanCahootsActivity.class);
+            intent.putExtra("amount", amount);
+            intent.putExtra("_account", account);
+            intent.putExtra("address", address);
+            intent.putExtra("type", selectedCahootsType.getCahootsType().getValue());
+            intent.putExtra("sendToPCode", sorobanSendToPCode);
             startActivity(intent);
             return;
         }

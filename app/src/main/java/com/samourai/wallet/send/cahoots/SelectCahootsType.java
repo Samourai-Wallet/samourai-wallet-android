@@ -4,10 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,24 +13,38 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.samourai.wallet.R;
+import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsType;
+
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 public class SelectCahootsType extends BottomSheetDialogFragment {
 
 
     public enum type {
-        STONEWALLX2_MANUAL(CahootsType.STONEWALLX2),
-        STONEWALLX2_SAMOURAI(CahootsType.STONEWALLX2),
-        STOWAWAY(CahootsType.STOWAWAY),
-        NONE(null);
+        STONEWALLX2_MANUAL(CahootsType.STONEWALLX2, CahootsMode.MANUAL),
+        STONEWALLX2_SAMOURAI(CahootsType.STONEWALLX2, CahootsMode.SAMOURAI),
+        STONEWALLX2_SOROBAN(CahootsType.STONEWALLX2, CahootsMode.SOROBAN),
+        STOWAWAY(CahootsType.STOWAWAY, CahootsMode.MANUAL),
+        STOWAWAY_SOROBAN(CahootsType.STOWAWAY, CahootsMode.SOROBAN),
+        NONE(null, null);
         private CahootsType cahootsType;
+        private CahootsMode cahootsMode;
 
-        type(CahootsType cahootsType) {
+        type(CahootsType cahootsType, CahootsMode cahootsMode) {
             this.cahootsType = cahootsType;
+            this.cahootsMode = cahootsMode;
         }
         public CahootsType getCahootsType() {
             return cahootsType;
+        }
+
+        public CahootsMode getCahootsMode() {
+            return cahootsMode;
         }
     }
 
@@ -42,7 +52,7 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
     private ViewGroup stowaway, stonewallx2;
     private ImageButton closeBtn;
     private LinearLayout typeChooserLayout, stowawayChooserLayout;
-    private ViewGroup samouraiAsParticipant, inPerson;
+    private ViewGroup samouraiAsParticipant, inPerson, soroban;
     private TextView title;
 
     @Override
@@ -61,6 +71,7 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
         stowawayChooserLayout = view.findViewById(R.id.stowaway_type_chooser_layout);
         samouraiAsParticipant = view.findViewById(R.id.samourai_as_participant_btn);
         inPerson = view.findViewById(R.id.in_person_manual_stowaway);
+        soroban = view.findViewById(R.id.soroban);
         closeBtn = view.findViewById(R.id.cahoots_type_close_btn);
         title = view.findViewById(R.id.cahoots_sheet_title);
 
@@ -76,6 +87,12 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
         inPerson.setOnClickListener(view1 -> {
             if (onSelectListener != null) {
                 onSelectListener.onSelect(type.STONEWALLX2_MANUAL);
+            }
+            this.dismiss();
+        });
+        soroban.setOnClickListener(view1 -> {
+            if (onSelectListener != null) {
+                onSelectListener.onSelect(type.STONEWALLX2_SOROBAN);
             }
             this.dismiss();
         });

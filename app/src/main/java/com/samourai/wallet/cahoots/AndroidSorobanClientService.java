@@ -8,8 +8,11 @@ import com.samourai.soroban.client.SorobanClientService;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.soroban.client.SorobanMessage;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
+
+import io.reactivex.subjects.Subject;
 
 public class AndroidSorobanClientService extends SorobanClientService {
     private static AndroidSorobanClientService instance;
@@ -35,19 +38,14 @@ public class AndroidSorobanClientService extends SorobanClientService {
 
     @Override
     public synchronized void startListening(PaymentCode paymentCodeInitiator) throws Exception {
+        checkTor();
+
         // stop first
         if (isStartedListening()) {
             try {
                 stopListening();
             } catch (Exception e) {
             }
-        }
-
-        // check Tor enabled
-        TorManager torManager = TorManager.getInstance(ctx);
-        if (!torManager.isConnected() || !torManager.isRequired()) {
-            Toast.makeText(ctx, "Tor connection is required for online Cahoots", Toast.LENGTH_SHORT).show();
-            return;
         }
 
         // start
@@ -58,5 +56,25 @@ public class AndroidSorobanClientService extends SorobanClientService {
     public synchronized void stopListening() throws Exception {
         super.stopListening();
         Toast.makeText(ctx, "Stopped looking for Cahoots", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public Subject<SorobanMessage> newStonewallx2(long amount, String address, PaymentCode paymentCodeCounterparty) throws Exception {
+        checkTor();
+        return super.newStonewallx2(amount, address, paymentCodeCounterparty);
+    }
+
+    @Override
+    public Subject<SorobanMessage> newStowaway(long amount, PaymentCode paymentCodeCounterparty) throws Exception {
+        checkTor();
+        return super.newStowaway(amount, paymentCodeCounterparty);
+    }
+
+    private void checkTor() throws Exception {
+        // require Tor
+        TorManager torManager = TorManager.getInstance(ctx);
+        if (!torManager.isConnected() || !torManager.isRequired()) {
+            throw new Exception("Tor connection is required for online Cahoots");
+        }
     }
 }

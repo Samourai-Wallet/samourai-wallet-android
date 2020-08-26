@@ -259,6 +259,10 @@
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"
             android:theme="@style/SamouraiAppTheme" />
+        <activity
+            android:name=".send.cahoots.SorobanCahootsActivity"
+            android:label="Online Cahoots"
+            android:theme="@style/SamouraiAppTheme" />
 
         <provider
             android:name=".util.GenericFileProvider"
