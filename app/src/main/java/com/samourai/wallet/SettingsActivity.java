@@ -86,16 +86,6 @@ public class SettingsActivity extends PreferenceActivity	{
             }
         });
 
-        Preference networkingPref = (Preference) findPreference("networking");
-        networkingPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
-                intent.putExtra("branch", "networking");
-                startActivity(intent);
-                return true;
-            }
-        });
-
         Preference troubleshootPref = (Preference) findPreference("troubleshoot");
         troubleshootPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
