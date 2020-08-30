@@ -15,6 +15,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
+
+import static com.samourai.wallet.util.LogUtil.debug;
 
 public class PushTx {
 
@@ -36,21 +39,36 @@ public class PushTx {
         return instance;
     }
 
-    public String samourai(String hexString) {
+    public String samourai(String hexString, List<Integer> strictModeVouts) {
 
         String _url = "pushtx/";
+
+        String strStrictVouts = "";
+        if(strictModeVouts != null && strictModeVouts.size() > 0) {
+            strStrictVouts = "&strict_mode_vouts=";
+            for(int i = 0; i < strictModeVouts.size(); i++) {
+                strStrictVouts += strictModeVouts.get(i);
+                if(i < (strictModeVouts.size() - 1)) {
+                    strStrictVouts += "|";
+                }
+            }
+        }
 
         try {
             String response = null;
 
             if(!TorManager.getInstance(context).isRequired())    {
                 String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
-                response = WebUtil.getInstance(context).postURL(_base + _url + "?at=" + APIFactory.getInstance(context).getAccessToken(), "tx=" + hexString);
+                debug("PushTx", strStrictVouts);
+                response = WebUtil.getInstance(context).postURL(_base + _url + "?at=" + APIFactory.getInstance(context).getAccessToken(), "tx=" + hexString + strStrictVouts);
             }
             else    {
                 String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR : WebUtil.SAMOURAI_API2_TOR;
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("tx", hexString);
+                if(strStrictVouts.length() > "&strict_mode_vouts=".length())    {
+                    args.put("strict_mode_vouts", strStrictVouts.substring("&strict_mode_vouts=".length()));
+                }
                 response = WebUtil.getInstance(context).tor_postURL(_base + _url + "?at=" + APIFactory.getInstance(context).getAccessToken(), args);
             }
 
@@ -69,7 +87,7 @@ public class PushTx {
 
         try {
             if(DO_SPEND)    {
-                response = PushTx.getInstance(context).samourai(hexTx);
+                response = PushTx.getInstance(context).samourai(hexTx, null);
                 if(response != null)    {
                     JSONObject jsonObject = new org.json.JSONObject(response);
                     if(jsonObject.has("status"))    {

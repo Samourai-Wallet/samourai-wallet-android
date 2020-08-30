@@ -26,6 +26,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +80,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
@@ -164,6 +170,22 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
+
+                final CheckBoxPreference cbPref11 = (CheckBoxPreference) findPreference("strictOutputs");
+                cbPref11.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref11.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.STRICT_OUTPUTS, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.STRICT_OUTPUTS, true);
+                        }
+
+                        return true;
+                    }
+                });
+
 
                 Preference psbtPref = (Preference) findPreference("psbt");
                 psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {

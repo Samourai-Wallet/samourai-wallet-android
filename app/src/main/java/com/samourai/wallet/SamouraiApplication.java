@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Environment;
 import androidx.multidex.MultiDex;
 
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
@@ -105,8 +106,15 @@ public class SamouraiApplication extends Application {
         }
     }
 
+
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    public void onTerminate() {
+        TorManager.getInstance(getApplicationContext()).dispose();
+        super.onTerminate();
     }
 }

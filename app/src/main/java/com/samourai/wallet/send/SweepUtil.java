@@ -149,10 +149,10 @@ public class SweepUtil  {
 
                                 String receive_address = null;
                                 if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
-                                    receive_address = AddressFactory.getInstance(context).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                                    receive_address = AddressFactory.getInstance(context).getBIP84Receive().getRight().getBech32AsString();
                                 }
                                 else    {
-                                    receive_address = AddressFactory.getInstance(context).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                                    receive_address = AddressFactory.getInstance(context).getReceive().getRight().getAddressString();
                                 }
                                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                                 receivers.put(receive_address, BigInteger.valueOf(amount));
@@ -165,7 +165,7 @@ public class SweepUtil  {
 
                                 String response = null;
                                 try {
-                                    response = PushTx.getInstance(context).samourai(hexTx);
+                                    response = PushTx.getInstance(context).samourai(hexTx, null);
 
                                     if(response != null)    {
                                         JSONObject jsonObject = new org.json.JSONObject(response);
@@ -206,7 +206,7 @@ public class SweepUtil  {
                         sweep(privKeyReader, TYPE_P2SH_P2WPKH);
                     }
                     else if(type == TYPE_P2WPKH)    {
-                        ;
+                        Toast.makeText(context, R.string.sweep_no_amount, Toast.LENGTH_SHORT).show();
                     }
                     else    {
                         ;

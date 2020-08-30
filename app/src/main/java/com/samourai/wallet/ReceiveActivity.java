@@ -43,18 +43,17 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.uri.BitcoinURI;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,6 +91,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private String addr44 = null;
     private String addr49 = null;
     private String addr84 = null;
+    private int idx = 0;
     private int idx44 = 0;
     private int idx49 = 0;
     private int idx84 = 0;
@@ -174,23 +174,26 @@ public class ReceiveActivity extends AppCompatActivity {
                 advanceOptionsContainer.setVisibility(visibility);
             }
         });
-        idx84 = BIP84Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
-        idx49 = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
-        try {
-            idx44 = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx();
-        } catch (IOException | MnemonicException.MnemonicLengthException e) {
-            ;
-        }
-        addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
-        addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
-        addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+
+        Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive();
+        addr84 = pair84.getRight().getBech32AsString();
+        idx84 = pair84.getLeft();
+        Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive();
+        addr49 = pair49.getRight().getAddressAsString();
+        idx49 = pair49.getLeft();
+        Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).getReceive();
+        addr44 = pair44.getRight().getAddressString();
+        idx44 = pair44.getLeft();
 
         if (useSegwit && isBIP84Selected()) {
             addr = addr84;
+            idx = idx84;
         } else if (useSegwit && !isBIP84Selected()) {
             addr = addr49;
+            idx = idx49;
         } else {
             addr = addr44;
+            idx = idx44;
         }
         addressTypesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -259,20 +262,31 @@ public class ReceiveActivity extends AppCompatActivity {
             @Override
             public void onSwipeLeft() {
                 if (useSegwit && isBIP84Selected() && canRefresh84) {
-                    addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                    Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive();
+                    addr84 = pair84.getRight().getBech32AsString();
                     addr = addr84;
+                    idx84 = pair84.getLeft();
+                    idx = idx84;
                     canRefresh84 = false;
                     _menu.findItem(R.id.action_refresh).setVisible(false);
                     displayQRCode();
-                } else if (useSegwit && !isBIP84Selected() && canRefresh49) {
-                    addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                }
+                else if (useSegwit && !isBIP84Selected() && canRefresh49) {
+                    Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive();
+                    addr49 = pair49.getRight().getAddressAsString();
                     addr = addr49;
+                    idx49 = pair49.getLeft();
+                    idx = idx49;
                     canRefresh49 = false;
                     _menu.findItem(R.id.action_refresh).setVisible(false);
                     displayQRCode();
-                } else if (!useSegwit && canRefresh44) {
-                    addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                }
+                else if (!useSegwit && canRefresh44) {
+                    Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).getReceive();
+                    addr44 = pair44.getRight().getAddressString();
                     addr = addr44;
+                    idx44 = pair44.getLeft();
+                    idx = idx44;
                     canRefresh44 = false;
                     _menu.findItem(R.id.action_refresh).setVisible(false);
                     displayQRCode();
@@ -558,20 +572,31 @@ public class ReceiveActivity extends AppCompatActivity {
             }
             case R.id.action_refresh: {
                 if (useSegwit && isBIP84Selected() && canRefresh84) {
-                    addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                    Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive();
+                    addr84 = pair84.getRight().getBech32AsString();
                     addr = addr84;
+                    idx84 = pair84.getLeft();
+                    idx = idx84;
                     canRefresh84 = false;
                     item.setVisible(false);
                     displayQRCode();
-                } else if (useSegwit && !isBIP84Selected() && canRefresh49) {
-                    addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                }
+                else if (useSegwit && !isBIP84Selected() && canRefresh49) {
+                    Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive();
+                    addr49 = pair49.getRight().getAddressAsString();
                     addr = addr49;
+                    idx49 = pair49.getLeft();
+                    idx = idx49;
                     canRefresh49 = false;
                     item.setVisible(false);
                     displayQRCode();
-                } else if (!useSegwit && canRefresh44) {
-                    addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                }
+                else if (!useSegwit && canRefresh44) {
+                    Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).getReceive();
+                    addr44 = pair44.getRight().getAddressString();
                     addr = addr44;
+                    idx44 = pair44.getLeft();
+                    idx = idx44;
                     canRefresh44 = false;
                     item.setVisible(false);
                     displayQRCode();
@@ -749,20 +774,12 @@ public class ReceiveActivity extends AppCompatActivity {
         switch(sel)    {
             case 0:
                 path += "49'";
-                idx = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx() - 1;
                 break;
             case 1:
                 path += "84'";
-                idx = BIP84Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx() - 1;
                 break;
             default:
                 path += "44'";
-                try {
-                    idx = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx() -1;
-                }
-                catch(IOException | MnemonicException.MnemonicLengthException e) {
-                    ;
-                }
         }
 
         path += "/0'/0'/0/";

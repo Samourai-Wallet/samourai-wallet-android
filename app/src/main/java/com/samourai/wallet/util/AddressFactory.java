@@ -3,6 +3,7 @@ package com.samourai.wallet.util;
 import android.content.Context;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
@@ -79,7 +80,7 @@ public class AddressFactory {
         return instance;
     }
 
-    public HD_Address get(int chain)	{
+    public Pair<Integer, HD_Address> getReceive()	{
 
         int idx = 0;
         HD_Address addr = null;
@@ -88,10 +89,10 @@ public class AddressFactory {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
 
             if(hdw != null)    {
-                idx = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
-                addr = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
-                if(chain == RECEIVE_CHAIN && canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
-                    HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
+                idx = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+                addr = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
+                if(canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
+                    HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
 //                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                 }
             }
@@ -104,22 +105,12 @@ public class AddressFactory {
             mle.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
-        /*
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(DecryptionException de)	{
-            de.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        */
 
-        return addr;
+        return Pair.of(idx, addr);
 
     }
 
-    public SegwitAddress getBIP49(int chain)	{
+    public Pair<Integer, SegwitAddress> getBIP49Receive()	{
 
         int idx = 0;
         HD_Address addr = null;
@@ -129,39 +120,21 @@ public class AddressFactory {
             HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
 
             if(hdw != null)    {
-                idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
-                addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
+                idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+                addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
                 p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                if(chain == RECEIVE_CHAIN && canIncBIP49ReceiveAddress(idx))	{
-                    BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
+                if(canIncBIP49ReceiveAddress(idx))	{
+                    BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
 //                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                 }
             }
 //        }
-        /*
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(IOException ioe)	{
-            ioe.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle)	{
-            mle.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(DecryptionException de)	{
-            de.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        */
 
-        return p2shp2wpkh;
+        return Pair.of(idx, p2shp2wpkh);
 
     }
 
-    public SegwitAddress getBIP84(int chain)	{
+    public Pair<Integer, SegwitAddress> getBIP84Receive()	{
 
         int idx = 0;
         HD_Address addr = null;
@@ -171,35 +144,16 @@ public class AddressFactory {
         HD_Wallet hdw = BIP84Util.getInstance(context).getWallet();
 
         if(hdw != null)    {
-            idx = BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
-            addr = BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
+            idx = BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+            addr = BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
             p2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-            if(chain == RECEIVE_CHAIN && canIncBIP84ReceiveAddress(idx))	{
-                BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
+            if(canIncBIP84ReceiveAddress(idx))	{
+                BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
 //                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
             }
         }
-//        }
-        /*
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(IOException ioe)	{
-            ioe.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle)	{
-            mle.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(DecryptionException de)	{
-            de.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        */
 
-        return p2wpkh;
+        return Pair.of(idx, p2wpkh);
 
     }
 
@@ -222,36 +176,12 @@ public class AddressFactory {
         return addr;
     }
 
-    public SegwitAddress getBIP49(int accountIdx, int chain, int idx)	{
-
-        HD_Address addr = null;
-        SegwitAddress p2shp2wpkh = null;
-
-        HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
-        addr = hdw.getAccount(accountIdx).getChain(chain).getAddressAt(idx);
-        p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-
-        return p2shp2wpkh;
-    }
-
-    public SegwitAddress getBIP84(int accountIdx, int chain, int idx)	{
-
-        HD_Address addr = null;
-        SegwitAddress p2wpkh = null;
-
-        HD_Wallet hdw = BIP84Util.getInstance(context).getWallet();
-        addr = hdw.getAccount(accountIdx).getChain(chain).getAddressAt(idx);
-        p2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-
-        return p2wpkh;
-    }
-
     public int getHighestTxReceiveIdx(int account)  {
         if(highestTxReceiveIdx.get(account) != null)  {
            return highestTxReceiveIdx.get(account);
         }
         else  {
-            return -1;
+            return (highestTxReceiveIdx.size() > 0) ? highestTxReceiveIdx.get(0) : 0;
         }
     }
 
@@ -265,7 +195,7 @@ public class AddressFactory {
             return highestTxChangeIdx.get(account);
         }
         else  {
-            return -1;
+            return (highestTxChangeIdx.size() > 0) ? highestTxChangeIdx.get(0) : 0;
         }
     }
 
@@ -359,7 +289,7 @@ public class AddressFactory {
             return ((idx - highestTxReceiveIdx.get(account)) < (LOOKAHEAD_GAP - 1));
         }
         else {
-            return false;
+            return ((idx - highestTxReceiveIdx.get(0)) < (LOOKAHEAD_GAP - 1));
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -18,6 +19,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
@@ -35,6 +37,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+
 
 public class JobRefreshService extends JobIntentService {
 
@@ -48,6 +53,7 @@ public class JobRefreshService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
 
+
         boolean dragged = intent.getBooleanExtra("dragged", false);
         boolean launch = intent.getBooleanExtra("launch", false);
         boolean notifTx = intent.getBooleanExtra("notifTx", false);
@@ -55,7 +61,6 @@ public class JobRefreshService extends JobIntentService {
         Log.d("JobRefreshService", "doInBackground()");
 
         APIFactory.getInstance(this.getApplicationContext()).stayingAlive();
-
         APIFactory.getInstance(this.getApplicationContext()).initWallet();
 
         try {
@@ -158,29 +163,51 @@ public class JobRefreshService extends JobIntentService {
 
             }
 
-            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUB49LOCK, false)) {
-                String ypub = BIP49Util.getInstance(this.getApplicationContext()).getWallet().getAccount(0).ypubstr();
-                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(ypub, 49, null);
+            try {
+                if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUB49LOCK, false)) {
+                    String ypub = BIP49Util.getInstance(this.getApplicationContext()).getWallet().getAccount(0).ypubstr();
+                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(ypub, 49, null);
+                }
+
+                if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUB84LOCK, false)) {
+                    String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccount(0).zpubstr();
+                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, null);
+                }
+
+                if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBPRELOCK, false)) {
+                    String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolPremixAccount()).zpubstr();
+                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
+                }
+
+                if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBPOSTLOCK, false)) {
+                    String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolPostmix()).zpubstr();
+                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBPOSTLOCK);
+                }
+
+                if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBBADBANKLOCK, false)) {
+                    String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolBadBank()).zpubstr();
+                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBBADBANKLOCK);
+                }
+
+                if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBRICOCHETLOCK, false)) {
+                    String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(RicochetMeta.getInstance(JobRefreshService.this).getRicochetAccount()).zpubstr();
+                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBRICOCHETLOCK);
+                }
+            } catch (Exception e) {
+                LogUtil.error(TAG,e.getMessage());
+                if(BuildConfig.DEBUG){
+                    e.printStackTrace();
+                }
             }
 
-            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUB84LOCK, false)) {
-                String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccount(0).zpubstr();
-                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, null);
-            }
-
-            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBPRELOCK, false)) {
-                String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolPremixAccount()).zpubstr();
-                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
-            }
-
-            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBPOSTLOCK, false)) {
-                String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolPostmix()).zpubstr();
-                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
-            }
-
-            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBBADBANKLOCK, false)) {
-                String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolBadBank()).zpubstr();
-                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBBADBANKLOCK);
+            try {
+                int prevIdx = RicochetMeta.getInstance(JobRefreshService.this).getIndex();
+                APIFactory.getInstance(JobRefreshService.this).parseRicochetXPUB();
+                if(prevIdx > RicochetMeta.getInstance(JobRefreshService.this).getIndex())    {
+                    RicochetMeta.getInstance(JobRefreshService.this).setIndex(prevIdx);
+                }
+            } catch (JSONException je) {
+                ;
             }
 
         } else {

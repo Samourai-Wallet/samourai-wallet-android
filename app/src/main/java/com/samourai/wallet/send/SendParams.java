@@ -1,12 +1,22 @@
 package com.samourai.wallet.send;
 
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.util.BatchSendUtil;
 
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.script.Script;
+import org.spongycastle.util.encoders.Hex;
+
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
+import static com.samourai.wallet.util.LogUtil.debug;
 
 public class SendParams	{
 
@@ -134,4 +144,45 @@ public class SendParams	{
     public int getChangeIdx()   {
         return changeIdx;
     }
+
+    public List<Integer> getSpendOutputIndex(Transaction tx)   {
+
+        List<Integer> ret = new ArrayList<Integer>();
+
+        for (int i = 0; i < tx.getOutputs().size(); i++) {
+            TransactionOutput output = tx.getOutput(i);
+            Script script = output.getScriptPubKey();
+            String scriptPubKey = Hex.toHexString(script.getProgram());
+            Address _p2sh = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
+            Address _p2pkh = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+            try {
+                if(Bech32Util.getInstance().isBech32Script(scriptPubKey)) {
+                    if(Bech32Util.getInstance().getAddressFromScript(scriptPubKey).compareToIgnoreCase(getDestAddress()) == 0) {
+                        debug("SendParams", "send address identified:" + Bech32Util.getInstance().getAddressFromScript(scriptPubKey));
+                        debug("SendParams", "send address output index:" + i);
+                        ret.add(i);
+                    }
+                }
+                else if(_p2sh != null && _p2pkh == null && _p2sh.toString().compareTo(getDestAddress()) == 0) {
+                    debug("SendParams", "send address identified:" + _p2sh.toString());
+                    debug("SendParams", "send address output index:" + i);
+                    ret.add(i);
+                }
+                else if(_p2sh == null && _p2pkh != null && _p2pkh.toString().compareTo(getDestAddress()) == 0) {
+                    debug("SendParams", "send address identified:" + _p2pkh.toString());
+                    debug("SendParams", "send address output index:" + i);
+                    ret.add(i);
+                }
+                else  {
+                    ;
+                }
+            } catch (Exception e) {
+                ;
+            }
+
+        }
+
+        return ret;
+    }
+
 }

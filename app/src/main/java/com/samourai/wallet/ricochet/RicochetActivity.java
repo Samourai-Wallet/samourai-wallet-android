@@ -179,7 +179,7 @@ public class RicochetActivity extends Activity {
 
                                 isOK = false;
 
-                                String response = PushTx.getInstance(RicochetActivity.this).samourai(txs[i]);
+                                String response = PushTx.getInstance(RicochetActivity.this).samourai(txs[i], null);
                                 Log.d("RicochetActivity", "pushTx:" + response);
                                 JSONObject jsonObject = new JSONObject(response);
                                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {

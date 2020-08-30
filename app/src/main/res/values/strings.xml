@@ -89,6 +89,8 @@
     <string name="options_fee_provider2">Select your preferred transaction fee estimation provider.</string>
     <string name="options_broadcast_on">Broadcast transactions</string>
     <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy raw signed transaction to the clipboard.</string>
+    <string name="options_strictoutputs">Strict mode</string>
+    <string name="options_strictoutputs2">Strict control of transaction outputs and address reuse.</string>
     <string name="options_segwit">Receive to segwit addresses</string>
     <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
     <string name="options_broadcast_hex">Broadcast transaction hex</string>
@@ -110,6 +112,8 @@
     <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
     <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
     <string name="options_postmix">Spend from post-mix Whirlpool</string>
+    <string name="options_ricochet_sync">Sync Ricochet</string>
+    <string name="options_ricochet_sync2">Synchronize Ricochet index.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -796,5 +800,10 @@
     <string name="display_psbt">Display PSBT</string>
     <string name="psbt_error">Error parsing PSBT</string>
     <string name="psbt_sign_error">Error signing transaction via PSBT</string>
+
+    <string name="strict_mode_address">Strict mode has detected possible address reuse for this transaction. Reformulate the transaction or broadcast as-is?</string>
+    <string name="strict_reformulate">Reformulate transaction</string>
+
+    <string name="sweep_no_amount">No utxos found for this private key.</string>
 
 </resources>
