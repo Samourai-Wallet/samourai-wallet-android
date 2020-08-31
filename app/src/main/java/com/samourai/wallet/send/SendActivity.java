@@ -1205,7 +1205,6 @@ public class SendActivity extends SamouraiActivity {
 
         if (preselectedUTXOs != null) {
             canDoBoltzmann = false;
-            SPEND_TYPE = SPEND_SIMPLE;
         }
 
         // entire balance (can only be simple spend)
