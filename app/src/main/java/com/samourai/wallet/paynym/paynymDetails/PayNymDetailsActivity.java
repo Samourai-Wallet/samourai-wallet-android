@@ -26,8 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.samourai.http.client.AndroidHttpClient;
-import com.samourai.http.client.IHttpClient;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
@@ -56,17 +54,14 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
-import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
-import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
-import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.xmanager.client.AndroidXManagerClient;
 import com.samourai.xmanager.client.XManagerClient;
 import com.samourai.xmanager.protocol.XManagerService;
 import com.squareup.picasso.Callback;
@@ -455,13 +450,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 Toast.makeText(PayNymDetailsActivity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
                 break;
             }
-            case R.id.receive_cahoots: {
-                // open receive activity
-                Intent intent = new Intent(this, SorobanCahootsActivity.class);
-                intent.putExtra("receiveFromPCode", pcode);
-                startActivity(intent);
-                break;
-            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -534,9 +522,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     }
 
     private Single<String> getPayNymAddress() {
-        TorManager torManager = TorManager.getInstance(getApplicationContext());
-        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
-        XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
+        XManagerClient xManagerClient = AndroidXManagerClient.getInstance(getApplicationContext());
         return Single.fromCallable(() -> xManagerClient.getAddressOrDefault(XManagerService.BIP47));
     }
 

@@ -133,7 +133,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('io.samourai.code.whirlpool:soroban-client-android:develop-SNAPSHOT') {
+    implementation ('io.samourai.code.wallet:soroban-client-java:develop-SNAPSHOT') {
         exclude group:'io.samourai.code.wallet', module:'extlibj'
     }
     implementation ('io.samourai.code.wallet:boltzmann-java:1.0.1') {
@@ -144,8 +144,7 @@ dependencies {
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
     implementation 'org.java-websocket:Java-WebSocket:1.3.6'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.auth0.android:jwtdecode:1.1.1'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.6.0'
     implementation 'com.github.clans:fab:1.6.4'

@@ -28,7 +28,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
-import com.samourai.soroban.client.SorobanClientService;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
@@ -96,7 +95,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
         }
 
         // setup cahoots
-        SorobanClientService sorobanClientService = AndroidSorobanClientService.getInstance(getApplicationContext());
+        AndroidSorobanClientService sorobanClientService = AndroidSorobanClientService.getInstance(getApplicationContext());
         cahootsService = sorobanClientService.getCahootsService();
 
         if (getIntent().hasExtra("payload")) {
@@ -108,10 +107,10 @@ public class ManualCahootsActivity extends SamouraiActivity {
             try {
                 switch (cahootsType) {
                     case STONEWALLX2:
-                        setCahootsMessage(cahootsService.newStonewallx2(amount, address));
+                        setCahootsMessage(cahootsService.newStonewallx2(account, amount, address));
                         break;
                     case STOWAWAY:
-                        setCahootsMessage(cahootsService.newStowaway(amount));
+                        setCahootsMessage(cahootsService.newStowaway(account, amount));
                         break;
                     default:
                         throw new Exception("Unknown #Cahoots");
@@ -201,7 +200,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
         try {
             // continue cahoots
-            setCahootsMessage(cahootsService.reply(qrData));
+            setCahootsMessage(cahootsService.reply(account, qrData));
         } catch(Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();

@@ -88,6 +88,10 @@ public class BIP47Meta {
         pcodeSegwit.clear();
     }
 
+    public boolean exists(String pcode) {
+        return pcodeLabels.containsKey(pcode);
+    }
+
     public String getLabel(String pcode)   {
         if(!pcodeLabels.containsKey(pcode))    {
             return "";

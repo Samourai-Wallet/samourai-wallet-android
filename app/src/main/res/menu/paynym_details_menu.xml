@@ -38,10 +38,5 @@
         android:title="@string/options_paynym_indexes"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/receive_cahoots"
-        android:title="Receive Cahoots online"
-        app:showAsAction="never" />
-
 
 </menu>

@@ -1,23 +1,28 @@
 package com.samourai.http.client;
 
-import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.util.WebUtil;
+import android.content.Context;
 
 /**
  * HTTP client manager for Whirlpool.
  */
 public class AndroidHttpClientService implements IHttpClientService {
-    private WebUtil webUtil;
-    private TorManager torManager;
+    private static AndroidHttpClientService instance;
 
-    public AndroidHttpClientService(WebUtil webUtil, TorManager torManager) {
-        this.webUtil = webUtil;
-        this.torManager = torManager;
+    public static AndroidHttpClientService getInstance(Context ctx) {
+        if (instance == null) {
+            instance = new AndroidHttpClientService(ctx);
+        }
+        return instance;
+    }
+
+    private Context ctx;
+
+    private AndroidHttpClientService(Context ctx) {
+        this.ctx = ctx;
     }
 
     @Override
     public AndroidHttpClient getHttpClient(HttpUsage httpUsage) {
-        AndroidHttpClient httpClient = new AndroidHttpClient(webUtil, torManager);
-        return httpClient;
+        return AndroidHttpClient.getInstance(ctx);
     }
 }

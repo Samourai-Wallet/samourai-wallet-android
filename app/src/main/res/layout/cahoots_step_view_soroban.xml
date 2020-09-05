@@ -93,30 +93,6 @@
             app:layout_constraintTop_toBottomOf="@+id/stonewall_fee_splitup_container" />
 
         <TextView
-            android:id="@+id/textViewConnectingSender"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:text="Have your mixing partner receive online Cahoots from you. Cahoots will progress automatically."
-            android:textColor="#FFbab9b9"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/cahoots_step_text"
-            app:layout_constraintTop_toBottomOf="@+id/cahoots_step_text" />
-
-        <TextView
-            android:id="@+id/textViewConnectingReceiver"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:text="Have your mixing partner send online Cahoots to you. Cahoots will progress automatically."
-            android:textColor="#FFbab9b9"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/cahoots_step_text"
-            app:layout_constraintTop_toBottomOf="@+id/cahoots_step_text" />
-
-        <TextView
             android:id="@+id/textViewConnected"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

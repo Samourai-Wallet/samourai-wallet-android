@@ -12,14 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Group;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.core.content.ContextCompat;
-
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -42,14 +34,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
 import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
 import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
-import com.samourai.http.client.AndroidHttpClient;
-import com.samourai.http.client.IHttpClient;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
@@ -78,7 +69,7 @@ import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
-import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
+import com.samourai.wallet.send.soroban.meeting.SorobanMeetingSendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -94,6 +85,7 @@ import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
+import com.samourai.xmanager.client.AndroidXManagerClient;
 import com.samourai.xmanager.client.XManagerClient;
 import com.samourai.xmanager.protocol.XManagerService;
 
@@ -125,6 +117,9 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.content.ContextCompat;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -192,7 +187,6 @@ public class SendActivity extends SamouraiActivity {
     public static String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
-    private String sorobanSendToPCode;
 
     private List<UTXOCoin> preselectedUTXOs = null;
 
@@ -344,13 +338,6 @@ public class SendActivity extends SamouraiActivity {
                 cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
                     @Override
                     public void onSelect(SelectCahootsType.type type) {
-                        if (CahootsMode.SOROBAN.equals(type.getCahootsMode())) {
-                            // require Paynym counterparty selection
-                            PaynymSelectModalFragment paynymSelectModalFragment =
-                                    PaynymSelectModalFragment.newInstance(code -> sorobanSendToPCode = code);
-                            paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select_soroban");
-                        }
-
                         chosen[0] = true;
                         selectedCahootsType = type;
 
@@ -394,7 +381,6 @@ public class SendActivity extends SamouraiActivity {
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
                             hideToAddressForStowaway();
-                            sorobanSendToPCode = null;
                         }
                         validateSpend();
                     }
@@ -718,9 +704,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private Completable setUpRicochetFees() {
-        TorManager torManager = TorManager.getInstance(getApplicationContext());
-        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
-        XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
+        XManagerClient xManagerClient = AndroidXManagerClient.getInstance(getApplicationContext());
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false)) {
             Completable completable = Completable.fromCallable(() -> {
                 String feeAddress = xManagerClient.getAddressOrDefault(XManagerService.RICOCHET);
@@ -762,7 +746,7 @@ public class SendActivity extends SamouraiActivity {
                 selectableBalance = balance;
             } else {
                 Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
-                if (tempBalance != 0L) {
+                if (tempBalance != null && tempBalance != 0L) {
                     balance = tempBalance;
                     selectableBalance = balance;
                 }
@@ -1630,7 +1614,7 @@ public class SendActivity extends SamouraiActivity {
                     break;
                 }
                 case STONEWALLX2_SOROBAN: {
-                    sendTransactionDetailsView.showStonewallX2Layout("Online over Tor", 1000);
+                    sendTransactionDetailsView.showStonewallX2Layout("Online", 1000);
                     btnSend.setBackgroundResource(R.drawable.button_blue);
                     btnSend.setText(getString(R.string.begin_stonewallx2));
                     break;
@@ -1731,18 +1715,7 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (CahootsMode.SOROBAN.equals(selectedCahootsType.getCahootsMode())) {
-            // require PaymentCode counterparty
-            if (sorobanSendToPCode == null) {
-                Toast.makeText(this,"Select a paynym as Cahoots counterparty",Toast.LENGTH_LONG).show();
-                return;
-            }
-            // Cahoots / Soroban
-            Intent intent = new Intent(this, SorobanCahootsActivity.class);
-            intent.putExtra("amount", amount);
-            intent.putExtra("_account", account);
-            intent.putExtra("address", address);
-            intent.putExtra("type", selectedCahootsType.getCahootsType().getValue());
-            intent.putExtra("sendToPCode", sorobanSendToPCode);
+            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address);
             startActivity(intent);
             return;
         }
