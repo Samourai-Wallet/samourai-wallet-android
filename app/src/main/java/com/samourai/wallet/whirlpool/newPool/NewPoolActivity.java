@@ -162,12 +162,12 @@ public class NewPoolActivity extends AppCompatActivity {
                 }
                 case 1: {
                     try {
-                        tx0.make();
+//                        tx0.make();
                     } catch (Exception ex) {
                         Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
                         return;
                     }
-                    calculateTx0(selectedPoolViewModel.getDenomination(),selectedPoolViewModel.getMinerFee()/1000L);
+                    calculateTx0(selectedPoolViewModel.getDenomination(),selectedPoolViewModel.getMinerFee());
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
                     confirmButton.setBackgroundResource(R.drawable.button_green);
