@@ -1,5 +1,7 @@
 package com.samourai.wallet.whirlpool.models;
 
+import android.util.Log;
+
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
@@ -25,12 +27,12 @@ public class PoolViewModel extends com.samourai.whirlpool.client.whirlpool.beans
     public void setMinerFee(Long minerFee, List<UTXOCoin> coins) {
         this.minerFee = minerFee;
         try {
-            this.tx0 = new WhirlpoolTx0(this.getDenomination(), minerFee / 1000L, 0, coins);
-//            tx0.make();
-            this.totalMinerFee = tx0.getFee();
+            this.tx0 = new WhirlpoolTx0(this.getDenomination(), minerFee, 0, coins);
+            this.totalMinerFee = minerFee;
             this.totalEstimatedBytes = tx0.getEstimatedBytes();
         } catch (Exception ex) {
             ex.printStackTrace();
+            LogUtil.error("PoolViewModel",ex.getMessage());
         }
     }
 
