@@ -41,7 +41,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
         holder.poolAmount.setText(getBTCDecimalFormat(poolViewModel.getDenomination(),2).concat(" BTC Pool"));
          holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat(" ").concat(getBTCDecimalFormat(poolViewModel.getFeeValue())).concat(" BTC"));
         holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getTotalFee())).concat(" BTC").concat(" (").concat(String.valueOf(poolViewModel.getTotalEstimatedBytes())).concat( " bytes)"));
-        holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getMinerFee())).concat(" BTC"));
+        holder.minerFee.setText(mContext.getString(R.string.miner_fee).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getMinerFee() * poolViewModel.getTotalEstimatedBytes())).concat(" BTC"));
         holder.checkBox.setOnCheckedChangeListener(null);
         holder.checkBox.setChecked(poolViewModel.isSelected());
         if (poolViewModel.isSelected()) {
@@ -94,7 +94,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView poolAmount, poolFees, minorFees, totalFees;
+        private TextView poolAmount, poolFees, minerFee, totalFees;
         private CheckBox checkBox;
         private View layout;
         private Group feesGroup;
@@ -103,7 +103,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
             super(itemView);
             poolAmount = itemView.findViewById(R.id.pool_item_amount);
             poolFees = itemView.findViewById(R.id.pool_item_fee);
-            minorFees = itemView.findViewById(R.id.pool_item_miner_fee);
+            minerFee = itemView.findViewById(R.id.pool_item_miner_fee);
             totalFees = itemView.findViewById(R.id.pool_item_total_fee);
             checkBox = itemView.findViewById(R.id.pool_item_checkbox);
             feesGroup = itemView.findViewById(R.id.item_pool_fees_group);
