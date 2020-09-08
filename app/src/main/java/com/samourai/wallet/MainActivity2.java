@@ -12,7 +12,9 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,6 +141,11 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
+        startApp();
+    }
+
+    private void startApp() {
+
         if (TorManager.getInstance(getApplicationContext()).isRequired() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.getInstance(getApplicationContext()).isConnected()) {
             loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
@@ -149,6 +156,12 @@ public class MainActivity2 extends Activity {
                     .subscribe(connection_states -> {
                         if (connection_states == TorProxyManager.ConnectionStatus.CONNECTED) {
                             initAppOnCreate();
+                        } else if (connection_states == TorProxyManager.ConnectionStatus.DISCONNECTED) {
+                            loaderTxView.setText("".concat(getText(R.string.unable_to_start_tor).toString()).concat(" Click here to restart"));
+                            loaderTxView.setOnClickListener(v -> {
+                                startApp();
+                                compositeDisposables.clear();
+                            });
                         }
                     });
             compositeDisposables.add(disposable);
