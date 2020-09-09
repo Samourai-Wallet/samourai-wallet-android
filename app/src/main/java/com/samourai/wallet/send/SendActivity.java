@@ -292,8 +292,12 @@ public class SendActivity extends SamouraiActivity {
         if (getIntent().getExtras().containsKey("preselected")) {
             preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
             setBalance();
-            SPEND_TYPE = SPEND_SIMPLE;
-            if(preselectedUTXOs != null && preselectedUTXOs.size() > 0 && balance < 1000000L) {
+            if (ricochetHopsSwitch.isChecked()) {
+                SPEND_TYPE = SPEND_RICOCHET;
+            } else {
+                SPEND_TYPE = SPEND_SIMPLE;
+            }
+            if (preselectedUTXOs != null && preselectedUTXOs.size() > 0 && balance < 1000000L) {
                 premiumAddons.setVisibility(View.GONE);
                 cahootsGroup.setVisibility(View.GONE);
                 addonsNotAvailableMessage.setVisibility(View.VISIBLE);
