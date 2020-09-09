@@ -33,6 +33,22 @@
             android:orientation="vertical">
 
 
+            <TextView
+                android:id="@+id/addons_not_available_message"
+                android:layout_width="match_parent"
+                android:paddingTop="14dp"
+                android:paddingBottom="12dp"
+                android:paddingStart="16dp"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:gravity="center"
+                android:textColor="#afd2d2d2"
+                android:paddingEnd="16dp"
+                android:layout_height="wrap_content"
+                android:text="@string/note_privacy_addons_are_not_available_for_selected_utxo_s" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/premium_addons"
                 android:layout_width="match_parent"

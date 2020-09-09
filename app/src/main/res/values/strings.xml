@@ -805,5 +805,12 @@
     <string name="strict_reformulate">Reformulate transaction</string>
 
     <string name="sweep_no_amount">No utxos found for this private key.</string>
+    <string name="note_privacy_addons_are_not_available_for_selected_utxo_s">NOTE: Privacy addons are not available for selected utxo\'s</string>
+    <string name="note_you_are_making_a_post_mix_spend_if_cahoots_nis_not_selected_samourai_will">NOTE: You are making a post-mix spend. If #Cahoots\nis not selected Samourai will attempt to make a STONEWALL spend.</string>
+    <string name="off">Off</string>
+    <string name="privacy_addons">Privacy Addons</string>
+    <string name="ricochet_">Ricochet</string>
+    <string name="staggered_delivery">Staggered delivery</string>
+    <string name="for_extra_privacy_message">For extra privacy and analysis resistance, each hop will appear in mempool 1 block apart. Final delivery can take between 30 min and 2 hours.</string>
 
 </resources>
