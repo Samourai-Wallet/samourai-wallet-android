@@ -1208,6 +1208,9 @@ public class SendActivity extends SamouraiActivity {
 
         if (preselectedUTXOs != null) {
             canDoBoltzmann = false;
+            if(SPEND_TYPE == SPEND_BOLTZMANN ){
+                SPEND_TYPE = SPEND_SIMPLE;
+            }
         }
 
         // entire balance (can only be simple spend)
@@ -1276,7 +1279,8 @@ public class SendActivity extends SamouraiActivity {
             }
 
             return true;
-        } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
+        } else
+            if (SPEND_TYPE == SPEND_BOLTZMANN) {
 
             Log.d("SendActivity", "needed amount:" + neededAmount);
 
