@@ -179,6 +179,8 @@ public class SendActivity extends SamouraiActivity {
     private HashMap<String, BigInteger> receivers;
     private int changeType;
     private ConstraintLayout cahootsGroup;
+    private ConstraintLayout premiumAddons;
+    private TextView addonsNotAvailableMessage;
     private String address;
     private String message;
     private long amount;
@@ -239,6 +241,8 @@ public class SendActivity extends SamouraiActivity {
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cohoots_options);
+        premiumAddons = sendTransactionDetailsView.findViewById(R.id.premium_addons);
+        addonsNotAvailableMessage = sendTransactionDetailsView.findViewById(R.id.addons_not_available_message);
         cahootsStatusText = sendTransactionDetailsView.findViewById(R.id.cahoot_status_text);
         totalMinerFeeLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_miner_fee_group);
         cahootsNotice = sendTransactionDetailsView.findViewById(R.id.cahoots_not_enabled_notice);
@@ -288,12 +292,11 @@ public class SendActivity extends SamouraiActivity {
         if (getIntent().getExtras().containsKey("preselected")) {
             preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
             setBalance();
-
+            SPEND_TYPE = SPEND_SIMPLE;
             if(preselectedUTXOs != null && preselectedUTXOs.size() > 0 && balance < 1000000L) {
+                premiumAddons.setVisibility(View.GONE);
                 cahootsGroup.setVisibility(View.GONE);
-                ricochetHopsSwitch.setVisibility(View.GONE);
-                ricochetTitle.setVisibility(View.GONE);
-                ricochetDesc.setVisibility(View.GONE);
+                addonsNotAvailableMessage.setVisibility(View.VISIBLE);
             }
 
         } else {
@@ -1205,6 +1208,9 @@ public class SendActivity extends SamouraiActivity {
 
         if (preselectedUTXOs != null) {
             canDoBoltzmann = false;
+            if(SPEND_TYPE == SPEND_BOLTZMANN ){
+                SPEND_TYPE = SPEND_SIMPLE;
+            }
         }
 
         // entire balance (can only be simple spend)
@@ -1273,7 +1279,8 @@ public class SendActivity extends SamouraiActivity {
             }
 
             return true;
-        } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
+        } else
+            if (SPEND_TYPE == SPEND_BOLTZMANN) {
 
             Log.d("SendActivity", "needed amount:" + neededAmount);
 
