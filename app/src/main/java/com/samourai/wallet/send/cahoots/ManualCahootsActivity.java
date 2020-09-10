@@ -31,6 +31,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
 import com.samourai.wallet.cahoots.CahootsMessage;
+import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsService;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
@@ -104,7 +105,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
                     getApplicationContext()
             );
             this.account = cahootsUi.getAccount();
-            setTitle(cahootsUi.getTitle("manual"));
+            setTitle(cahootsUi.getTitle(CahootsMode.MANUAL));
 
             if (getIntent().hasExtra("payload")) {
                 // resume cahoots

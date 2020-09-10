@@ -21,17 +21,8 @@
             android:textColor="@color/primary_light"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="Send Cahoots"
+            android:text="Select Cahoots counterparty"
             />
-
-        <TextView
-            android:id="@+id/textViewAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:text=""
-            android:textColor="#FFbab9b9" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             xmlns:app="http://schemas.android.com/apk/res-auto"

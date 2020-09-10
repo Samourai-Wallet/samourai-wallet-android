@@ -10,6 +10,7 @@ import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
 import com.samourai.wallet.cahoots.CahootsMessage;
+import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
 import com.samourai.wallet.soroban.client.SorobanMessage;
@@ -64,7 +65,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
                 getApplicationContext()
             );
             this.account = cahootsUi.getAccount();
-            setTitle(cahootsUi.getTitle("online"));
+            setTitle(cahootsUi.getTitle(CahootsMode.SOROBAN));
 
             if (getIntent().hasExtra("pcode")) {
                 String pcode = getIntent().getStringExtra("pcode");

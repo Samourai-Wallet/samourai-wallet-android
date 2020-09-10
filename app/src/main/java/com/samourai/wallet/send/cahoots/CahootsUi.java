@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
 import com.samourai.wallet.cahoots.CahootsMessage;
+import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsService;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
@@ -145,8 +146,8 @@ public class CahootsUi {
         }
     }
 
-    public String getTitle(String info) {
-        return (CahootsTypeUser.SENDER.equals(typeUser) ? "Sending" : "Receiving") + " " + info + " " + cahootsType;
+    public String getTitle(CahootsMode cahootsMode) {
+        return (CahootsTypeUser.SENDER.equals(typeUser) ? "Sending" : "Receiving") + " " + cahootsMode.getLabel().toLowerCase() + " " + cahootsType.getLabel();
     }
 
     public int getAccount() {

@@ -55,6 +55,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsMode;
+import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
@@ -69,6 +70,7 @@ import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
+import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
 import com.samourai.wallet.send.soroban.meeting.SorobanMeetingSendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -347,30 +349,16 @@ public class SendActivity extends SamouraiActivity {
                                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.warning_yellow));
                                 break;
                             }
-                            case STOWAWAY: {
-                                cahootsStatusText.setText("Stowaway");
+                            default: {
+                                cahootsStatusText.setText(selectedCahootsType.getCahootsType().getLabel()+" "+selectedCahootsType.getCahootsMode().getLabel());
                                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
-                                toAddressEditText.setText("Stowaway Collaborator");
-                                toAddressEditText.setEnabled(false);
-                                address = "";
-                                break;
-                            }
-                            case STONEWALLX2_MANUAL: {
-                                cahootsStatusText.setText("StonewallX2 Manual");
-                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
-                                break;
-                            }
-                            case STONEWALLX2_SOROBAN: {
-                                cahootsStatusText.setText("StonewallX2 Online");
-                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
-                                break;
-                            }
-                            case STONEWALLX2_SAMOURAI: {
-                                cahootsStatusText.setText("Stonewallx2 Samourai");
-                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
-                                break;
-                            }
 
+                                if (CahootsType.STOWAWAY.equals(selectedCahootsType.getCahootsType())) {
+                                    toAddressEditText.setText("Stowaway Collaborator");
+                                    toAddressEditText.setEnabled(false);
+                                    address = "";
+                                }
+                            }
                         }
                         validateSpend();
                     }
@@ -1107,7 +1095,7 @@ public class SendActivity extends SamouraiActivity {
         //                Log.i("SendActivity", "amount:" + amount);
 
 
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY) {
+        if (selectedCahootsType.getCahootsType() == CahootsType.STOWAWAY) {
             setButtonForStowaway(true);
             return true;
         } else {
@@ -1603,30 +1591,6 @@ public class SendActivity extends SamouraiActivity {
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
 
             switch (selectedCahootsType) {
-                case STONEWALLX2_MANUAL: {
-                    sendTransactionDetailsView.showStonewallX2Layout("Manual", 1000);
-                    btnSend.setBackgroundResource(R.drawable.button_blue);
-                    btnSend.setText(getString(R.string.begin_stonewallx2));
-                    break;
-                }
-                case STONEWALLX2_SAMOURAI: {
-                    sendTransactionDetailsView.showStonewallX2Layout("Samourai Wallet", 1000);
-                    break;
-                }
-                case STONEWALLX2_SOROBAN: {
-                    sendTransactionDetailsView.showStonewallX2Layout("Online", 1000);
-                    btnSend.setBackgroundResource(R.drawable.button_blue);
-                    btnSend.setText(getString(R.string.begin_stonewallx2));
-                    break;
-                }
-                case STOWAWAY: {
-//                            mixingPartner.setText("Samourai Wallet");
-                    sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
-                    btnSend.setBackgroundResource(R.drawable.button_blue);
-                    btnSend.setText(getString(R.string.begin_stowaway));
-
-                    break;
-                }
                 case NONE: {
                     sendTransactionDetailsView.showStonewallx1Layout(null);
                     // for ricochet entropy will be 0 always
@@ -1671,11 +1635,25 @@ public class SendActivity extends SamouraiActivity {
                     break;
                 }
                 default: {
-                    btnSend.setBackgroundResource(R.drawable.button_green);
-                    btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) amount))).concat(" BTC"));
+                    switch (selectedCahootsType.getCahootsType()) {
+                        case STONEWALLX2:
+                            sendTransactionDetailsView.showStonewallX2Layout(selectedCahootsType.getCahootsMode(), 1000);
+                            btnSend.setBackgroundResource(R.drawable.button_blue);
+                            btnSend.setText(getString(R.string.begin_stonewallx2));
+                            break;
+
+                        case STOWAWAY:
+                            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), address, null, 1000);
+                            btnSend.setBackgroundResource(R.drawable.button_blue);
+                            btnSend.setText(getString(R.string.begin_stowaway));
+                            break;
+
+                        default:
+                            btnSend.setBackgroundResource(R.drawable.button_green);
+                            btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) amount))).concat(" BTC"));
+                    }
                 }
             }
-
             return true;
         }
         return false;
@@ -1685,7 +1663,7 @@ public class SendActivity extends SamouraiActivity {
         if (prepare) {
             // Sets view with stowaway message
             // also hides overlay push icon from button
-            sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
+            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), address, null, 1000);
             btnSend.setBackgroundResource(R.drawable.button_blue);
             btnSend.setText(getString(R.string.begin_stowaway));
             sendTransactionDetailsView.getTransactionReview().findViewById(R.id.transaction_push_icon).setVisibility(View.INVISIBLE);
@@ -1703,7 +1681,6 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void initiateSpend() {
-
         if (CahootsMode.MANUAL.equals(selectedCahootsType.getCahootsMode())) {
             // Cahoots manual
             Intent intent = ManualCahootsActivity.createIntentSender(this, account, selectedCahootsType.getCahootsType(), amount, address);
@@ -1711,7 +1688,8 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (CahootsMode.SOROBAN.equals(selectedCahootsType.getCahootsMode())) {
-            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address);
+            // choose Cahoots counterparty
+            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address, strPCode);
             startActivity(intent);
             return;
         }
@@ -2169,7 +2147,7 @@ public class SendActivity extends SamouraiActivity {
         } else {
             totalMinerFeeLayout.setVisibility(View.VISIBLE);
         }
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds && amount != 0) {
+        if (selectedCahootsType.getCahootsType() == CahootsType.STOWAWAY && !insufficientFunds && amount != 0) {
             enableReviewButton(true);
             return true;
         }

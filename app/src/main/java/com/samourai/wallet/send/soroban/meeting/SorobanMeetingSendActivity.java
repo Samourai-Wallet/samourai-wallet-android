@@ -24,6 +24,8 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -39,7 +41,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
     private long sendAmount;
     private String sendAddress;
 
-    private TextView paynymDisplayName, textViewAccount, textViewConnecting;
+    private TextView paynymDisplayName, textViewConnecting;
     private ImageView paynymAvatar;
     private View paynymSelect;
     private Button sendButton;
@@ -48,12 +50,15 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
 
     private String pcode;
 
-    public static Intent createIntent(Context ctx, int account, CahootsType type, long amount, String address) {
+    public static Intent createIntent(Context ctx, int account, CahootsType type, long amount, String address, String pcode) {
         Intent intent = new Intent(ctx, SorobanMeetingSendActivity.class);
         intent.putExtra("_account", account);
         intent.putExtra("type", type.getValue());
         intent.putExtra("sendAmount", amount);
         intent.putExtra("sendAddress", address);
+        if (!StringUtils.isEmpty(pcode)) {
+            intent.putExtra("pcode", pcode);
+        }
         return intent;
     }
 
@@ -68,7 +73,6 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
 
         paynymSelect = findViewById(R.id.paynym_select);
         paynymDisplayName = findViewById(R.id.paynym_display_name);
-        textViewAccount = findViewById(R.id.textViewAccount);
         textViewConnecting = findViewById(R.id.textViewConnecting);
         paynymAvatar = findViewById(R.id.img_paynym_avatar);
         sendButton = findViewById(R.id.send_button);
@@ -96,9 +100,11 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
             }
             sorobanCahootsInitiator = AndroidSorobanClientService.getInstance(getApplicationContext()).initiator(account.getAccountIndex());
 
-            textViewAccount.setText("Sending from: "+account.name());
-
-            selectPCode();
+            if (getIntent().hasExtra("pcode")) {
+                setPCode(getIntent().getStringExtra("pcode"));
+            } else {
+                selectPCode();
+            }
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Cahoots error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
@@ -120,6 +126,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                 .into(paynymAvatar);
 
         sendButton.setVisibility(View.VISIBLE);
+        send();
     }
 
     private void send() {

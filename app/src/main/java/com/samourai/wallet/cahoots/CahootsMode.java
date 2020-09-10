@@ -4,14 +4,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Optional;
 
 public enum CahootsMode {
-    MANUAL(0),
-    SOROBAN(1),
-    SAMOURAI(2);
+    MANUAL(0, "Manual"),
+    SOROBAN(1, "Online"),
+    SAMOURAI(2, "Samourai");
 
     private int value;
+    private String label;
 
-    CahootsMode(int value) {
+    CahootsMode(int value, String label) {
         this.value = value;
+        this.label = label;
     }
 
     public static Optional<CahootsMode> find(int value) {
@@ -26,5 +28,9 @@ public enum CahootsMode {
     @JsonValue
     public int getValue() {
         return value;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
+import com.samourai.wallet.cahoots.CahootsMode;
 
 import java.text.DecimalFormat;
 
@@ -86,26 +87,26 @@ public class SendTransactionDetailsView extends FrameLayout {
         stoneWallLayout.setVisibility(enable ? INVISIBLE : VISIBLE);
     }
 
-    public void showStonewallX2Layout(String participant, long fee) {
+    public void showStonewallX2Layout(CahootsMode cahootsMode, long fee) {
 
         stoneWallLayout.getRootView().post(() -> {
             stoneWallX2Layout.setVisibility(VISIBLE);
             stowawayLayout.setVisibility(GONE);
             stoneWallLayout.setVisibility(GONE);
         });
-        stoneWallx2mixingParticipant.setText(participant);
+        stoneWallx2mixingParticipant.setText(cahootsMode.getLabel());
 
     }
 
-    public void showStowawayLayout(String participant, TxProcessorResult entropy, long fee) {
+    public void showStowawayLayout(CahootsMode cahootsMode, String participant, TxProcessorResult entropy, long fee) {
         stoneWallLayout.getRootView().post(() -> {
             stowawayLayout.setVisibility(VISIBLE);
             stoneWallLayout.setVisibility(GONE);
             stoneWallX2Layout.setVisibility(GONE);
         });
 
-        stowawayMixingParticipant.setText("____");
-
+        stowawayMixingParticipant.setText(participant);
+        stowawayMethod.setText(cahootsMode.getLabel());
     }
 
     public void showStonewallx1Layout(TxProcessorResult entropyResult) {
