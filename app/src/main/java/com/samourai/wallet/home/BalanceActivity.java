@@ -684,10 +684,12 @@ public class BalanceActivity extends SamouraiActivity {
                 ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
 
                 if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
-                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                    cahootIntent.putExtra("account",account);
-                    startActivity(cahootIntent);
+                    try {
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, clipItem.getText().toString().trim());
+                        startActivity(cahootIntent);
+                    } catch (Exception e) {
+                        Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                    }
                 }else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
                 }
@@ -803,9 +805,7 @@ public class BalanceActivity extends SamouraiActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("_account", account);
-                        cahootIntent.putExtra("payload", strResult.trim());
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         PSBTUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
@@ -985,9 +985,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if (privKeyReader.getFormat() != null) {
                     doPrivKey(code.trim());
                 } else if (Cahoots.isCahoots(code.trim())) {
-                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload", code.trim());
-                    cahootIntent.putExtra("_account", account);
+                    Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
                     startActivity(cahootIntent);
 
                 } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
@@ -1018,9 +1016,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("payload",code.trim());
-                        cahootIntent.putExtra("_account",account);
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());

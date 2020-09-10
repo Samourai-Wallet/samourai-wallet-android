@@ -128,23 +128,37 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
         Toast.makeText(getApplicationContext(),"Sending Cahoots request...",Toast.LENGTH_LONG).show();
 
         try {
-            sorobanDisposable = sorobanCahootsInitiator.meetingRequest(new PaymentCode(pcode), "sending "+sendAmount+" sats", cahootsType, TIMEOUT_MS)
+            PaymentCode paymentCode = new PaymentCode(pcode);
+            // send meeting request
+            sorobanDisposable = sorobanCahootsInitiator.sendMeetingRequest(paymentCode, "sending "+sendAmount+" sats", cahootsType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(sorobanResponse -> {
-                    setSending(false);
-                    if (sorobanResponse.isAccept()) {
-                        Toast.makeText(getApplicationContext(), "Cahoots request accepted!", Toast.LENGTH_LONG).show();
-                        Intent intent = SorobanCahootsActivity.createIntentSender(this, account.getAccountIndex(), pcode, cahootsType, sendAmount, sendAddress);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Cahoots request refused!", Toast.LENGTH_LONG).show();
-                    }
+                .subscribe(meetingRequest -> {
+                    Toast.makeText(getApplicationContext(), "Waiting for Cahoots response...", Toast.LENGTH_LONG).show();
+                    // meeting request sent, receive response
+                    sorobanDisposable = sorobanCahootsInitiator.receiveMeetingResponse(meetingRequest, TIMEOUT_MS)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(sorobanResponse -> {
+                            setSending(false);
+                            if (sorobanResponse.isAccept()) {
+                                Toast.makeText(getApplicationContext(), "Cahoots request accepted!", Toast.LENGTH_LONG).show();
+                                Intent intent = SorobanCahootsActivity.createIntentSender(this, account.getAccountIndex(), cahootsType, sendAmount, sendAddress, pcode);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Cahoots request refused!", Toast.LENGTH_LONG).show();
+                            }
+                        }, error -> {
+                            setSending(false);
+                            Toast.makeText(getApplicationContext(),"Error: "+error.getMessage(),Toast.LENGTH_LONG).show();
+                            error.printStackTrace();
+                        });
                 }, error -> {
                     setSending(false);
                     Toast.makeText(getApplicationContext(),"Error: "+error.getMessage(),Toast.LENGTH_LONG).show();
                     error.printStackTrace();
-                });
+                }
+            );
         } catch (Exception e) {
             setSending(false);
             e.printStackTrace();

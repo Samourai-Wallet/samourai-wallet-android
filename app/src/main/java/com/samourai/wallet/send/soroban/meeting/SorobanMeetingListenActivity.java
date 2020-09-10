@@ -47,8 +47,8 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
     }
 
     private void startListen() throws Exception {
-        Toast.makeText(this, "Listening for online Cahoots requests...", Toast.LENGTH_SHORT).show();
-        sorobanDisposable = sorobanCahootsContributor.meetingListen(TIMEOUT_MS)
+        Toast.makeText(this, "Waiting for online Cahoots requests...", Toast.LENGTH_SHORT).show();
+        sorobanDisposable = sorobanCahootsContributor.receiveMeetingRequest(TIMEOUT_MS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(cahootsRequest -> {
@@ -67,8 +67,8 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                             .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Accepting Cahoots request...", Toast.LENGTH_SHORT).show();
-                                    sorobanCahootsContributor.meetingResponse(cahootsRequest, true).subscribe(sorobanResponseMessage -> {
-                                        Intent intent = SorobanCahootsActivity.createIntentReceiver(getApplicationContext(), account, cahootsRequest.getSenderPaymentCode(), cahootsRequest.getType());
+                                    sorobanCahootsContributor.sendMeetingResponse(cahootsRequest, true).subscribe(sorobanResponseMessage -> {
+                                        Intent intent = SorobanCahootsActivity.createIntentCounterparty(getApplicationContext(), account, cahootsRequest.getType(), cahootsRequest.getSenderPaymentCode());
                                         startActivity(intent);
                                         finish();
                                     });
@@ -79,7 +79,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                             }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Refusing Cahoots request...", Toast.LENGTH_SHORT).show();
-                                    sorobanCahootsContributor.meetingResponse(cahootsRequest, false).subscribe(sorobanResponseMessage -> {
+                                    sorobanCahootsContributor.sendMeetingResponse(cahootsRequest, false).subscribe(sorobanResponseMessage -> {
                                         finish();
                                     });
                                 } catch (Exception e) {

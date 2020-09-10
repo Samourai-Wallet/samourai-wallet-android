@@ -34,13 +34,14 @@ public class AndroidSorobanClientService {
     private AndroidSorobanClientService(Context ctx) {
         this.ctx = ctx;
 
+        BIP47Util bip47Util = BIP47Util.getInstance(ctx);
         NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
         CahootsWallet cahootsWallet = new AndroidCahootsWallet(ctx);
-        BIP47Wallet bip47Wallet = BIP47Util.getInstance(ctx).getWallet();
+        BIP47Wallet bip47Wallet = bip47Util.getWallet();
         this.httpClient = AndroidHttpClient.getInstance(ctx);
         this.cahootsService = new CahootsService(params, cahootsWallet);
-        this.sorobanService = new SorobanService(params, bip47Wallet, httpClient);
-        this.sorobanMeetingService = new SorobanMeetingService(params, bip47Wallet, httpClient);
+        this.sorobanService = new SorobanService(bip47Util, params, bip47Wallet, httpClient);
+        this.sorobanMeetingService = new SorobanMeetingService(bip47Util, params, bip47Wallet, httpClient);
     }
 
     public SorobanCahootsInitiator initiator(int account) {

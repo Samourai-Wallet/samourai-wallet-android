@@ -1706,11 +1706,7 @@ public class SendActivity extends SamouraiActivity {
 
         if (CahootsMode.MANUAL.equals(selectedCahootsType.getCahootsMode())) {
             // Cahoots manual
-            Intent intent = new Intent(this, ManualCahootsActivity.class);
-            intent.putExtra("amount", amount);
-            intent.putExtra("_account", account);
-            intent.putExtra("address", address);
-            intent.putExtra("type", selectedCahootsType.getCahootsType().getValue());
+            Intent intent = ManualCahootsActivity.createIntentSender(this, account, selectedCahootsType.getCahootsType(), amount, address);
             startActivity(intent);
             return;
         }
@@ -1973,12 +1969,12 @@ public class SendActivity extends SamouraiActivity {
         }
 
         if (Cahoots.isCahoots(data.trim())) {
-//            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
-            Intent cahootsIntent = new Intent(this, ManualCahootsActivity.class);
-            cahootsIntent.putExtra("_account", account);
-            cahootsIntent.putExtra("payload", data.trim());
-            startActivity(cahootsIntent);
-
+            try {
+                Intent cahootsIntent = ManualCahootsActivity.createIntentResume(this, account, data.trim());
+                startActivity(cahootsIntent);
+            } catch (Exception e) {
+                Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+            }
             return;
         }
         if (FormatsUtil.getInstance().isPSBT(data.trim())) {
