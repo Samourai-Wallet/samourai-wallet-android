@@ -105,10 +105,10 @@ public class SorobanCahootsActivity extends SamouraiActivity {
         Observable<SorobanMessage> sorobanListener;
         switch (cahootsUi.getCahootsType()) {
             case STONEWALLX2:
-                sorobanListener = sorobanClientService.initiator(account).newStonewallx2(account, sendAmount, sendAddress, paymentCode, TIMEOUT_MS);
+                sorobanListener = sorobanClientService.initiator().newStonewallx2(account, sendAmount, sendAddress, paymentCode, TIMEOUT_MS);
                 break;
             case STOWAWAY:
-                sorobanListener = sorobanClientService.initiator(account).newStowaway(account, sendAmount, paymentCode, TIMEOUT_MS);
+                sorobanListener = sorobanClientService.initiator().newStowaway(account, sendAmount, paymentCode, TIMEOUT_MS);
                 break;
             default:
                 throw new Exception("Unknown #Cahoots");
@@ -120,7 +120,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
 
     private void startReceiver() throws Exception {
         AndroidSorobanClientService sorobanClientService = cahootsUi.getSorobanClientService();
-        Observable<SorobanMessage> sorobanListener = sorobanClientService.contributor(account).contributor(account, paymentCode, TIMEOUT_MS);
+        Observable<SorobanMessage> sorobanListener = sorobanClientService.contributor().contributor(account, paymentCode, TIMEOUT_MS);
         subscribeOnMessage(sorobanListener);
         Toast.makeText(this, "Waiting for online Cahoots", Toast.LENGTH_SHORT).show();
     }
@@ -133,7 +133,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
                     if (cahootsMessage != null) {
                         cahootsUi.setCahootsMessage(cahootsMessage);
                         if (cahootsMessage.isLastMessage()) {
-                            Toast.makeText(getApplicationContext(), "Cahoots completed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Cahoots success", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(this, "Cahoots progress: " + (cahootsMessage.getStep() + 1) + "/" + cahootsMessage.getNbSteps(), Toast.LENGTH_SHORT).show();
                         }

@@ -10,6 +10,7 @@ import com.samourai.soroban.client.cahoots.SorobanCahootsContributor;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
 import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
 import com.samourai.wallet.util.AppUtil;
@@ -35,7 +36,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        sorobanCahootsContributor = AndroidSorobanClientService.getInstance(getApplicationContext()).contributor(0);
+        sorobanCahootsContributor = AndroidSorobanClientService.getInstance(getApplicationContext()).contributor();
 
         try {
             startListen();
@@ -59,6 +60,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                         return;
                     }
                     String senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.getSenderPaymentCode());
+                    PaymentCode senderPaymentCode = new PaymentCode(cahootsRequest.getSenderPaymentCode());
 
                     new AlertDialog.Builder(SorobanMeetingListenActivity.this)
                             .setTitle("Cahoots request received!")
@@ -67,7 +69,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                             .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Accepting Cahoots request...", Toast.LENGTH_SHORT).show();
-                                    sorobanCahootsContributor.sendMeetingResponse(cahootsRequest, true).subscribe(sorobanResponseMessage -> {
+                                    sorobanCahootsContributor.sendMeetingResponse(senderPaymentCode, cahootsRequest, true).subscribe(sorobanResponseMessage -> {
                                         Intent intent = SorobanCahootsActivity.createIntentCounterparty(getApplicationContext(), account, cahootsRequest.getType(), cahootsRequest.getSenderPaymentCode());
                                         startActivity(intent);
                                         finish();
@@ -79,7 +81,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                             }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Refusing Cahoots request...", Toast.LENGTH_SHORT).show();
-                                    sorobanCahootsContributor.sendMeetingResponse(cahootsRequest, false).subscribe(sorobanResponseMessage -> {
+                                    sorobanCahootsContributor.sendMeetingResponse(senderPaymentCode, cahootsRequest, false).subscribe(sorobanResponseMessage -> {
                                         finish();
                                     });
                                 } catch (Exception e) {

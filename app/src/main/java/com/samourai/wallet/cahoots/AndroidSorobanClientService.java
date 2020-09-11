@@ -16,13 +16,21 @@ import com.samourai.wallet.util.AppUtil;
 
 import org.bitcoinj.core.NetworkParameters;
 
+import java.security.Security;
+
 public class AndroidSorobanClientService {
+    private static final String PROVIDER = "SC"; // use spongycastle
+
     private static AndroidSorobanClientService instance;
     private Context ctx;
     private IHttpClient httpClient;
     private CahootsService cahootsService;
     private SorobanService sorobanService;
     private SorobanMeetingService sorobanMeetingService;
+
+    static {
+        Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+    }
 
     public static AndroidSorobanClientService getInstance(Context ctx) {
         if (instance == null) {
@@ -40,11 +48,11 @@ public class AndroidSorobanClientService {
         BIP47Wallet bip47Wallet = bip47Util.getWallet();
         this.httpClient = AndroidHttpClient.getInstance(ctx);
         this.cahootsService = new CahootsService(params, cahootsWallet);
-        this.sorobanService = new SorobanService(bip47Util, params, bip47Wallet, httpClient);
-        this.sorobanMeetingService = new SorobanMeetingService(bip47Util, params, bip47Wallet, httpClient);
+        this.sorobanService = new SorobanService(bip47Util, params, PROVIDER, bip47Wallet, httpClient);
+        this.sorobanMeetingService = new SorobanMeetingService(bip47Util, params, PROVIDER, bip47Wallet, httpClient);
     }
 
-    public SorobanCahootsInitiator initiator(int account) {
+    public SorobanCahootsInitiator initiator() {
         return new SorobanCahootsInitiator(cahootsService, sorobanService, sorobanMeetingService) {
 
             @Override
@@ -54,7 +62,7 @@ public class AndroidSorobanClientService {
         };
     }
 
-    public SorobanCahootsContributor contributor(int account) {
+    public SorobanCahootsContributor contributor() {
         return new SorobanCahootsContributor(cahootsService, sorobanService, sorobanMeetingService) {
 
             @Override

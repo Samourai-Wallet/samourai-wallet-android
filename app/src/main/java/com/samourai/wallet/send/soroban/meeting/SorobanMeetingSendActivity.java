@@ -143,11 +143,10 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                 .subscribe(meetingRequest -> {
                     Toast.makeText(getApplicationContext(), "Waiting for Cahoots response...", Toast.LENGTH_LONG).show();
                     // meeting request sent, receive response
-                    sorobanDisposable = sorobanCahootsInitiator.receiveMeetingResponse(meetingRequest, TIMEOUT_MS)
+                    sorobanDisposable = sorobanCahootsInitiator.receiveMeetingResponse(paymentCode, meetingRequest, TIMEOUT_MS)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(sorobanResponse -> {
-                            setSending(false);
                             if (sorobanResponse.isAccept()) {
                                 Toast.makeText(getApplicationContext(), "Cahoots request accepted!", Toast.LENGTH_LONG).show();
                                 Intent intent = SorobanCahootsActivity.createIntentSender(this, account.getAccountIndex(), cahootsType, sendAmount, sendAddress, pcode);
@@ -155,6 +154,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                             } else {
                                 Toast.makeText(getApplicationContext(), "Cahoots request refused!", Toast.LENGTH_LONG).show();
                             }
+                            setSending(false);
                         }, error -> {
                             setSending(false);
                             Toast.makeText(getApplicationContext(),"Error: "+error.getMessage(),Toast.LENGTH_LONG).show();
