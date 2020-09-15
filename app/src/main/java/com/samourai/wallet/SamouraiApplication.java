@@ -8,15 +8,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Environment;
-import androidx.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
+
+import androidx.multidex.MultiDex;
 
 public class SamouraiApplication extends Application {
 
@@ -49,8 +51,10 @@ public class SamouraiApplication extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
 
+            // enable debug logs for external libraries (extlibj, whirlpool-client...)
+            LogUtil.setLoggersDebug();
+        }
     }
 
     public void startService() {

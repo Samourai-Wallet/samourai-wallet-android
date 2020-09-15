@@ -406,13 +406,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     } else if (SendParams.getInstance().getChangeType() == 49) {
                         BIP49Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
                     } else {
-                        try {
-                            HD_WalletFactory.getInstance(TxAnimUIActivity.this).get().getAccount(0).getChange().incAddrIdx();
-                        } catch (IOException ioe) {
-                            ;
-                        } catch (MnemonicException.MnemonicLengthException mle) {
-                            ;
-                        }
+                        HD_WalletFactory.getInstance(TxAnimUIActivity.this).get().getAccount(0).getChange().incAddrIdx();
                     }
                 }
 
@@ -522,14 +516,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     HD_WalletFactory.getInstance(TxAnimUIActivity.this).get().getAccount(0).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());
                 }
             }
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            Toast.makeText(TxAnimUIActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
         } catch (DecoderException de) {
             Toast.makeText(TxAnimUIActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (IOException ioe) {
-            Toast.makeText(TxAnimUIActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            ;
         }
 
     }

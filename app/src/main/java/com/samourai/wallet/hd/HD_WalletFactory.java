@@ -132,7 +132,7 @@ public class HD_WalletFactory	{
         return hdw;
     }
 
-    public HD_Wallet get() throws IOException, MnemonicException.MnemonicLengthException {
+    public HD_Wallet get() {
 
         if(wallets == null || wallets.size() < 1) {
             return null;
@@ -232,21 +232,6 @@ public class HD_WalletFactory	{
     }
 
     public byte[] getFingerprint() throws IOException, MnemonicException.MnemonicLengthException {
-
-        List<String> wordList = Arrays.asList(get().getMnemonic().split("\\s+"));
-        String passphrase = get().getPassphrase();
-
-        byte[] hd_seed = MnemonicCode.toSeed(wordList, passphrase.toString());
-        DeterministicKey mKey = HDKeyDerivation.createMasterPrivateKey(hd_seed);
-        int fp = mKey.getFingerprint();
-
-        ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        bb.putInt(fp);
-        byte[] buf = bb.array();
-
-        return buf;
-
+        return get().getFingerprint();
     }
-
 }

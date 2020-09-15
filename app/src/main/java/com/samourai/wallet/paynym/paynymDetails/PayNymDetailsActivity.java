@@ -13,15 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,12 +25,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.samourai.http.client.AndroidHttpClient;
-import com.samourai.http.client.IHttpClient;
+import com.google.android.material.snackbar.Snackbar;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.ricochet.RicochetMeta;
-import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -61,20 +49,19 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
-import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
-import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.xmanager.client.AndroidXManagerClient;
 import com.samourai.xmanager.client.XManagerClient;
 import com.samourai.xmanager.protocol.XManagerService;
 import com.squareup.picasso.Callback;
@@ -101,7 +88,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import io.reactivex.Completable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -339,13 +329,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         Disposable disposable = Observable.fromCallable(() -> {
             List<Tx> txesListSelected = new ArrayList<>();
             List<Tx> txs = APIFactory.getInstance(this).getAllXpubTxs();
-            try {
-                APIFactory.getInstance(getApplicationContext()).getXpubAmounts().get(HD_WalletFactory.getInstance(getApplicationContext()).get().getAccount(0).xpubstr());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (MnemonicException.MnemonicLengthException e) {
-                e.printStackTrace();
-            }
+            APIFactory.getInstance(getApplicationContext()).getXpubAmounts().get(HD_WalletFactory.getInstance(getApplicationContext()).get().getAccount(0).xpubstr());
 
             if (txs != null)
                 for (Tx tx : txs) {
@@ -466,8 +450,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 Toast.makeText(PayNymDetailsActivity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
                 break;
             }
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -540,9 +522,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     }
 
     private Single<String> getPayNymAddress() {
-        TorManager torManager = TorManager.getInstance(getApplicationContext());
-        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
-        XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
+        XManagerClient xManagerClient = AndroidXManagerClient.getInstance(getApplicationContext());
         return Single.fromCallable(() -> xManagerClient.getAddressOrDefault(XManagerService.BIP47));
     }
 
@@ -554,10 +534,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         long balance = 0L;
         try {
             balance = APIFactory.getInstance(PayNymDetailsActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(PayNymDetailsActivity.this).get().getAccount(0).xpubstr());
-        } catch (IOException ioe) {
-            balance = 0L;
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            balance = 0L;
         } catch (java.lang.NullPointerException npe) {
             balance = 0L;
         }
@@ -580,7 +556,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         // get unspents
         //
         List<UTXO> utxos = null;
-        if (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0, 1, 4).longValue()) {
+        if (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0, 1, 0, 4).longValue()) {
             utxos = new ArrayList<UTXO>();
             utxos.addAll(UTXOFactory.getInstance().getAllP2SH_P2WPKH().values());
         } else {

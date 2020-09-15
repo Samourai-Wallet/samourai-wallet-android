@@ -38,4 +38,5 @@
         android:title="@string/options_paynym_indexes"
         app:showAsAction="never" />
 
+
 </menu>
