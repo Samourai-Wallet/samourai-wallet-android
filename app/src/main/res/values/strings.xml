@@ -794,6 +794,7 @@
     <string name="enter_scode">Enter your Whirlpool SCODE. If confirmed by pressing \'OK\' the Whirlpool service will close. Re-enter Whirlpool to activate the SCODE.</string>
     <string name="this_utxo_is_marked_as_spendable">This UTXO is marked as Spendable</string>
     <string name="this_utxo_is_marked_as_blocked">This UTXO is marked as Blocked</string>
+    <string name="full_spend_warning">This transaction will spend the entirety of your wallet. Are you sure that you want to do this?</string>
     <string name="postmix_full_spend">This transaction will spend the entirety of your post-mix wallet which will undo the privacy attained via Whirlpool mixing. Are you sure that you want to do this?</string>
 
     <string name="psbt_sign_tx">Sign transaction</string>
