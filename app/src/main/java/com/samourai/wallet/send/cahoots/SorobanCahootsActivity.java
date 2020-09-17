@@ -62,7 +62,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
                 getIntent(),
                 getSupportFragmentManager(),
                 i -> SorobanCahootsStepFragment.newInstance(i),
-                getApplicationContext()
+                this
             );
             this.account = cahootsUi.getAccount();
             setTitle(cahootsUi.getTitle(CahootsMode.SOROBAN));
@@ -133,8 +133,8 @@ public class SorobanCahootsActivity extends SamouraiActivity {
                     if (cahootsMessage != null) {
                         cahootsUi.setCahootsMessage(cahootsMessage);
                         if (cahootsMessage.isDone()) {
-                            Toast.makeText(getApplicationContext(), "Cahoots success", Toast.LENGTH_SHORT).show();
-                            finish();
+                            Toast.makeText(getApplicationContext(), "Cahoots success", Toast.LENGTH_LONG).show();
+                            cahootsUi.notifyWalletAndFinish();
                         } else {
                             Toast.makeText(this, "Cahoots progress: " + (cahootsMessage.getStep() + 1) + "/" + cahootsMessage.getNbSteps(), Toast.LENGTH_SHORT).show();
                         }

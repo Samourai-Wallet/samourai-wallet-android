@@ -101,7 +101,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
                     getIntent(),
                     getSupportFragmentManager(),
                     i -> ManualCahootsStepFragment.newInstance(i, listener),
-                    getApplicationContext()
+                    this
             );
             this.account = cahootsUi.getAccount();
             setTitle(cahootsUi.getTitle(CahootsMode.MANUAL));

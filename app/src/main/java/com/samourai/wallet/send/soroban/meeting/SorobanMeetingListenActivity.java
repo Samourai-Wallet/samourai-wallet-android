@@ -63,8 +63,9 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                     String senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.getSender());
                     PaymentCode senderPaymentCode = new PaymentCode(cahootsRequest.getSender());
 
-                    String alert = "From: "+senderDisplayLabel+"\nType: "+cahootsRequest.getType().getLabel();
-                    alert += "Miner fee: "+(cahootsRequest.getType().isMinerFeeShared() ? "shared" : "none (paid by sender)")+"\n";
+                    String alert = "From: "+senderDisplayLabel+"\n" +
+                            "Type: "+cahootsRequest.getType().getLabel()+"\n" +
+                            "Miner fee: "+(cahootsRequest.getType().isMinerFeeShared() ? "shared" : "paid by sender")+"\n";
                     alert += "Do you want to collaborate?";
                     new AlertDialog.Builder(SorobanMeetingListenActivity.this)
                             .setTitle("Cahoots request received!")

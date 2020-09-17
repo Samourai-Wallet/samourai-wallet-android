@@ -20,6 +20,8 @@ import org.bitcoinj.core.NetworkParameters;
 
 import java.security.Security;
 
+import io.reactivex.Observable;
+
 public class AndroidSorobanClientService {
     private static final String PROVIDER = "SC"; // use spongycastle
 
@@ -99,5 +101,9 @@ public class AndroidSorobanClientService {
 
     public OnlineCahootsService getOnlineCahootsService() {
         return onlineCahootsService;
+    }
+
+    public Observable<SorobanMessage> getOnInteraction() {
+        return sorobanService.getOnInteraction();
     }
 }
