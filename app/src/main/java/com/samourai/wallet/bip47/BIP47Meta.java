@@ -100,11 +100,18 @@ public class BIP47Meta {
     public String getDisplayLabel(String pcode)   {
         String label = getLabel(pcode);
         if(label.length() == 0 || pcode.equals(label))    {
-            return getAbbreviatedPcode(pcode);
+            label = getAbbreviatedPcode(pcode);
         }
-        else    {
-            return label;
+        if (getArchived(pcode)) {
+            label += " (archived)";
         }
+        if (getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT) {
+            label += " (not followed)";
+        }
+        if (getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
+            label += " (not confirmed)";
+        }
+        return label;
     }
 
     public String getAbbreviatedPcode(String pcode)   {
