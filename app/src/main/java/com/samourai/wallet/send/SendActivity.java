@@ -1036,11 +1036,15 @@ public class SendActivity extends SamouraiActivity {
 
         amount = (long) (Math.round(dAmount * 1e8));
 
-        if (amount == balance && balance == selectableBalance && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+        if (amount == balance && balance == selectableBalance) {
 
+            int warningMessage = R.string.full_spend_warning;
+            if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                warningMessage = R.string.postmix_full_spend;
+            }
             AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                     .setTitle(R.string.app_name)
-                    .setMessage(R.string.postmix_full_spend)
+                    .setMessage(warningMessage)
                     .setCancelable(false)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
