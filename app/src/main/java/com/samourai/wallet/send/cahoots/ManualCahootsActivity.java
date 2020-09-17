@@ -30,11 +30,11 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
-import com.samourai.wallet.cahoots.CahootsMessage;
 import com.samourai.wallet.cahoots.CahootsMode;
-import com.samourai.wallet.cahoots.CahootsService;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
+import com.samourai.wallet.cahoots.ManualCahootsMessage;
+import com.samourai.wallet.cahoots.ManualCahootsService;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.util.AppUtil;
 
@@ -54,8 +54,8 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private AppCompatDialog dialog;
 
     public static Intent createIntentResume(Context ctx, int account, String payload) throws Exception {
-        CahootsService cahootsService = AndroidSorobanClientService.getInstance(ctx).getCahootsService();
-        CahootsMessage msg = cahootsService.parse(payload);
+        ManualCahootsService manualCahootsService = AndroidSorobanClientService.getInstance(ctx).getManualCahootsService();
+        ManualCahootsMessage msg = manualCahootsService.parse(payload);
         CahootsTypeUser typeUser = msg.getTypeUser().getPartner();
         Intent intent = CahootsUi.createIntent(ctx, ManualCahootsActivity.class, account, msg.getType(), typeUser);
         intent.putExtra("payload", payload);
@@ -128,13 +128,13 @@ public class ManualCahootsActivity extends SamouraiActivity {
         }
         String sendAddress = getIntent().getStringExtra("sendAddress");
 
-        CahootsService cahootsService = cahootsUi.getCahootsService();
+        ManualCahootsService manualCahootsService = cahootsUi.getManualCahootsService();
         switch (cahootsUi.getCahootsType()) {
             case STONEWALLX2:
-                cahootsUi.setCahootsMessage(cahootsService.newStonewallx2(account, sendAmount, sendAddress));
+                cahootsUi.setCahootsMessage(manualCahootsService.newStonewallx2(account, sendAmount, sendAddress));
                 break;
             case STOWAWAY:
-                cahootsUi.setCahootsMessage(cahootsService.newStowaway(account, sendAmount));
+                cahootsUi.setCahootsMessage(manualCahootsService.newStowaway(account, sendAmount));
                 break;
             default:
                 throw new Exception("Unknown #Cahoots");
@@ -184,8 +184,8 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private void onScanCahootsPayload(String qrData) {
         try {
             // continue cahoots
-            CahootsService cahootsService = cahootsUi.getCahootsService();
-            cahootsUi.setCahootsMessage(cahootsService.reply(account, qrData));
+            ManualCahootsService manualCahootsService = cahootsUi.getManualCahootsService();
+            cahootsUi.setCahootsMessage(manualCahootsService.reply(account, qrData));
         } catch(Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();

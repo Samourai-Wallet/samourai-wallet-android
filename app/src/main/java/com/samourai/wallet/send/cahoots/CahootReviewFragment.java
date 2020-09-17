@@ -44,6 +44,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.Subject;
 
 import static com.samourai.wallet.send.SendActivity.stubAddress;
 
@@ -56,6 +57,7 @@ public class CahootReviewFragment extends Fragment {
     Button sendBtn;
     Group cahootsEntropyGroup, cahootsProgressGroup;
     private Cahoots payload;
+    private Subject onBroadcastListener;
     private CompositeDisposable disposables = new CompositeDisposable();
 
     public static CahootReviewFragment newInstance() {
@@ -107,6 +109,10 @@ public class CahootReviewFragment extends Fragment {
                         boolean success = PushTx.getInstance(getActivity()).pushTx(Hex.toHexString(payload.getTransaction().bitcoinSerialize()));
 
                         if (success) {
+                            // notify Soroban partner
+                            if (onBroadcastListener != null) {
+                                onBroadcastListener.onComplete();
+                            }
                             getActivity().runOnUiThread(() -> {
                                 Toast.makeText(getActivity(), R.string.tx_sent, Toast.LENGTH_SHORT).show();
                                 notifyWalletAndFinish();
@@ -183,6 +189,9 @@ public class CahootReviewFragment extends Fragment {
         this.payload = payload;
     }
 
+    public void setOnBroadcastListener(Subject onBroadcastListener) {
+        this.onBroadcastListener = onBroadcastListener;
+    }
 
     private String formatForBtc(Long amount) {
         return (String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) amount)).concat(" BTC"));
@@ -245,6 +254,10 @@ public class CahootReviewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        // notify Soroban partner
+        if (onBroadcastListener != null && !onBroadcastListener.hasComplete()) {
+            onBroadcastListener.onError(new Exception("Broadcast canceled by user"));
+        }
         super.onDestroy();
         disposables.dispose();
     }

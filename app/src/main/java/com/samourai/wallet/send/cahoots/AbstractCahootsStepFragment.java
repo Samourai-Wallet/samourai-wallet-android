@@ -6,8 +6,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.cahoots.CahootsMessage;
 import com.samourai.wallet.cahoots.CahootsType;
+import com.samourai.wallet.cahoots.ManualCahootsMessage;
 import com.samourai.wallet.cahoots.STONEWALLx2;
 
 import java.util.Locale;
@@ -22,7 +22,7 @@ public abstract class AbstractCahootsStepFragment extends Fragment {
     protected int step = 0;
     protected static final String TAG = "CahootsStepView";
 
-    protected CahootsMessage cahootsMessage;
+    protected ManualCahootsMessage cahootsMessage;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public abstract class AbstractCahootsStepFragment extends Fragment {
         }
     }
 
-    public void setCahootsMessage(CahootsMessage cahootsMessage) {
+    public void setCahootsMessage(ManualCahootsMessage cahootsMessage) {
         this.cahootsMessage = cahootsMessage;
     }
 

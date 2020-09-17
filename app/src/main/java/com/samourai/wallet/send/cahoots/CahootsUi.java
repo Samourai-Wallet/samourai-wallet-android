@@ -6,11 +6,12 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.samourai.wallet.cahoots.AndroidSorobanClientService;
-import com.samourai.wallet.cahoots.CahootsMessage;
 import com.samourai.wallet.cahoots.CahootsMode;
-import com.samourai.wallet.cahoots.CahootsService;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
+import com.samourai.wallet.cahoots.ManualCahootsMessage;
+import com.samourai.wallet.cahoots.ManualCahootsService;
+import com.samourai.wallet.soroban.client.SorobanMessage;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
 import com.samourai.wallet.widgets.ViewPager;
 
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 import java8.util.function.Function;
 
 public class CahootsUi {
@@ -35,9 +38,8 @@ public class CahootsUi {
     private CahootsType cahootsType;
 
     private AndroidSorobanClientService sorobanClientService;
-    private CahootsService cahootsService;
 
-    private CahootsMessage cahootsMessage;
+    private ManualCahootsMessage cahootsMessage;
 
     static Intent createIntent(Context ctx, Class activityClass, int account, CahootsType type, CahootsTypeUser typeUser) {
         Intent intent = new Intent(ctx, activityClass);
@@ -82,22 +84,26 @@ public class CahootsUi {
 
         // setup cahoots
         sorobanClientService = AndroidSorobanClientService.getInstance(ctx);
-        cahootsService = sorobanClientService.getCahootsService();
     }
 
     private void createSteps(FragmentManager fragmentManager, Function<Integer, Fragment> fragmentProvider) {
-        for (int i = 0; i < (CahootsMessage.NB_STEPS-1); i++) {
+        for (int i = 0; i < (ManualCahootsMessage.NB_STEPS-1); i++) {
             Fragment stepView = fragmentProvider.apply(i);
             steps.add(stepView);
         }
-        steps.add(cahootReviewFragment);
+        if (CahootsTypeUser.SENDER.equals(typeUser)) {
+            steps.add(cahootReviewFragment);
+        } else {
+            Fragment stepView = fragmentProvider.apply(ManualCahootsMessage.NB_STEPS-1);
+            steps.add(stepView);
+        }
         stepsViewGroup.setTotalSteps(steps.size());
         viewPager.setAdapter(new StepAdapter(fragmentManager));
 
         setStep(0);
     }
 
-    void setCahootsMessage(CahootsMessage msg) throws Exception {
+    void setCahootsMessage(ManualCahootsMessage msg) throws Exception {
         Log.d("CahootsUi", "# Cahoots => " + msg.toString());
 
         // check cahootsType
@@ -115,9 +121,14 @@ public class CahootsUi {
         int step = cahootsMessage.getStep();
         setStep(step);
 
-        if (cahootsMessage.isLastMessage()) {
+        if (CahootsTypeUser.SENDER.equals(typeUser) && cahootsMessage.isDone()) {
             // review last step
             cahootReviewFragment.setCahoots(cahootsMessage.getCahoots());
+
+            // listen for broadcast
+            Subject<SorobanMessage> onBroadcast = BehaviorSubject.create();
+            onBroadcast.doOnEach(x -> sorobanClientService.initiator().confirmTxBroadcast(x.getValue()));
+            cahootReviewFragment.setOnBroadcastListener(onBroadcast);
         } else {
             // show cahoots progress
             ((AbstractCahootsStepFragment) steps.get(step)).setCahootsMessage(cahootsMessage);
@@ -162,7 +173,7 @@ public class CahootsUi {
         return cahootsType;
     }
 
-    public CahootsMessage getCahootsMessage() {
+    public ManualCahootsMessage getCahootsMessage() {
         return cahootsMessage;
     }
 
@@ -170,7 +181,7 @@ public class CahootsUi {
         return sorobanClientService;
     }
 
-    public CahootsService getCahootsService() {
-        return cahootsService;
+    public ManualCahootsService getManualCahootsService() {
+        return sorobanClientService.getManualCahootsService();
     }
 }

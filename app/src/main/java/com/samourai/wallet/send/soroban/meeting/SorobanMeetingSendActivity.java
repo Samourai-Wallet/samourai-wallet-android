@@ -136,7 +136,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
         try {
             PaymentCode paymentCode = new PaymentCode(pcode);
             // send meeting request
-            sorobanDisposable = sorobanCahootsInitiator.sendMeetingRequest(paymentCode, "sending "+sendAmount+" sats", cahootsType)
+            sorobanDisposable = sorobanCahootsInitiator.sendMeetingRequest(paymentCode, cahootsType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(meetingRequest -> {

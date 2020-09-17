@@ -55,22 +55,26 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                 .subscribe(cahootsRequest -> {
 
                     // trusted paynyms only
-                    if (!bip47Meta.exists(cahootsRequest.getSenderPaymentCode())) {
-                        Toast.makeText(this, "Ignoring Cahoots request from unknown sender!", Toast.LENGTH_SHORT).show();
+                    if (!bip47Meta.exists(cahootsRequest.getSender(), false)) {
+                        String senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.getSender());
+                        Toast.makeText(this, "Ignored Cahoots request from unknown sender: "+senderDisplayLabel, Toast.LENGTH_LONG).show();
                         return;
                     }
-                    String senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.getSenderPaymentCode());
-                    PaymentCode senderPaymentCode = new PaymentCode(cahootsRequest.getSenderPaymentCode());
+                    String senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.getSender());
+                    PaymentCode senderPaymentCode = new PaymentCode(cahootsRequest.getSender());
 
+                    String alert = "From: "+senderDisplayLabel+"\nType: "+cahootsRequest.getType().getLabel();
+                    alert += "Miner fee: "+(cahootsRequest.getType().isMinerFeeShared() ? "shared" : "none (paid by sender)")+"\n";
+                    alert += "Do you want to collaborate?";
                     new AlertDialog.Builder(SorobanMeetingListenActivity.this)
                             .setTitle("Cahoots request received!")
-                            .setMessage("From: "+senderDisplayLabel+"\n"+cahootsRequest.toString()+"\nDo you want to continue?")
+                            .setMessage(alert)
                             .setCancelable(true)
                             .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Accepting Cahoots request...", Toast.LENGTH_SHORT).show();
                                     sorobanCahootsContributor.sendMeetingResponse(senderPaymentCode, cahootsRequest, true).subscribe(sorobanResponseMessage -> {
-                                        Intent intent = SorobanCahootsActivity.createIntentCounterparty(getApplicationContext(), account, cahootsRequest.getType(), cahootsRequest.getSenderPaymentCode());
+                                        Intent intent = SorobanCahootsActivity.createIntentCounterparty(getApplicationContext(), account, cahootsRequest.getType(), cahootsRequest.getSender());
                                         startActivity(intent);
                                         finish();
                                     });
@@ -89,9 +93,6 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                                     Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                     }).show();
-
-
-
                 }, error->{
                     Log.i(TAG, "Error: "+error.getMessage());
                     Toast.makeText(this, "Error: "+ error.getMessage(), Toast.LENGTH_SHORT).show();

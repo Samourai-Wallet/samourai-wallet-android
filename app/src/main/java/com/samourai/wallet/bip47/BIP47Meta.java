@@ -88,10 +88,6 @@ public class BIP47Meta {
         pcodeSegwit.clear();
     }
 
-    public boolean exists(String pcode) {
-        return pcodeLabels.containsKey(pcode);
-    }
-
     public String getLabel(String pcode)   {
         if(!pcodeLabels.containsKey(pcode))    {
             return "";
@@ -142,6 +138,10 @@ public class BIP47Meta {
 
         Map<String, String> sortedMapAsc = valueSortByComparator(labels, true);
         return sortedMapAsc.keySet();
+    }
+
+    public boolean exists(String pcode, boolean includeArchived) {
+        return getSortedByLabels(includeArchived).contains(pcode);
     }
 
     public Set<String> getSortedByLabels(boolean includeArchived, boolean confirmed)    {
