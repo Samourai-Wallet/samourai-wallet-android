@@ -540,7 +540,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     }
 
     private Single<String> getPayNymAddress() {
-        TorManager torManager = TorManager.getInstance(getApplicationContext());
+        TorManager torManager = TorManager.INSTANCE;
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
         XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
         return Single.fromCallable(() -> xManagerClient.getAddressOrDefault(XManagerService.BIP47));

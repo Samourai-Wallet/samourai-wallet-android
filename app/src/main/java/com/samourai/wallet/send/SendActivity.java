@@ -710,7 +710,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private Completable setUpRicochetFees() {
-        TorManager torManager = TorManager.getInstance(getApplicationContext());
+        TorManager torManager = TorManager.INSTANCE;
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
         XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false)) {
@@ -1889,7 +1889,7 @@ public class SendActivity extends SamouraiActivity {
                                                 url += "pushtx/schedule";
                                                 try {
                                                     String result = "";
-                                                    if (TorManager.getInstance(getApplicationContext()).isRequired()) {
+                                                    if (TorManager.INSTANCE.isRequired()) {
                                                         result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj, null);
 
                                                     } else {
