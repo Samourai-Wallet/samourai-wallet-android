@@ -271,15 +271,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <receiver android:name=".whirlpool.service.WhirlpoolBroadCastReceiver" />
-        <receiver android:name=".tor.TorBroadCastReceiver" />
-        <receiver
-            android:name="com.msopentech.thali.android.toronionproxy.ConnectionChangeReceiver"
-            android:label="NetworkChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
+
         <receiver
             android:name=".util.ConnectionChangeReceiver"
             android:label="NetworkChangeReceiver">
@@ -293,10 +285,6 @@
             android:name=".service.WebSocketService"
             android:enabled="true" />
 
-        <service
-            android:name=".tor.TorService"
-            android:enabled="true"
-            android:stopWithTask="true" />
         <service
             android:name=".service.JobRefreshService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
