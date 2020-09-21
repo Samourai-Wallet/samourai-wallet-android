@@ -57,7 +57,7 @@ public class PushTx {
         try {
             String response = null;
 
-            if(!TorManager.getInstance(context).isRequired())    {
+            if(!TorManager.INSTANCE.isRequired())    {
                 String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
                 debug("PushTx", strStrictVouts);
                 response = WebUtil.getInstance(context).postURL(_base + _url + "?at=" + APIFactory.getInstance(context).getAccessToken(), "tx=" + hexString + strStrictVouts);

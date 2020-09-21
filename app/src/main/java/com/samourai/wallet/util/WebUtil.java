@@ -94,8 +94,8 @@ public class WebUtil {
         if (context == null) {
             return postURL(null, request, urlParameters, headers);
         } else {
-            Log.v("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
-            if (TorManager.getInstance(context).isRequired()) {
+            Log.v("WebUtil", "Tor required status:" + TorManager.INSTANCE.isRequired());
+            if (TorManager.INSTANCE.isRequired()) {
                 if (urlParameters.startsWith("tx=")) {
                     HashMap<String, String> args = new HashMap<String, String>();
                     args.put("tx", urlParameters.substring(3));
@@ -246,8 +246,8 @@ public class WebUtil {
             return _getURL(URL, headers);
         } else {
             //if(TorUtil.getInstance(context).orbotIsRunning())    {
-            Log.v("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
-            if (TorManager.getInstance(context).isRequired()) {
+            Log.v("WebUtil", "Tor required status:" + TorManager.INSTANCE.isRequired());
+            if (TorManager.INSTANCE.isRequired()) {
                 return tor_getURL(URL, headers);
             } else {
                 return _getURL(URL, headers);
@@ -298,7 +298,7 @@ public class WebUtil {
     private String tor_getURL(String URL, Map<String,String> headers) throws Exception {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy())
+                .proxy(TorManager.INSTANCE.getProxy())
                 .connectTimeout(90, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS);
 
@@ -346,7 +346,7 @@ public class WebUtil {
 
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy())
+                .proxy(TorManager.INSTANCE.getProxy())
                 .connectTimeout(90, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS);
 
@@ -392,7 +392,7 @@ public class WebUtil {
         RequestBody body = RequestBody.create(JSON, jsonToString);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy());
+                .proxy(TorManager.INSTANCE.getProxy());
 
         if(URL.contains("onion")){
             getHostNameVerifier(builder);
@@ -508,7 +508,7 @@ public class WebUtil {
     }
 
     public static String getAPIUrl(Context context){
-        if(TorManager.getInstance(context).isRequired()){
+        if(TorManager.INSTANCE.isRequired()){
             return   SamouraiWallet.getInstance().isTestNet() ? SAMOURAI_API2_TESTNET_TOR : SAMOURAI_API2_TOR;
 
         }else {

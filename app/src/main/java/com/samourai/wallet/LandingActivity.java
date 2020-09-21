@@ -27,7 +27,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -39,7 +38,6 @@ import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -57,6 +55,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import io.matthewnelson.topl_service.TorServiceController;
+import io.matthewnelson.topl_service.service.TorService;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -130,45 +130,32 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     private void stopTor() {
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.STOP_SERVICE);
-        startService(startIntent);
+        TorServiceController.stopTor();
         PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, false);
     }
 
     private void startTor() {
-        Disposable disposable = TorManager.getInstance(this)
-                .getTorStatus()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(state -> {
-                    if (state == TorProxyManager.ConnectionStatus.CONNECTING) {
-                        progressBarTor.setVisibility(View.VISIBLE);
-                        torStatus.setVisibility(View.VISIBLE);
-                        torStatus.setText("Tor service connecting...");
-                    } else if (state == TorProxyManager.ConnectionStatus.CONNECTED) {
-                        PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
-                        torStatus.setVisibility(View.VISIBLE);
-                        torStatusCheck.setVisibility(View.VISIBLE);
-                        torStatus.setText("Tor Connected");
-                        progressBarTor.setVisibility(View.INVISIBLE);
-                        torSwitch.setChecked(true);
-//                        if(waitingForPairing)    {
-//                            doDojoPairing1();
-//                        }
-
-                    } else {
-                        torStatus.setVisibility(View.INVISIBLE);
-                        progressBarTor.setVisibility(View.INVISIBLE);
-                        torStatusCheck.setVisibility(View.INVISIBLE);
-                        torSwitch.setVisibility(View.VISIBLE);
-                        torSwitch.setChecked(false);
-                    }
-                });
-        compositeDisposables.add(disposable);
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.START_SERVICE);
-        startService(startIntent);
+        TorManager.INSTANCE.getTorStateLiveData().observe(this,torState -> {
+            if (torState ==   TorManager.TorState.WAITING) {
+                progressBarTor.setVisibility(View.VISIBLE);
+                torStatus.setVisibility(View.VISIBLE);
+                torStatus.setText("Tor service connecting...");
+            } else if (torState == TorManager.TorState.ON) {
+                PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
+                torStatus.setVisibility(View.VISIBLE);
+                torStatusCheck.setVisibility(View.VISIBLE);
+                torStatus.setText("Tor Connected");
+                progressBarTor.setVisibility(View.INVISIBLE);
+                torSwitch.setChecked(true);
+            } else {
+                torStatus.setVisibility(View.INVISIBLE);
+                progressBarTor.setVisibility(View.INVISIBLE);
+                torStatusCheck.setVisibility(View.INVISIBLE);
+                torSwitch.setVisibility(View.VISIBLE);
+                torSwitch.setChecked(false);
+            }
+        });
+        TorServiceController.startTor();
     }
 
     private void setAppVersion() {
