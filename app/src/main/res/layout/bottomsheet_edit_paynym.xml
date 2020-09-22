@@ -6,27 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="420dp"
     android:background="@color/windowDark"
+    android:theme="@style/SamouraiAppTheme"
+    style="@style/SamouraiAppTheme"
     android:minHeight="420dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editText_layout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content"  
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:theme="@style/FloatingLabelStylePaynym"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView50">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/paynym_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Label"
+            app:hintTextColor="@color/grey_accent"
             android:textColor="@color/white"
             android:inputType="textPersonName" />
 
@@ -44,10 +46,9 @@
         app:layout_constraintEnd_toEndOf="@+id/editText_layout"
         app:layout_constraintStart_toStartOf="@+id/editText_layout"
         app:layout_constraintTop_toBottomOf="@+id/editText_layout"
-        android:theme="@style/FloatingLabelStylePaynym"
         app:layout_constraintVertical_bias="0.0">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/paynym_pcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
