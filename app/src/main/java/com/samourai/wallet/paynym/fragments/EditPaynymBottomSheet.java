@@ -34,6 +34,12 @@ public class EditPaynymBottomSheet extends BottomSheetDialogFragment {
 
         pcode = getArguments().getString("pcode");
         label = getArguments().getString("label");
+        if(label.contains("(not followed)")){
+            label = label.replace("(not followed)", "");
+        }
+        if(label.contains("(not confirmed)")){
+            label =      label.replace("(not confirmed)", "");
+        }
         buttonText = getArguments().getString("buttonText");
 
         labelEdt = view.findViewById(R.id.paynym_label);
