@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.samourai.wallet.R;
 
 public class EditPaynymBottomSheet extends BottomSheetDialogFragment {
@@ -24,7 +24,7 @@ public class EditPaynymBottomSheet extends BottomSheetDialogFragment {
     private String buttonText;
 
 
-    private EditText labelEdt, pcodeEdt;
+    private TextInputEditText labelEdt, pcodeEdt;
     private Button saveButton;
     private View.OnClickListener onClickListener;
 
