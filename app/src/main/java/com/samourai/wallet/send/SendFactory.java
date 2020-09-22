@@ -707,17 +707,9 @@ public class SendFactory	{
             return change_address;
         }
         else    {
-            try {
-                String change_address = HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
-                HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().incAddrIdx();
-                return change_address;
-            }
-            catch(IOException ioe) {
-                return null;
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                return null;
-            }
+            String change_address = HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+            HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().incAddrIdx();
+            return change_address;
         }
 
     }

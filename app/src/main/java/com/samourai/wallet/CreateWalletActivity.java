@@ -400,15 +400,7 @@ public class CreateWalletActivity extends FragmentActivity implements
                         //
                         if (create) {
 
-                            String seed = null;
-                            try {
-                                seed = HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getMnemonic();
-                            } catch (IOException ioe) {
-                                ioe.printStackTrace();
-                            } catch (MnemonicException.MnemonicLengthException mle) {
-                                mle.printStackTrace();
-                            }
-
+                            String seed = HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getMnemonic();
                             Intent intent = new Intent(CreateWalletActivity.this,  RecoveryWordsActivity.class);
                             intent.putExtra("BIP39_WORD_LIST",seed);
                             startActivity(intent);
@@ -430,8 +422,6 @@ public class CreateWalletActivity extends FragmentActivity implements
 
                     Toast.makeText(CreateWalletActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
                 } catch (MnemonicException.MnemonicLengthException mle) {
                     mle.printStackTrace();
                 } finally {

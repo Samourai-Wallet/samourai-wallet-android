@@ -49,6 +49,9 @@ public class SamouraiApplication extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            // enable debug logs for external libraries (extlibj, whirlpool-client...)
+            LogUtil.setLoggersDebug();
         }
     }
 

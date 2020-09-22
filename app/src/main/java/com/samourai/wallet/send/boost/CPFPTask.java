@@ -312,7 +312,7 @@ public class CPFPTask extends AsyncTask<String, Void, String> {
                                                 }
 
                                             }
-                                        } catch (MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                        } catch (DecoderException e) {
                                             handler.post(new Runnable() {
                                                 public void run() {
                                                     Toast.makeText(activity, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -339,7 +339,7 @@ public class CPFPTask extends AsyncTask<String, Void, String> {
                                             int prevIdx = HD_WalletFactory.getInstance(activity).get().getAccount(0).getReceive().getAddrIdx() - 1;
                                             HD_WalletFactory.getInstance(activity).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                         }
-                                    } catch (MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                    } catch (DecoderException e) {
                                         handler.post(new Runnable() {
                                             public void run() {
                                                 Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();

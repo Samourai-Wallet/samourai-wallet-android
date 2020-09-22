@@ -54,12 +54,12 @@ public class CahootsFactory {
 
         try {
             for(int i = 0; i < array.length(); i++) {
-                Cahoots c = new Cahoots();
-                c.fromJSON(array.getJSONObject(i));
+                String payload = array.getJSONObject(i).toString();
+                Cahoots c = Cahoots.parse(payload);
                 cahoots.add(c);
             }
         }
-        catch(JSONException ex) {
+        catch(Exception ex) {
             throw new RuntimeException(ex);
         }
 

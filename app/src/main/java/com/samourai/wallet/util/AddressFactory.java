@@ -85,25 +85,15 @@ public class AddressFactory {
         int idx = 0;
         HD_Address addr = null;
 
-        try	{
-            HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
+        HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
 
-            if(hdw != null)    {
-                idx = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
-                addr = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
-                if(canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
-                    HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
+        if(hdw != null)    {
+            idx = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+            addr = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
+            if(canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
+                HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
 //                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-                }
             }
-        }
-        catch(IOException ioe)	{
-            ioe.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle)	{
-            mle.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
 
         return Pair.of(idx, addr);
@@ -159,19 +149,7 @@ public class AddressFactory {
 
     public HD_Address get(int accountIdx, int chain, int idx)	{
 
-        HD_Address addr = null;
-
-        try	{
-            addr = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(chain).getAddressAt(idx);
-        }
-        catch(IOException ioe)	{
-            ioe.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle)	{
-            mle.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
+        HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(chain).getAddressAt(idx);
 
         return addr;
     }

@@ -358,16 +358,11 @@ public class BalanceActivity extends SamouraiActivity {
         receiveFab.setOnClickListener(view -> {
             menuFab.toggle(true);
 
-            try {
-                HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
+            HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
 
-                if (hdw != null) {
-                    Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                    startActivity(intent);
-                }
-
-
-            } catch (IOException | MnemonicException.MnemonicLengthException e) {
+            if (hdw != null) {
+                Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                startActivity(intent);
             }
         });
         paynymFab.setOnClickListener(view -> {
@@ -695,10 +690,12 @@ public class BalanceActivity extends SamouraiActivity {
                 ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
 
                 if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
-                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                    cahootIntent.putExtra("_account",account);
-                    startActivity(cahootIntent);
+                    try {
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, clipItem.getText().toString().trim());
+                        startActivity(cahootIntent);
+                    } catch (Exception e) {
+                        Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                    }
                 }else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
                 }
@@ -722,28 +719,24 @@ public class BalanceActivity extends SamouraiActivity {
         } else if (id == R.id.action_backup) {
 
             if (SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
-                try {
-                    if (HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
-                        doBackup();
-                    } else {
+                if (HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
+                    doBackup();
+                } else {
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
-                        AlertDialog alert = builder.create();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
+                    AlertDialog alert = builder.create();
 
-                        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        if (!isFinishing()) {
-                            alert.show();
+                    alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
                         }
+                    });
 
+                    if (!isFinishing()) {
+                        alert.show();
                     }
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                } catch (IOException ioe) {
+
                 }
             } else {
                 Toast.makeText(BalanceActivity.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
@@ -813,9 +806,7 @@ public class BalanceActivity extends SamouraiActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("_account", account);
-                        cahootIntent.putExtra("payload", strResult.trim());
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         PSBTUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
@@ -996,9 +987,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if (privKeyReader.getFormat() != null) {
                     doPrivKey(code.trim());
                 } else if (Cahoots.isCahoots(code.trim())) {
-                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload", code.trim());
-                    cahootIntent.putExtra("_account", account);
+                    Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
                     startActivity(cahootIntent);
 
                 } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
@@ -1029,9 +1018,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("payload",code.trim());
-                        cahootIntent.putExtra("_account",account);
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
@@ -1197,70 +1184,61 @@ public class BalanceActivity extends SamouraiActivity {
 
     private void doBackup() {
 
-        try {
-            final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
+        final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
 
-            final String[] export_methods = new String[2];
-            export_methods[0] = getString(R.string.export_to_clipboard);
-            export_methods[1] = getString(R.string.export_to_email);
+        final String[] export_methods = new String[2];
+        export_methods[0] = getString(R.string.export_to_clipboard);
+        export_methods[1] = getString(R.string.export_to_email);
 
-            new AlertDialog.Builder(BalanceActivity.this)
-                    .setTitle(R.string.options_export)
-                    .setSingleChoiceItems(export_methods, 0, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+        new AlertDialog.Builder(BalanceActivity.this)
+                .setTitle(R.string.options_export)
+                .setSingleChoiceItems(export_methods, 0, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                    try {
-                                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                                    } catch (IOException ioe) {
-                                        ;
-                                    } catch (JSONException je) {
-                                        ;
-                                    } catch (DecryptionException de) {
-                                        ;
-                                    } catch (MnemonicException.MnemonicLengthException mle) {
-                                        ;
-                                    }
-
-                                    String encrypted = null;
-                                    try {
-                                        encrypted = AESUtil.encrypt(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
-                                    } catch (Exception e) {
-                                        Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    } finally {
-                                        if (encrypted == null) {
-                                            Toast.makeText(BalanceActivity.this, R.string.encryption_error, Toast.LENGTH_SHORT).show();
-                                            return;
-                                        }
-                                    }
-
-                                    JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted, true);
-
-                                    if (which == 0) {
-                                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                                        android.content.ClipData clip = null;
-                                        clip = android.content.ClipData.newPlainText("Wallet backup", obj.toString());
-                                        clipboard.setPrimaryClip(clip);
-                                        Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Intent email = new Intent(Intent.ACTION_SEND);
-                                        email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
-                                        email.putExtra(Intent.EXTRA_TEXT, obj.toString());
-                                        email.setType("message/rfc822");
-                                        startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
-                                    }
-
-                                    dialog.dismiss();
+                                try {
+                                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                                } catch (IOException ioe) {
+                                    ;
+                                } catch (JSONException je) {
+                                    ;
+                                } catch (DecryptionException de) {
+                                    ;
+                                } catch (MnemonicException.MnemonicLengthException mle) {
+                                    ;
                                 }
-                            }
-                    ).show();
 
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-            Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
+                                String encrypted = null;
+                                try {
+                                    encrypted = AESUtil.encrypt(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
+                                } catch (Exception e) {
+                                    Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    if (encrypted == null) {
+                                        Toast.makeText(BalanceActivity.this, R.string.encryption_error, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                }
+
+                                JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted, true);
+
+                                if (which == 0) {
+                                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                    android.content.ClipData clip = null;
+                                    clip = android.content.ClipData.newPlainText("Wallet backup", obj.toString());
+                                    clipboard.setPrimaryClip(clip);
+                                    Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent email = new Intent(Intent.ACTION_SEND);
+                                    email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
+                                    email.putExtra(Intent.EXTRA_TEXT, obj.toString());
+                                    email.setType("message/rfc822");
+                                    startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
+                                }
+
+                                dialog.dismiss();
+                            }
+                        }
+                ).show();
 
     }
 

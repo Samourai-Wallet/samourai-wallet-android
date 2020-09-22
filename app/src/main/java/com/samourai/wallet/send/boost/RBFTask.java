@@ -293,31 +293,21 @@ public class RBFTask extends AsyncTask<String, Void, String> {
                     boolean addedChangeOutput = false;
                     // parent tx didn't have change output
                     if (outputs.length() == 1 && extraChange > 0L) {
-                        try {
-                            boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress()) || PrefsUtil.getInstance(activity).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
+                        boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress()) || PrefsUtil.getInstance(activity).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
 
-                            String change_address = null;
-                            if (isSegwitChange) {
-                                int changeIdx = BIP49Util.getInstance(activity).getWallet().getAccount(0).getChange().getAddrIdx();
-                                change_address = BIP49Util.getInstance(activity).getAddressAt(AddressFactory.CHANGE_CHAIN, changeIdx).getAddressAsString();
-                            } else {
-                                int changeIdx = HD_WalletFactory.getInstance(activity).get().getAccount(0).getChange().getAddrIdx();
-                                change_address = HD_WalletFactory.getInstance(activity).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
-                            }
-
-                            Script toOutputScript = ScriptBuilder.createOutputScript(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), change_address));
-                            TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
-                            txOutputs.add(output);
-                            addedChangeOutput = true;
-                        } catch (MnemonicException.MnemonicLengthException | IOException e) {
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(activity, R.string.cannot_create_change_output, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            return "KO";
+                        String change_address = null;
+                        if (isSegwitChange) {
+                            int changeIdx = BIP49Util.getInstance(activity).getWallet().getAccount(0).getChange().getAddrIdx();
+                            change_address = BIP49Util.getInstance(activity).getAddressAt(AddressFactory.CHANGE_CHAIN, changeIdx).getAddressAsString();
+                        } else {
+                            int changeIdx = HD_WalletFactory.getInstance(activity).get().getAccount(0).getChange().getAddrIdx();
+                            change_address = HD_WalletFactory.getInstance(activity).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
                         }
+
+                        Script toOutputScript = ScriptBuilder.createOutputScript(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), change_address));
+                        TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
+                        txOutputs.add(output);
+                        addedChangeOutput = true;
 
                     }
                     // parent tx had change output

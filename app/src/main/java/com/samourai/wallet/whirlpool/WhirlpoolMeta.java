@@ -2,7 +2,7 @@ package com.samourai.wallet.whirlpool;
 
 import android.content.Context;
 
-import com.samourai.wallet.SamouraiWallet;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,10 +10,6 @@ import org.json.JSONObject;
 public class WhirlpoolMeta {
 
     public final static double WHIRLPOOL_FEE_RATE_POOL_DENOMINATION = 0.05;
-
-    private final static int WHIRLPOOL_BADBANK_ACCOUNT = Integer.MAX_VALUE - 3;
-    private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
-    private final static int WHIRLPOOL_POSTMIX_ACCOUNT = Integer.MAX_VALUE - 1;
 
     private static String strSCODE = null;
 
@@ -35,15 +31,15 @@ public class WhirlpoolMeta {
     }
 
     public int getWhirlpoolPremixAccount() {
-        return WHIRLPOOL_PREMIX_ACCOUNT;
+        return WhirlpoolAccount.PREMIX.getAccountIndex();
     }
 
     public int getWhirlpoolPostmix() {
-        return WHIRLPOOL_POSTMIX_ACCOUNT;
+        return WhirlpoolAccount.POSTMIX.getAccountIndex();
     }
 
     public int getWhirlpoolBadBank() {
-        return WHIRLPOOL_BADBANK_ACCOUNT;
+        return WhirlpoolAccount.BADBANK.getAccountIndex();
     }
 
     public void setSCODE(String scode) {

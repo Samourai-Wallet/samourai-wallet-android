@@ -120,7 +120,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
             oAuthManager = Optional.empty();
         }
 
-        IHttpClientService httpClientService = new AndroidHttpClientService(webUtil, torManager);
+        IHttpClientService httpClientService = AndroidHttpClientService.getInstance(ctx);
         IHttpClient httpClient = httpClientService.getHttpClient(HttpUsage.BACKEND);
         BackendApi backendApi = new BackendApi(httpClient, backendUrl, oAuthManager);
 
