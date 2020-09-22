@@ -84,7 +84,7 @@ public class AndroidSorobanClientService {
 
     protected void doCheckTor() throws Exception {
         // require Tor
-        TorManager torManager = TorManager.getInstance(ctx);
+        TorManager torManager = TorManager.INSTANCE;
         if (!torManager.isConnected() || !torManager.isRequired()) {
             throw new Exception("Tor connection is required for online Cahoots");
         }

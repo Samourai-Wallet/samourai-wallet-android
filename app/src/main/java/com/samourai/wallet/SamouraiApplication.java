@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorManager;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.File;

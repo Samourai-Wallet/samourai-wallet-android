@@ -17,6 +17,6 @@ public class AndroidXManagerClient extends XManagerClient {
     }
 
     private AndroidXManagerClient(Context ctx) {
-        super(SamouraiWallet.getInstance().isTestNet(), TorManager.getInstance(ctx).isConnected(), AndroidHttpClient.getInstance(ctx));
+        super(SamouraiWallet.getInstance().isTestNet(), TorManager.INSTANCE.isConnected(), AndroidHttpClient.getInstance(ctx));
     }
 }

@@ -40,6 +40,8 @@ import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
 import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
+import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.http.client.IHttpClient;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;

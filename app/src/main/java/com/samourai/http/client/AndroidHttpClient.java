@@ -32,10 +32,10 @@ public class AndroidHttpClient extends JacksonHttpClient {
     private TorManager torManager;
 
     private AndroidHttpClient(Context ctx) {
-        this(WebUtil.getInstance(ctx), TorManager.getInstance(ctx));
+        this(WebUtil.getInstance(ctx), TorManager.INSTANCE);
     }
 
-    private AndroidHttpClient(WebUtil webUtil, TorManager torManager) {
+    public AndroidHttpClient(WebUtil webUtil, TorManager torManager) {
         this.webUtil = webUtil;
         this.torManager = torManager;
     }
