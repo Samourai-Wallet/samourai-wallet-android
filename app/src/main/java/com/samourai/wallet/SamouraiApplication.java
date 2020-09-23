@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorManager;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
@@ -112,14 +113,13 @@ public class SamouraiApplication extends Application {
 
     @Override
     public void onTerminate() {
-        Log.i("CM","TERMINATE");
         TorServiceController.stopTor();
         super.onTerminate();
     }
 
     private void setUpTorService() {
         TorManager.INSTANCE.setUp(this);
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !PrefsUtil.getInstance(this).getValue(PrefsUtil.OFFLINE, false)) {
             startService();
         }
     }
