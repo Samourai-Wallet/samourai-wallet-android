@@ -241,8 +241,12 @@ public class BalanceActivity extends SamouraiActivity {
                         final long amount = out.getValue().longValue();
 
                         if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
-                                !BlockedUTXO.getInstance().contains(hash, idx) &&
-                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx)) {
+                                ((!BlockedUTXO.getInstance().contains(hash, idx) &&
+                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx))
+                                ||
+                                (!BlockedUTXO.getInstance().containsPostMix(hash, idx) &&
+                                !BlockedUTXO.getInstance().containsNotDustedPostMix(hash, idx)))
+                                ){
 
 //                            BalanceActivity.this.runOnUiThread(new Runnable() {
 //                            @Override
@@ -267,13 +271,23 @@ public class BalanceActivity extends SamouraiActivity {
                                             .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    BlockedUTXO.getInstance().add(hash, idx, amount);
+                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
+                                                        BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
+                                                    }
+                                                    else    {
+                                                        BlockedUTXO.getInstance().add(hash, idx, amount);
+                                                    }
 
                                                 }
                                             }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    BlockedUTXO.getInstance().addNotDusted(hash, idx);
+                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
+                                                        BlockedUTXO.getInstance().addNotDustedPostMix(hash, idx);
+                                                    }
+                                                    else    {
+                                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
+                                                    }
 
                                                 }
                                             });

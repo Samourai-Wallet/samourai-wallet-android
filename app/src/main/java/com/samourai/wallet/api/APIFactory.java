@@ -1888,6 +1888,14 @@ public class APIFactory	{
                 }
             }
 
+            for(String _s : BlockedUTXO.getInstance().getNotDustedUTXOPostMix())   {
+//                debug("APIFactory", "not dusted postmix:" + _s);
+                if(!seenOutputsPostMix.contains(_s))    {
+                    BlockedUTXO.getInstance().removeNotDustedPostMix(_s);
+//                    debug("APIFactory", "not dusted postmix removed:" + _s);
+                }
+            }
+
             for(String _s : BlockedUTXO.getInstance().getBlockedUTXOPostMix().keySet())   {
                 debug("APIFactory", "blocked post-mix:" + _s);
                 if(!seenOutputsPostMix.contains(_s))    {
