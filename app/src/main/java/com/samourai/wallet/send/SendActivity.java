@@ -2238,7 +2238,7 @@ public class SendActivity extends SamouraiActivity {
         }
         if (item.getItemId() == R.id.select_paynym) {
             PaynymSelectModalFragment paynymSelectModalFragment =
-                    PaynymSelectModalFragment.newInstance(code -> processPCode(code, null));
+                    PaynymSelectModalFragment.newInstance(code -> processPCode(code, null),false);
             paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
             return true;
         }
