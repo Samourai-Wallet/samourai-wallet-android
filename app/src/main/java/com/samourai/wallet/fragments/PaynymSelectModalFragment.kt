@@ -145,6 +145,10 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val code = paymentCodes[position].code
             var label = paymentCodes[position].nymName
+            var metaLabel = BIP47Meta.getInstance().getLabel(paymentCodes[position].code)
+            if(! metaLabel.isNullOrBlank()){
+                label = metaLabel
+            }
             if (BIP47Meta.getInstance().getArchived(code)) {
                 label += " (archived)"
             }
