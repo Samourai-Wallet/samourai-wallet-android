@@ -65,7 +65,7 @@ public class WebUtil {
         if (authToken != null) {
             rbuilder.addHeader("auth-token", authToken);
         }
-        if(TorManager.INSTANCE.isRequired()){
+        if(TorManager.INSTANCE.isConnected() || TorManager.INSTANCE.isRequired()){
             builder.proxy(TorManager.INSTANCE.getProxy());
         }
 

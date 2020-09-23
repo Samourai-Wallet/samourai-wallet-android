@@ -137,6 +137,8 @@ Make every spend a CoinJoin."
             android:id="@+id/cahoots_type_stowaway_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
             app:layout_constraintTop_toBottomOf="@+id/divider3"
@@ -305,6 +307,8 @@ and quickest option."
             android:id="@+id/in_person_manual_stowaway"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
             tools:layout_editor_absoluteX="-16dp">
@@ -352,10 +356,18 @@ face-to-face interaction."
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/soroban"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
             tools:layout_editor_absoluteX="-16dp">

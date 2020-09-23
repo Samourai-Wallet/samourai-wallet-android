@@ -1,5 +1,6 @@
 package com.samourai.wallet.send.soroban.meeting;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,12 +21,15 @@ import com.samourai.wallet.cahoots.AndroidSorobanClientService;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -67,10 +71,11 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_soroban_meeting_send);
 
-        setSupportActionBar(findViewById(R.id.toolbar));
-        if (getSupportActionBar() != null)
+        setSupportActionBar(findViewById(R.id.toolbar_soroban_meeting));
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+            setTitle("Select Cahoots counterparty");
+        }
         paynymSelect = findViewById(R.id.paynym_select);
         paynymDisplayName = findViewById(R.id.paynym_display_name);
         textViewConnecting = findViewById(R.id.textViewConnecting);
@@ -80,6 +85,35 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
 
         paynymSelect.setOnClickListener(v -> selectPCode());
         sendButton.setOnClickListener(v -> send());
+
+        if (TorManager.INSTANCE.isConnected() && !PrefsUtil.getInstance(getApplication()).getValue(PrefsUtil.OFFLINE, false)) {
+            parsePayloadIntent();
+        } else {
+            String message = "";
+            if (!TorManager.INSTANCE.isConnected()) {
+                message = "Tor connection is required for online cahoots ? do you want to continue ?";
+            }
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm")
+                    .setMessage(message)
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+                        progressBar.setVisibility(View.VISIBLE);
+                        PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.OFFLINE, false);
+                        TorServiceController.startTor();
+                        TorManager.INSTANCE.getTorStateLiveData().observe(SorobanMeetingSendActivity.this, torState -> {
+                            if (torState == TorManager.TorState.ON) {
+                                parsePayloadIntent();
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+
+            }).show();
+        }
+    }
+
+    private void parsePayloadIntent() {
 
         try {
             if (getIntent().hasExtra("_account")) {
@@ -95,7 +129,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
             if (getIntent().hasExtra("sendAddress")) {
                 sendAddress = getIntent().getStringExtra("sendAddress");
             }
-            if (cahootsType == null || sendAmount <= 0 ) {
+            if (cahootsType == null || sendAmount <= 0) {
                 throw new Exception("Invalid arguments");
             }
             sorobanCahootsInitiator = AndroidSorobanClientService.getInstance(getApplicationContext()).initiator();
@@ -113,7 +147,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
     }
 
     private void selectPCode() {
-        PaynymSelectModalFragment paynymSelectModalFragment = PaynymSelectModalFragment.newInstance(code -> setPCode(code));
+        PaynymSelectModalFragment paynymSelectModalFragment = PaynymSelectModalFragment.newInstance(code -> setPCode(code), true);
         paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
     }
 
@@ -131,44 +165,44 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
 
     private void send() {
         setSending(true);
-        Toast.makeText(getApplicationContext(),"Sending Cahoots request...",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Sending Cahoots request...", Toast.LENGTH_LONG).show();
 
         try {
             PaymentCode paymentCode = new PaymentCode(pcode);
             // send meeting request
             sorobanDisposable = sorobanCahootsInitiator.sendMeetingRequest(paymentCode, cahootsType)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(meetingRequest -> {
-                    Toast.makeText(getApplicationContext(), "Waiting for Cahoots response...", Toast.LENGTH_LONG).show();
-                    // meeting request sent, receive response
-                    sorobanDisposable = sorobanCahootsInitiator.receiveMeetingResponse(paymentCode, meetingRequest, TIMEOUT_MS)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(sorobanResponse -> {
-                            if (sorobanResponse.isAccept()) {
-                                Toast.makeText(getApplicationContext(), "Cahoots request accepted!", Toast.LENGTH_LONG).show();
-                                Intent intent = SorobanCahootsActivity.createIntentSender(this, account.getAccountIndex(), cahootsType, sendAmount, sendAddress, pcode);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Cahoots request refused!", Toast.LENGTH_LONG).show();
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(meetingRequest -> {
+                                Toast.makeText(getApplicationContext(), "Waiting for Cahoots response...", Toast.LENGTH_LONG).show();
+                                // meeting request sent, receive response
+                                sorobanDisposable = sorobanCahootsInitiator.receiveMeetingResponse(paymentCode, meetingRequest, TIMEOUT_MS)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(sorobanResponse -> {
+                                            if (sorobanResponse.isAccept()) {
+                                                Toast.makeText(getApplicationContext(), "Cahoots request accepted!", Toast.LENGTH_LONG).show();
+                                                Intent intent = SorobanCahootsActivity.createIntentSender(this, account.getAccountIndex(), cahootsType, sendAmount, sendAddress, pcode);
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "Cahoots request refused!", Toast.LENGTH_LONG).show();
+                                            }
+                                            setSending(false);
+                                        }, error -> {
+                                            setSending(false);
+                                            Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                                            error.printStackTrace();
+                                        });
+                            }, error -> {
+                                setSending(false);
+                                Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                                error.printStackTrace();
                             }
-                            setSending(false);
-                        }, error -> {
-                            setSending(false);
-                            Toast.makeText(getApplicationContext(),"Error: "+error.getMessage(),Toast.LENGTH_LONG).show();
-                            error.printStackTrace();
-                        });
-                }, error -> {
-                    setSending(false);
-                    Toast.makeText(getApplicationContext(),"Error: "+error.getMessage(),Toast.LENGTH_LONG).show();
-                    error.printStackTrace();
-                }
-            );
+                    );
         } catch (Exception e) {
             setSending(false);
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(),"Error: "+e.getMessage(),Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

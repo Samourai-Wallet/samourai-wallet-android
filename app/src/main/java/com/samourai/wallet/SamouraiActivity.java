@@ -2,6 +2,9 @@ package com.samourai.wallet;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,5 +32,13 @@ public class SamouraiActivity extends AppCompatActivity {
         if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
             setTheme(R.style.SamouraiAppWhirlpoolTheme);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
