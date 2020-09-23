@@ -108,6 +108,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                             }
                         });
                     }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+                finish();
 
             }).show();
         }
