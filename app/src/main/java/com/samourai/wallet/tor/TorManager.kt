@@ -96,7 +96,7 @@ object TorManager {
         val configDir = application.getDir("torservice", Context.MODE_PRIVATE)
 
         val builder = TorConfigFiles.Builder(installDir, configDir)
-        builder.torExecutable(File(installDir, "tor.so"))
+        builder.torExecutable(File(installDir, "libTor.so"))
         return Builder(
                 application = application,
                 torServiceNotificationBuilder = serviceNotificationBuilder,
