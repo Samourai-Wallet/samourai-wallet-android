@@ -108,6 +108,18 @@ public class BlockedUTXO {
         }
     }
 
+    public void addNotDustedPostMix(String hash, int idx)    {
+        if(!notDustedUTXOPostMix.contains(hash + "-" + Integer.toString(idx)))    {
+            notDustedUTXOPostMix.add(hash + "-" + Integer.toString(idx));
+        }
+    }
+
+    public void addNotDustedPostMix(String id)    {
+        if(!notDustedUTXOPostMix.contains(id))    {
+            notDustedUTXOPostMix.add(id);
+        }
+    }
+
     public void removeNotDusted(String hash, int idx)   {
         if(notDustedUTXO.contains(hash + "-" + Integer.toString(idx)))    {
             notDustedUTXO.remove(hash + "-" + Integer.toString(idx));
@@ -120,8 +132,24 @@ public class BlockedUTXO {
         }
     }
 
+    public void removeNotDustedPostMix(String hash, int idx)   {
+        if(notDustedUTXOPostMix.contains(hash + "-" + Integer.toString(idx)))    {
+            notDustedUTXOPostMix.remove(hash + "-" + Integer.toString(idx));
+        }
+    }
+
+    public void removeNotDustedPostMix(String s)   {
+        if(notDustedUTXOPostMix.contains(s))    {
+            notDustedUTXOPostMix.remove(s);
+        }
+    }
+
     public boolean containsNotDusted(String hash, int idx)   {
         return notDustedUTXO.contains(hash + "-" + Integer.toString(idx));
+    }
+
+    public boolean containsNotDustedPostMix(String hash, int idx)   {
+        return notDustedUTXOPostMix.contains(hash + "-" + Integer.toString(idx));
     }
 
     public ConcurrentHashMap<String, Long> getBlockedUTXO() {
@@ -180,6 +208,10 @@ public class BlockedUTXO {
 
     public List<String> getNotDustedUTXO() {
         return notDustedUTXO;
+    }
+
+    public List<String> getNotDustedUTXOPostMix() {
+        return notDustedUTXOPostMix;
     }
 
     public long getPostMix(String hash, int idx)    {
@@ -246,6 +278,12 @@ public class BlockedUTXO {
             }
             blockedObj.put("notDusted", notDusted);
 
+            JSONArray notDustedPostMix = new JSONArray();
+            for(String s : notDustedUTXOPostMix)   {
+                notDustedPostMix.put(s);
+            }
+            blockedObj.put("notDustedPostMix", notDustedPostMix);
+
             for(String id : blockedUTXOPostMix.keySet())   {
                 JSONObject obj = new JSONObject();
                 obj.put("id", id);
@@ -293,6 +331,14 @@ public class BlockedUTXO {
 
                 for(int i = 0; i < array.length(); i++)   {
                     addNotDusted(array.getString(i));
+                }
+            }
+
+            if(blockedObj.has("notDustedPostMix"))  {
+                JSONArray array = blockedObj.getJSONArray("notDustedPostMix");
+
+                for(int i = 0; i < array.length(); i++)   {
+                    addNotDustedPostMix(array.getString(i));
                 }
             }
 
