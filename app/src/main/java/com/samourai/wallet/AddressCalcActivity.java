@@ -42,7 +42,7 @@ import org.bitcoinj.core.ECKey;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AddressCalcActivity extends Activity {
+public class AddressCalcActivity extends SamouraiActivity {
 
     private EditText edIndex = null;
     private Spinner spType = null;
@@ -59,6 +59,10 @@ public class AddressCalcActivity extends Activity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        setSupportActionBar(findViewById(R.id.toolbar));
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         edIndex = (EditText)findViewById(R.id.index);
 
         spType = (Spinner)findViewById(R.id.address_type_spinner);
