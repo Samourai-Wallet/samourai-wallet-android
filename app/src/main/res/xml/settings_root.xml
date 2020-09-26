@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:title="@string/options_cat_wallet"
         android:key="wallet"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         />
 
     <Preference
         android:title="@string/options_txs"
         android:key="txs"
-        />
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"        />
 <!--
     <Preference
         android:title="@string/options_cat_stealth"
@@ -25,11 +32,17 @@
     <Preference
         android:title="@string/options_troubleshoot"
         android:key="troubleshoot"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         />
 
     <Preference
         android:title="@string/options_cat_other"
         android:key="other"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         />
 
 </PreferenceScreen>

@@ -172,12 +172,13 @@
         <activity
             android:name=".PayNymCalcActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+            android:label="PayNym Calculator" />
 
         <activity
             android:name=".AddressCalcActivity"
+            android:theme="@style/SamouraiAppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+            android:label="Address Calculator" />
 
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"

@@ -70,7 +70,7 @@ import org.bitcoinj.core.Coin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class OpenDimeActivity extends Activity {
+public class OpenDimeActivity extends SamouraiActivity {
 
     static {
         FileSystemFactory.registerFileSystem(new JavaFsFileSystemCreator());
@@ -159,6 +159,12 @@ public class OpenDimeActivity extends Activity {
         setContentView(R.layout.activity_opendime);
 
         setTitle(R.string.samourai_opendime);
+
+        setSupportActionBar(findViewById(R.id.toolbar));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
 
         if(!AccessFactory.getInstance(OpenDimeActivity.this).isLoggedIn())    {
             Intent _intent = new Intent(OpenDimeActivity.this, PinEntryActivity.class);
