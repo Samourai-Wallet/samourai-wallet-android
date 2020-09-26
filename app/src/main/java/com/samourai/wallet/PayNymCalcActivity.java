@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.bitcoinj.core.ECKey;
 
-public class PayNymCalcActivity extends Activity {
+public class PayNymCalcActivity extends SamouraiActivity {
 
     private EditText edPayNym = null;
     private EditText edIndex = null;
@@ -50,6 +50,10 @@ public class PayNymCalcActivity extends Activity {
         edPayNym = (EditText)findViewById(R.id.paynym);
         edIndex = (EditText)findViewById(R.id.index);
 
+        setSupportActionBar(findViewById(R.id.toolbar));
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         edPayNym.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
