@@ -66,26 +66,7 @@ public class CahootReviewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        if (payload != null) {
-            toAddress.setText(payload.getDestination());
-            sendBtn.setText(getString(R.string.send).concat(" ").concat(formatForBtc(payload.getSpendAmount()+payload.getFeeAmount())));
-            amountInBtc.setText(formatForBtc(payload.getSpendAmount()));
-            amountInSats.setText(String.valueOf(payload.getSpendAmount()).concat(" sat"));
-            if ((payload.getFeeAmount() == 0)) {
-                feeInBtc.setText("__");
-                feeInSats.setText("__");
-            } else {
-                feeInBtc.setText(formatForBtc(payload.getFeeAmount()));
-                feeInSats.setText(String.valueOf(payload.getFeeAmount()).concat(" sat"));
 
-            }
-            if (payload instanceof Stowaway) {
-                cahootsEntropyGroup.setVisibility(View.GONE);
-            } else {
-                calculateEntropy();
-            }
-
-        }
 
         sendBtn.setOnClickListener(view1 -> {
 
@@ -165,6 +146,29 @@ public class CahootReviewFragment extends Fragment {
                 });
     }
 
+    private void showPayloadInfo(){
+        if (payload != null) {
+            toAddress.setText(payload.getDestination());
+            sendBtn.setText(getString(R.string.send).concat(" ").concat(formatForBtc(payload.getSpendAmount()+payload.getFeeAmount())));
+            amountInBtc.setText(formatForBtc(payload.getSpendAmount()));
+            amountInSats.setText(String.valueOf(payload.getSpendAmount()).concat(" sat"));
+            if ((payload.getFeeAmount() == 0)) {
+                feeInBtc.setText("__");
+                feeInSats.setText("__");
+            } else {
+                feeInBtc.setText(formatForBtc(payload.getFeeAmount()));
+                feeInSats.setText(String.valueOf(payload.getFeeAmount()).concat(" sat"));
+
+            }
+            if (payload instanceof Stowaway) {
+                cahootsEntropyGroup.setVisibility(View.GONE);
+            } else {
+                calculateEntropy();
+            }
+
+        }
+
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -184,6 +188,9 @@ public class CahootReviewFragment extends Fragment {
 
     public void setCahoots(Cahoots payload) {
         this.payload = payload;
+        if(isAdded()){
+            showPayloadInfo();
+        }
     }
 
     public void setOnBroadcast(Callable onBroadcast) {
