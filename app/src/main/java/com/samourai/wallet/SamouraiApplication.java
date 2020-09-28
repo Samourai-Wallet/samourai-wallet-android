@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.PrintWriter;
 
 import io.matthewnelson.topl_service.TorServiceController;
+import io.reactivex.plugins.RxJavaPlugins;
 
 public class SamouraiApplication extends Application {
 
@@ -33,6 +34,7 @@ public class SamouraiApplication extends Application {
         super.onCreate();
         setUpTorService();
         setUpChannels();
+        RxJavaPlugins.setErrorHandler(throwable -> {}); 
 
         // Write logcat output to a file
         if (BuildConfig.DEBUG) {
