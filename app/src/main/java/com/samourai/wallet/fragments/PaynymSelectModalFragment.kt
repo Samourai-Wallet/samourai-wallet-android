@@ -69,35 +69,39 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
     private fun getFromNetwork() {
         loadingView.visibility = View.VISIBLE
         job = CoroutineScope(Dispatchers.Main).launch(Dispatchers.IO) {
-            val strPaymentCode = BIP47Util.getInstance(requireContext().applicationContext).paymentCode.toString()
-            val obj = JSONObject()
-            obj.put("nym", strPaymentCode)
-            val res = WebUtil.getInstance(requireContext().applicationContext).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString())
-            val json = JSONObject(res)
-            val mutableCollection = mutableListOf<PaynymModel>()
+            try {
+                val strPaymentCode = BIP47Util.getInstance(requireContext().applicationContext).paymentCode.toString()
+                val obj = JSONObject()
+                obj.put("nym", strPaymentCode)
+                val res = WebUtil.getInstance(requireContext().applicationContext).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString())
+                val json = JSONObject(res)
+                val mutableCollection = mutableListOf<PaynymModel>()
 
-            if (json.has("following")) {
-                repeat(json.getJSONArray("following").length()) {
-                    val item = fromJSON<PaynymModel>(json.getJSONArray("following").getJSONObject(it).toString());
-                    item?.let { it1 -> mutableCollection.add(it1) }
+                if (json.has("following")) {
+                    repeat(json.getJSONArray("following").length()) {
+                        val item = fromJSON<PaynymModel>(json.getJSONArray("following").getJSONObject(it).toString());
+                        item?.let { it1 -> mutableCollection.add(it1) }
+                    }
                 }
-            }
 
-            if (json.has("followers")) {
-                repeat(json.getJSONArray("followers").length()) { position ->
-                    val item = fromJSON<PaynymModel>(json.getJSONArray("followers").getJSONObject(position).toString());
-                    mutableCollection.find {  it.code == item?.code }.let {
-                        if(it == null){
-                            item?.let { it1 -> mutableCollection.add(it1) }
+                if (json.has("followers")) {
+                    repeat(json.getJSONArray("followers").length()) { position ->
+                        val item = fromJSON<PaynymModel>(json.getJSONArray("followers").getJSONObject(position).toString());
+                        mutableCollection.find {  it.code == item?.code }.let {
+                            if(it == null){
+                                item?.let { it1 -> mutableCollection.add(it1) }
+                            }
                         }
                     }
                 }
-            }
-            paymentCodes = ArrayList(mutableCollection)
+                paymentCodes = ArrayList(mutableCollection)
 
-            withContext(Dispatchers.Main) {
-                loadingView.visibility = View.GONE
-                setAdapter()
+                withContext(Dispatchers.Main) {
+                    loadingView.visibility = View.GONE
+                    setAdapter()
+                }
+            } catch (e: Exception) {
+                throw  CancellationException(e.message)
             }
         }
         job?.invokeOnCompletion {
