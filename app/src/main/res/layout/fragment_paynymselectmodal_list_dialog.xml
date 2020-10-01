@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/blue_semi_transparent_pressed"
         android:padding="16dp"
-        android:text="@string/paynyms"
+        android:id="@+id/dialogTitle"
         android:textColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -27,6 +27,7 @@ import kotlinx.coroutines.*
 import org.json.JSONObject
 
 class PaynymSelectModalFragment : BottomSheetDialogFragment() {
+    private lateinit var dialogTitle: String
     var selectListener: Listener? = null
     private var job: Job? = null
     private var paymentCodes: ArrayList<PaynymModel> = arrayListOf()
@@ -34,6 +35,7 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
     lateinit var recyclerView: RecyclerView
     lateinit var emptyview: LinearLayout
     lateinit var loadingView: LinearLayout
+    lateinit var dialogTitleTxt: TextView
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_paynymselectmodal_list_dialog, container, false)
@@ -43,6 +45,8 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
         recyclerView = view.findViewById(R.id.list)
         emptyview = view.findViewById(R.id.empty_paynym)
         loadingView = view.findViewById(R.id.paynym_loading)
+        dialogTitleTxt = view.findViewById(R.id.dialogTitle)
+        dialogTitleTxt.text = dialogTitle
         if (!loadFromNetwork) {
             paymentCodes = ArrayList(BIP47Meta.getInstance().getSortedByLabels(false, true).map {
                 PaynymModel(code = it, "", nymName = BIP47Meta.getInstance().getDisplayLabel(it))
@@ -150,7 +154,7 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
             val code = paymentCodes[position].code
             var label = paymentCodes[position].nymName
             var metaLabel = BIP47Meta.getInstance().getLabel(paymentCodes[position].code)
-            if(! metaLabel.isNullOrBlank()){
+            if (!metaLabel.isNullOrBlank()) {
                 label = metaLabel
             }
             if (BIP47Meta.getInstance().getArchived(code)) {
@@ -175,10 +179,13 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(selectListener: Listener?, loadFromNetwork: Boolean): PaynymSelectModalFragment {
+        fun newInstance(selectListener: Listener?,
+                        dialogTitle: String = "PayNym",
+                        loadFromNetwork: Boolean): PaynymSelectModalFragment {
             val fragment = PaynymSelectModalFragment()
             fragment.selectListener = selectListener
             fragment.loadFromNetwork = loadFromNetwork
+            fragment.dialogTitle = dialogTitle
             return fragment
         }
     }
