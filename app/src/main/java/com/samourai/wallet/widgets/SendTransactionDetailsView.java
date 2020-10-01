@@ -9,6 +9,7 @@ import androidx.transition.Slide;
 import androidx.transition.TransitionManager;
 import androidx.transition.TransitionSet;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,15 +89,14 @@ public class SendTransactionDetailsView extends FrameLayout {
         stoneWallLayout.setVisibility(enable ? INVISIBLE : VISIBLE);
     }
 
-    public void showStonewallX2Layout(CahootsMode cahootsMode, long fee) {
+    public void showStonewallX2Layout(CahootsMode cahootsMode, String participant,  long fee) {
 
         stoneWallLayout.getRootView().post(() -> {
             stoneWallX2Layout.setVisibility(VISIBLE);
             stowawayLayout.setVisibility(GONE);
             stoneWallLayout.setVisibility(GONE);
         });
-        stoneWallx2mixingParticipant.setText(cahootsMode.getLabel());
-
+        stoneWallx2mixingParticipant.setText(participant);
     }
 
     public void showStowawayLayout(CahootsMode cahootsMode, String participant, TxProcessorResult entropy, long fee) {
@@ -105,7 +105,6 @@ public class SendTransactionDetailsView extends FrameLayout {
             stoneWallLayout.setVisibility(GONE);
             stoneWallX2Layout.setVisibility(GONE);
         });
-
         stowawayMixingParticipant.setText(participant);
         stowawayMethod.setText(cahootsMode.getLabel());
     }

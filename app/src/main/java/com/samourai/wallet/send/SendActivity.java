@@ -87,7 +87,6 @@ import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
-import com.samourai.xmanager.client.AndroidXManagerClient;
 import com.samourai.xmanager.client.XManagerClient;
 import com.samourai.xmanager.protocol.XManagerService;
 
@@ -166,6 +165,7 @@ public class SendActivity extends SamouraiActivity {
     private boolean openedPaynym = false;
 
     private String strPCode = null;
+    private String strPcodeCounterParty = null;
     private long feeLow, feeMed, feeHigh;
     private String strPrivacyWarning;
     private String strCannotDoBoltzmann;
@@ -342,10 +342,13 @@ public class SendActivity extends SamouraiActivity {
                 cahootsType.show(getSupportFragmentManager(), cahootsType.getTag());
                 cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
                     @Override
-                    public void onSelect(SelectCahootsType.type type) {
+                    public void onSelect(SelectCahootsType.type type,String pcode) {
                         chosen[0] = true;
                         selectedCahootsType = type;
 
+                        if(pcode != null){
+                            strPcodeCounterParty = pcode;
+                        }
                         switch (selectedCahootsType) {
                             case NONE: {
                                 cahootsStatusText.setText("Off");
@@ -357,7 +360,7 @@ public class SendActivity extends SamouraiActivity {
                                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
 
                                 if (CahootsType.STOWAWAY.equals(selectedCahootsType.getCahootsType())) {
-                                    toAddressEditText.setText("Stowaway Collaborator");
+                                    toAddressEditText.setText(BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty) );
                                     toAddressEditText.setEnabled(false);
                                     address = "";
                                 }
@@ -368,6 +371,7 @@ public class SendActivity extends SamouraiActivity {
 
                     @Override
                     public void onDismiss() {
+                        strPcodeCounterParty = null;
                         if (!chosen[0]) {
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
@@ -375,6 +379,7 @@ public class SendActivity extends SamouraiActivity {
                         }
                         validateSpend();
                     }
+
                 });
             } else {
                 selectedCahootsType = SelectCahootsType.type.NONE;
@@ -1655,13 +1660,14 @@ public class SendActivity extends SamouraiActivity {
                 default: {
                     switch (selectedCahootsType.getCahootsType()) {
                         case STONEWALLX2:
-                            sendTransactionDetailsView.showStonewallX2Layout(selectedCahootsType.getCahootsMode(), 1000);
+                            sendTransactionDetailsView.showStonewallX2Layout(selectedCahootsType.getCahootsMode(),   BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty),1000);
                             btnSend.setBackgroundResource(R.drawable.button_blue);
                             btnSend.setText(getString(R.string.begin_stonewallx2));
                             break;
 
                         case STOWAWAY:
-                            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), address, null, 1000);
+                            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(),
+                                    BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty), null, 1000);
                             btnSend.setBackgroundResource(R.drawable.button_blue);
                             btnSend.setText(getString(R.string.begin_stowaway));
                             break;
@@ -1681,7 +1687,7 @@ public class SendActivity extends SamouraiActivity {
         if (prepare) {
             // Sets view with stowaway message
             // also hides overlay push icon from button
-            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), address, null, 1000);
+            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty), null, 1000);
             btnSend.setBackgroundResource(R.drawable.button_blue);
             btnSend.setText(getString(R.string.begin_stowaway));
             sendTransactionDetailsView.getTransactionReview().findViewById(R.id.transaction_push_icon).setVisibility(View.INVISIBLE);
@@ -1707,8 +1713,7 @@ public class SendActivity extends SamouraiActivity {
         }
         if (CahootsMode.SOROBAN.equals(selectedCahootsType.getCahootsMode())) {
             // choose Cahoots counterparty (pre-select for STOWAWAY)
-            String pCodeCounterparty = CahootsType.STOWAWAY.equals(selectedCahootsType.getCahootsType()) ? strPCode : null;
-            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address, pCodeCounterparty);
+            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address, strPcodeCounterParty);
             startActivity(intent);
             return;
         }
@@ -2238,7 +2243,7 @@ public class SendActivity extends SamouraiActivity {
         }
         if (item.getItemId() == R.id.select_paynym) {
             PaynymSelectModalFragment paynymSelectModalFragment =
-                    PaynymSelectModalFragment.newInstance(code -> processPCode(code, null),false);
+                    PaynymSelectModalFragment.newInstance(code -> processPCode(code, null),getString(R.string.paynym),false);
             paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
             return true;
         }

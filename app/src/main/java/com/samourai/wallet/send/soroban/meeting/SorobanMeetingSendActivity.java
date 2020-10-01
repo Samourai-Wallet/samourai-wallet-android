@@ -148,7 +148,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
     }
 
     private void selectPCode() {
-        PaynymSelectModalFragment paynymSelectModalFragment = PaynymSelectModalFragment.newInstance(code -> setPCode(code), true);
+        PaynymSelectModalFragment paynymSelectModalFragment = PaynymSelectModalFragment.newInstance(code -> setPCode(code), getString(R.string.paynym),true);
         paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
     }
 

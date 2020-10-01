@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.samourai.wallet.R;
 import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsType;
+import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -114,23 +115,18 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
         inPerson.setOnClickListener(view1 -> {
             if (onSelectListener != null) {
                 SelectCahootsType.type typeInPerson = CahootsType.STONEWALLX2.equals(cahootsType) ? type.STONEWALLX2_MANUAL : type.STOWAWAY_MANUAL;
-                onSelectListener.onSelect(typeInPerson);
+                onSelectListener.onSelect(typeInPerson,null);
             }
             this.dismiss();
         });
         soroban.setOnClickListener(view1 -> {
             if (onSelectListener != null) {
                 SelectCahootsType.type typeSoroban = CahootsType.STONEWALLX2.equals(cahootsType) ? type.STONEWALLX2_SOROBAN : type.STOWAWAY_SOROBAN;
-                onSelectListener.onSelect(typeSoroban);
+                choosePaynymCollaborator(typeSoroban);
             }
-            this.dismiss();
         });
         samouraiAsParticipant.setOnClickListener(view1 -> {
             Toast.makeText(getContext(),"Coming soon",Toast.LENGTH_SHORT).show();
-//            if (onSelectListener != null) {
-//                onSelectListener.onSelect(type.STONEWALLX2_SAMOURAI);
-//            }
-//            this.dismiss();
         });
     }
 
@@ -161,9 +157,16 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
 
         });
     }
-
+    private void choosePaynymCollaborator(type typeSoroban){
+        PaynymSelectModalFragment paynymSelectModalFragment =
+                PaynymSelectModalFragment.newInstance(code -> {
+                    onSelectListener.onSelect(typeSoroban,code);
+                    this.dismiss();
+                },"Choose collaborator",true);
+        paynymSelectModalFragment.show(getChildFragmentManager(), "paynym_select");
+    }
     public interface OnSelectListener {
-        void onSelect(type type);
+        void onSelect(type type , String pcode);
 
         void onDismiss();
     }
