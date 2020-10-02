@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.samourai.soroban.client.cahoots.SorobanCahootsContributor;
+import com.samourai.soroban.client.meeting.SorobanMeetingService;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.cahoots.AndroidSorobanClientService;
+import com.samourai.wallet.cahoots.AndroidSorobanCahootsService;
 import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
 import com.samourai.wallet.util.AppUtil;
 
@@ -23,7 +23,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
 
     private static final String TAG = "SorobanMeetingListen";
     private static final BIP47Meta bip47Meta = BIP47Meta.getInstance();
-    private SorobanCahootsContributor sorobanCahootsContributor;
+    private SorobanMeetingService sorobanMeetingService;
     private Disposable sorobanDisposable;
     private static final int TIMEOUT_MS = 60000;
 
@@ -36,7 +36,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        sorobanCahootsContributor = AndroidSorobanClientService.getInstance(getApplicationContext()).contributor();
+        sorobanMeetingService = AndroidSorobanCahootsService.getInstance(getApplicationContext()).getSorobanMeetingService();
 
         try {
             startListen();
@@ -49,7 +49,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
 
     private void startListen() throws Exception {
         Toast.makeText(this, "Waiting for online Cahoots requests...", Toast.LENGTH_SHORT).show();
-        sorobanDisposable = sorobanCahootsContributor.receiveMeetingRequest(TIMEOUT_MS)
+        sorobanDisposable = sorobanMeetingService.receiveMeetingRequest(TIMEOUT_MS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(cahootsRequest -> {
@@ -74,7 +74,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                             .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Accepting Cahoots request...", Toast.LENGTH_SHORT).show();
-                                    sorobanCahootsContributor.sendMeetingResponse(senderPaymentCode, cahootsRequest, true).subscribe(sorobanResponseMessage -> {
+                                    sorobanMeetingService.sendMeetingResponse(senderPaymentCode, cahootsRequest, true).subscribe(sorobanResponseMessage -> {
                                         Intent intent = SorobanCahootsActivity.createIntentCounterparty(getApplicationContext(), account, cahootsRequest.getType(), cahootsRequest.getSender());
                                         startActivity(intent);
                                         finish();
@@ -86,7 +86,7 @@ public class SorobanMeetingListenActivity extends SamouraiActivity {
                             }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
                                 try {
                                     Toast.makeText(this, "Refusing Cahoots request...", Toast.LENGTH_SHORT).show();
-                                    sorobanCahootsContributor.sendMeetingResponse(senderPaymentCode, cahootsRequest, false).subscribe(sorobanResponseMessage -> {
+                                    sorobanMeetingService.sendMeetingResponse(senderPaymentCode, cahootsRequest, false).subscribe(sorobanResponseMessage -> {
                                         finish();
                                     });
                                 } catch (Exception e) {

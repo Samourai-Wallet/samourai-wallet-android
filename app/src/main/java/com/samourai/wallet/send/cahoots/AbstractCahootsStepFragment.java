@@ -7,8 +7,8 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.cahoots.CahootsType;
-import com.samourai.wallet.cahoots.ManualCahootsMessage;
-import com.samourai.wallet.cahoots.STONEWALLx2;
+import com.samourai.wallet.cahoots.stonewallx2.STONEWALLx2;
+import com.samourai.soroban.cahoots.ManualCahootsMessage;
 
 import java.util.Locale;
 

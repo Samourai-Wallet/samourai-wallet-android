@@ -17,7 +17,7 @@ import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.Stowaway;
+import com.samourai.wallet.cahoots.stowaway.Stowaway;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.widgets.EntropyBar;
 
@@ -100,6 +100,7 @@ public class CahootReviewFragment extends Fragment {
                             getActivity().runOnUiThread(() -> {
                                 cahootsProgressGroup.setVisibility(View.GONE);
                             });
+                            sendBtn.setEnabled(true);
                         }
 
                         Looper.loop();

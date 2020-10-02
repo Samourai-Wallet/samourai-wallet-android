@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,12 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.samourai.soroban.client.cahoots.SorobanCahootsInitiator;
+import com.samourai.soroban.client.meeting.SorobanMeetingService;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.cahoots.AndroidSorobanClientService;
+import com.samourai.wallet.cahoots.AndroidSorobanCahootsService;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.send.cahoots.SorobanCahootsActivity;
@@ -37,7 +36,7 @@ import io.reactivex.schedulers.Schedulers;
 public class SorobanMeetingSendActivity extends SamouraiActivity {
 
     private static final String TAG = "SorobanMeetingSend";
-    private SorobanCahootsInitiator sorobanCahootsInitiator;
+    private SorobanMeetingService sorobanMeetingService;
     private static final int TIMEOUT_MS = 120000;
 
     private WhirlpoolAccount account;
@@ -133,7 +132,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
             if (cahootsType == null || sendAmount <= 0) {
                 throw new Exception("Invalid arguments");
             }
-            sorobanCahootsInitiator = AndroidSorobanClientService.getInstance(getApplicationContext()).initiator();
+            sorobanMeetingService = AndroidSorobanCahootsService.getInstance(getApplicationContext()).getSorobanMeetingService();
 
             if (getIntent().hasExtra("pcode")) {
                 setPCode(getIntent().getStringExtra("pcode"));
@@ -148,7 +147,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
     }
 
     private void selectPCode() {
-        PaynymSelectModalFragment paynymSelectModalFragment = PaynymSelectModalFragment.newInstance(code -> setPCode(code), getString(R.string.paynym),true);
+        PaynymSelectModalFragment paynymSelectModalFragment = PaynymSelectModalFragment.newInstance(code -> setPCode(code), getString(R.string.paynym), true);
         paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
     }
 
@@ -166,18 +165,19 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
 
     private void send() {
         setSending(true);
-        Toast.makeText(getApplicationContext(), "Sending Cahoots request...", Toast.LENGTH_LONG).show();
+        textViewConnecting.setText("Sending Cahoots request...");
 
         try {
             PaymentCode paymentCode = new PaymentCode(pcode);
             // send meeting request
-            sorobanDisposable = sorobanCahootsInitiator.sendMeetingRequest(paymentCode, cahootsType)
+            sorobanDisposable = sorobanMeetingService.sendMeetingRequest(paymentCode, cahootsType)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(meetingRequest -> {
-                                Toast.makeText(getApplicationContext(), "Waiting for Cahoots response...", Toast.LENGTH_LONG).show();
+                                textViewConnecting.setText("Have your mixing partner receive online Cahoots.");
+
                                 // meeting request sent, receive response
-                                sorobanDisposable = sorobanCahootsInitiator.receiveMeetingResponse(paymentCode, meetingRequest, TIMEOUT_MS)
+                                sorobanDisposable = sorobanMeetingService.receiveMeetingResponse(paymentCode, meetingRequest, TIMEOUT_MS)
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(sorobanResponse -> {

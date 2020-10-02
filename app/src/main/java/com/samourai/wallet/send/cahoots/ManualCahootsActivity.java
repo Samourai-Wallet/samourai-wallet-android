@@ -27,14 +27,17 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+import com.samourai.soroban.cahoots.CahootsContext;
+import com.samourai.soroban.cahoots.ManualCahootsMessage;
+import com.samourai.soroban.cahoots.ManualCahootsService;
+import com.samourai.soroban.cahoots.TxBroadcastInteraction;
+import com.samourai.soroban.client.SorobanReply;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
-import com.samourai.wallet.cahoots.AndroidSorobanClientService;
+import com.samourai.wallet.cahoots.AndroidSorobanCahootsService;
 import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
-import com.samourai.wallet.cahoots.ManualCahootsMessage;
-import com.samourai.wallet.cahoots.ManualCahootsService;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.util.AppUtil;
 
@@ -54,7 +57,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private AppCompatDialog dialog;
 
     public static Intent createIntentResume(Context ctx, int account, String payload) throws Exception {
-        ManualCahootsService manualCahootsService = AndroidSorobanClientService.getInstance(ctx).getManualCahootsService();
+        ManualCahootsService manualCahootsService = AndroidSorobanCahootsService.getInstance(ctx).getManualCahootsService();
         ManualCahootsMessage msg = manualCahootsService.parse(payload);
         CahootsTypeUser typeUser = msg.getTypeUser().getPartner();
         Intent intent = CahootsUi.createIntent(ctx, ManualCahootsActivity.class, account, msg.getType(), typeUser);
@@ -128,17 +131,9 @@ public class ManualCahootsActivity extends SamouraiActivity {
         }
         String sendAddress = getIntent().getStringExtra("sendAddress");
 
-        ManualCahootsService manualCahootsService = cahootsUi.getManualCahootsService();
-        switch (cahootsUi.getCahootsType()) {
-            case STONEWALLX2:
-                cahootsUi.setCahootsMessage(manualCahootsService.newStonewallx2(account, sendAmount, sendAddress));
-                break;
-            case STOWAWAY:
-                cahootsUi.setCahootsMessage(manualCahootsService.newStowaway(account, sendAmount));
-                break;
-            default:
-                throw new Exception("Unknown #Cahoots");
-        }
+        ManualCahootsService manualCahootsService = cahootsUi.getSorobanCahootsService().getManualCahootsService();
+        CahootsContext cahootsContext = cahootsUi.setCahootsContextInitiator(sendAmount, sendAddress);
+        cahootsUi.setCahootsMessage(manualCahootsService.initiate(account, cahootsContext));
     }
 
     @Override
@@ -184,8 +179,22 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private void onScanCahootsPayload(String qrData) {
         try {
             // continue cahoots
-            ManualCahootsService manualCahootsService = cahootsUi.getManualCahootsService();
-            cahootsUi.setCahootsMessage(manualCahootsService.reply(account, qrData));
+            ManualCahootsService manualCahootsService = cahootsUi.getSorobanCahootsService().getManualCahootsService();
+            ManualCahootsMessage cahootsMessage = manualCahootsService.parse(qrData);
+            CahootsContext cahootsContext = cahootsUi.getCahootsContext();
+            if (cahootsContext == null) {
+                // first scan => counterparty
+                cahootsContext = cahootsUi.setCahootsContextCounterparty();
+            }
+            SorobanReply reply = manualCahootsService.reply(account, cahootsContext, cahootsMessage);
+            if (reply instanceof ManualCahootsMessage) {
+                cahootsUi.setCahootsMessage((ManualCahootsMessage)reply);
+            }
+            else if (reply instanceof TxBroadcastInteraction) {
+                cahootsUi.setInteraction((TxBroadcastInteraction)reply);
+            } else {
+                throw new Exception("Unknown SorobanReply: "+reply.getClass());
+            }
         } catch(Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();

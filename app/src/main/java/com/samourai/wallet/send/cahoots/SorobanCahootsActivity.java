@@ -9,11 +9,12 @@ import com.samourai.soroban.client.cahoots.OnlineCahootsMessage;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.cahoots.AndroidSorobanClientService;
+import com.samourai.wallet.cahoots.AndroidSorobanCahootsService;
 import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
-import com.samourai.wallet.soroban.client.SorobanMessage;
+import com.samourai.soroban.cahoots.CahootsContext;
+import com.samourai.soroban.client.SorobanMessage;
 import com.samourai.wallet.util.AppUtil;
 
 import io.reactivex.Observable;
@@ -101,26 +102,18 @@ public class SorobanCahootsActivity extends SamouraiActivity {
         }
         String sendAddress = getIntent().getStringExtra("sendAddress");
 
-        AndroidSorobanClientService sorobanClientService = cahootsUi.getSorobanClientService();
-        Observable<SorobanMessage> sorobanListener;
-        switch (cahootsUi.getCahootsType()) {
-            case STONEWALLX2:
-                sorobanListener = sorobanClientService.initiator().newStonewallx2(account, sendAmount, sendAddress, paymentCode, TIMEOUT_MS);
-                break;
-            case STOWAWAY:
-                sorobanListener = sorobanClientService.initiator().newStowaway(account, sendAmount, paymentCode, TIMEOUT_MS);
-                break;
-            default:
-                throw new Exception("Unknown #Cahoots");
-        }
+        AndroidSorobanCahootsService sorobanCahootsService = cahootsUi.getSorobanCahootsService();
+        CahootsContext cahootsContext = cahootsUi.setCahootsContextInitiator(sendAmount, sendAddress);
+        Observable<SorobanMessage> sorobanListener = sorobanCahootsService.initiator(account, cahootsContext, paymentCode, TIMEOUT_MS);
 
         // listen for cahoots progress
         subscribeOnMessage(sorobanListener);
     }
 
     private void startReceiver() throws Exception {
-        AndroidSorobanClientService sorobanClientService = cahootsUi.getSorobanClientService();
-        Observable<SorobanMessage> sorobanListener = sorobanClientService.contributor().contributor(account, paymentCode, TIMEOUT_MS);
+        AndroidSorobanCahootsService sorobanCahootsService = cahootsUi.getSorobanCahootsService();
+        CahootsContext cahootsContext = cahootsUi.setCahootsContextCounterparty();
+        Observable<SorobanMessage> sorobanListener = sorobanCahootsService.contributor(account, cahootsContext, paymentCode, TIMEOUT_MS);
         subscribeOnMessage(sorobanListener);
         Toast.makeText(this, "Waiting for online Cahoots", Toast.LENGTH_SHORT).show();
     }
@@ -132,12 +125,6 @@ public class SorobanCahootsActivity extends SamouraiActivity {
                     OnlineCahootsMessage cahootsMessage = (OnlineCahootsMessage)sorobanMessage;
                     if (cahootsMessage != null) {
                         cahootsUi.setCahootsMessage(cahootsMessage);
-                        if (cahootsMessage.isDone()) {
-                            Toast.makeText(getApplicationContext(), "Cahoots success", Toast.LENGTH_LONG).show();
-                            cahootsUi.notifyWalletAndFinish();
-                        } else {
-                            Toast.makeText(this, "Cahoots progress: " + (cahootsMessage.getStep() + 1) + "/" + cahootsMessage.getNbSteps(), Toast.LENGTH_SHORT).show();
-                        }
                     }
                 },
                 sorobanError -> {

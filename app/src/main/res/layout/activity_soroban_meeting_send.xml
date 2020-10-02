@@ -111,7 +111,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="Have your mixing partner receive online Cahoots."
+            android:text=""
             android:textColor="#FFbab9b9"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="@+id/progressBar"
