@@ -342,13 +342,16 @@ public class SendActivity extends SamouraiActivity {
                 cahootsType.show(getSupportFragmentManager(), cahootsType.getTag());
                 cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
                     @Override
-                    public void onSelect(SelectCahootsType.type type,String pcode) {
+                    public void onSelect(SelectCahootsType.type type, String pcode) {
+
+                        if (pcode != null) {
+                            strPcodeCounterParty = pcode;
+                            if(type.getCahootsType() == CahootsType.STOWAWAY){
+                                strPCode = pcode;
+                            }
+                        }
                         chosen[0] = true;
                         selectedCahootsType = type;
-
-                        if(pcode != null){
-                            strPcodeCounterParty = pcode;
-                        }
                         switch (selectedCahootsType) {
                             case NONE: {
                                 cahootsStatusText.setText("Off");
@@ -371,8 +374,8 @@ public class SendActivity extends SamouraiActivity {
 
                     @Override
                     public void onDismiss() {
-                        strPcodeCounterParty = null;
                         if (!chosen[0]) {
+                            strPcodeCounterParty = null;
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
                             hideToAddressForStowaway();
