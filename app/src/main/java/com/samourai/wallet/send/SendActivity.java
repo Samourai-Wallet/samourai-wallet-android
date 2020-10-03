@@ -1715,9 +1715,8 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (CahootsMode.SOROBAN.equals(selectedCahootsType.getCahootsMode())) {
-            // choose Cahoots counterparty (pre-select for STOWAWAY)
-            String preselectPcodeCounterParty = (selectedCahootsType.getCahootsType().equals(CahootsType.STOWAWAY) ? strPcodeCounterParty : null);
-            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address, preselectPcodeCounterParty);
+            // choose Cahoots counterparty
+            Intent intent = SorobanMeetingSendActivity.createIntent(getApplicationContext(), account, selectedCahootsType.getCahootsType(), amount, address, strPcodeCounterParty);
             startActivity(intent);
             return;
         }
