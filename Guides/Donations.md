@@ -26,7 +26,7 @@ I have worked to convert this information into markdown to be hosted on the gith
 
 <img src="https://paynym.is/PM8TJQQcNHFNZhPfU91bBu8mU8vezK8Bh5ybTMY9VD1pTHZN6jijk8SDRMzQ5WfE3j5T7whSzShtK74HsY6qtC3UFjBQRyN7BQn7RD27zhA2hTQARK4V/avatar" width="300" height="300" /> 
 
-[+fancysurf42F](https://paynym.is/+fancysurf42F) 
+[+Crazyk](https://paynym.is/+Crazyk) 
 PM8TJQQcNHFNZhPfU91bBu8mU8vezK8Bh5ybTMY9VD1pTHZN6jijk8SDRMzQ5WfE3j5T7whSzShtK74HsY6qtC3UFjBQRyN7BQn7RD27zhA2hTQARK4V
 
 [![BIP47 payment code](http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=PM8TJQQcNHFNZhPfU91bBu8mU8vezK8Bh5ybTMY9VD1pTHZN6jijk8SDRMzQ5WfE3j5T7whSzShtK74HsY6qtC3UFjBQRyN7BQn7RD27zhA2hTQARK4V&qzone=1&margin=0&size=200x200&ecc=L)](https://paynym.is/+fancysurf42F)
