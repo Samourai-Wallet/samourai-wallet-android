@@ -29,7 +29,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class FeeActivity extends Activity {
+public class FeeActivity extends SamouraiActivity {
 
     private Button btLowFee = null;
     private Button btAutoFee = null;
@@ -56,8 +56,6 @@ public class FeeActivity extends Activity {
         setContentView(R.layout.activity_fee);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        FeeActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
 
         feeSeekBar = findViewById(R.id.fee_seekbar);
@@ -271,8 +269,6 @@ public class FeeActivity extends Activity {
 
     @Override
     public void onDestroy() {
-        FeeActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
         super.onDestroy();
     }
 
