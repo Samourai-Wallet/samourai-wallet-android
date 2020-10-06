@@ -765,26 +765,28 @@ public class ReceiveActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void displayPath()  {
+    private void displayPath() {
 
         int sel = addressTypesSpinner.getSelectedItemPosition();
         String path = "m/";
-        int idx = 0 ;
+        int idx = 0;
 
-        switch(sel)    {
+        switch (sel) {
             case 0:
                 path += "49'";
+                idx = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive().getLeft();
                 break;
             case 1:
                 path += "84'";
+                idx = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive().getLeft();
                 break;
             default:
                 path += "44'";
+                idx = AddressFactory.getInstance(ReceiveActivity.this).getReceive().getLeft();
         }
 
         path += "/0'/0'/0/";
         path += idx;
-
         tvPath.setText(path);
 
     }
