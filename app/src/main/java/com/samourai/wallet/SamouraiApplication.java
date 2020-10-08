@@ -108,7 +108,6 @@ public class SamouraiApplication extends Application {
 
     @Override
     public void onTerminate() {
-        Log.i("CM","TERMINATE");
         TorServiceController.stopTor();
         super.onTerminate();
     }

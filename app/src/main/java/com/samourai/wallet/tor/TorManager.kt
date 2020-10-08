@@ -107,7 +107,6 @@ object TorManager {
                 geoip6AssetPath = "common/geoip6",
 
         )
-                .disableStopServiceOnTaskRemoved(false)
                 .useCustomTorConfigFiles(builder.build())
                 .setBuildConfigDebug(BuildConfig.DEBUG)
                 .setEventBroadcaster(eventBroadcaster = TorEventBroadcaster())
