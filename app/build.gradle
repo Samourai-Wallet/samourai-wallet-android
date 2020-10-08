@@ -83,7 +83,7 @@ def getApiKey(key){
 dependencies {
 
     def lifecycle_version = "2.2.0"
-    def topl_android_version = "1.0.0-beta01"
+    def topl_android_version = "1.0.0-beta02"
 
     api fileTree(include: ['*.jar'], dir: 'libs')
     implementation('com.google.zxing:core:3.3.0') {
