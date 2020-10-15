@@ -363,7 +363,7 @@ public class SendActivity extends SamouraiActivity {
                                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
 
                                 if (CahootsType.STOWAWAY.equals(selectedCahootsType.getCahootsType())) {
-                                    toAddressEditText.setText(BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty) );
+                                    toAddressEditText.setText(getParticipantLabel());
                                     toAddressEditText.setEnabled(false);
                                     address = "";
                                 }
@@ -1663,14 +1663,14 @@ public class SendActivity extends SamouraiActivity {
                 default: {
                     switch (selectedCahootsType.getCahootsType()) {
                         case STONEWALLX2:
-                            sendTransactionDetailsView.showStonewallX2Layout(selectedCahootsType.getCahootsMode(),   BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty),1000);
+                            sendTransactionDetailsView.showStonewallX2Layout(selectedCahootsType.getCahootsMode(),   getParticipantLabel(),1000);
                             btnSend.setBackgroundResource(R.drawable.button_blue);
                             btnSend.setText(getString(R.string.begin_stonewallx2));
                             break;
 
                         case STOWAWAY:
                             sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(),
-                                    BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty), null, 1000);
+                                    getParticipantLabel(), null, 1000);
                             btnSend.setBackgroundResource(R.drawable.button_blue);
                             btnSend.setText(getString(R.string.begin_stowaway));
                             break;
@@ -1686,11 +1686,15 @@ public class SendActivity extends SamouraiActivity {
         return false;
     }
 
+    private String getParticipantLabel() {
+        return strPcodeCounterParty != null ? BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty) : null;
+    }
+
     private void setButtonForStowaway(boolean prepare) {
         if (prepare) {
             // Sets view with stowaway message
             // also hides overlay push icon from button
-            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), BIP47Meta.getInstance().getDisplayLabel(strPcodeCounterParty), null, 1000);
+            sendTransactionDetailsView.showStowawayLayout(selectedCahootsType.getCahootsMode(), getParticipantLabel(), null, 1000);
             btnSend.setBackgroundResource(R.drawable.button_blue);
             btnSend.setText(getString(R.string.begin_stowaway));
             sendTransactionDetailsView.getTransactionReview().findViewById(R.id.transaction_push_icon).setVisibility(View.INVISIBLE);
