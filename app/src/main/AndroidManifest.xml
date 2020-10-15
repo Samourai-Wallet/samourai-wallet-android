@@ -81,7 +81,7 @@
         <activity
             android:name=".paynym.PayNymHome"
             android:label="@string/paynyms"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -106,7 +106,7 @@
         <activity
             android:name=".home.BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -123,7 +123,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:theme="@style/SamouraiAppTheme"
+            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
 
@@ -266,7 +266,7 @@
         <activity
             android:name=".send.soroban.meeting.SorobanMeetingListenActivity"
             android:label="Listen for online Cahoots"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".send.soroban.meeting.SorobanMeetingSendActivity"
             android:label="Send online Cahoots"
