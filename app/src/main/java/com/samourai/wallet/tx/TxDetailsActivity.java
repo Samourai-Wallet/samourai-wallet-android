@@ -17,7 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.boost.RBFTask;
@@ -45,7 +47,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class TxDetailsActivity extends AppCompatActivity {
+public class TxDetailsActivity extends SamouraiActivity {
 
     private CircleImageView payNymAvatar;
     private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate, bottomButton, minerFee, minerFeeRate;
@@ -54,7 +56,7 @@ public class TxDetailsActivity extends AppCompatActivity {
     private String BTCDisplayAmount, SatDisplayAmount, paynymDisplayName;
     private RBFTask rbfTask = null;
     private CPFPTask cpfpTask = null;
-    private ProgressBar progressBar;
+    private ProgressIndicator progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
