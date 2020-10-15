@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
@@ -133,7 +134,7 @@ public class BalanceActivity extends SamouraiActivity {
 
     private List<Tx> txs = null;
     private RecyclerView TxRecyclerView;
-    private ProgressBar progressBar;
+    private ProgressIndicator progressBar;
     private BalanceViewModel balanceViewModel;
 
     private RicochetQueueTask ricochetQueueTask = null;
