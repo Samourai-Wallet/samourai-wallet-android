@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Samourai.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarStyle">@style/Widget.Samourai.Toolbar</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorOnPrimary">?attr/colorOnSecondary</item>
+        <item name="statusBarBackground">@color/grey_accent</item>
+        <item name="android:windowBackground">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/grey_accent</item>
+        <item name="backgroundColor">@color/windowDark</item>
+        <item name="background">@color/windowDark</item>
+        <item name="android:colorControlActivated">@color/blue</item>
+        <item name="android:navigationBarColor">@color/windowDark</item>
+        <item name="android:actionModeBackground">@color/grey_accent</item>
+        <item name="actionModeBackground">@color/grey_accent</item>
+    </style>
+
+    <style name="AppTheme.MaterialDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="shapeAppearanceMediumComponent">@style/Widget.Samourai.Alert.Rounded</item>
+        <item name="colorPrimary">@color/accent</item>
+    </style>
+
+</resources>
