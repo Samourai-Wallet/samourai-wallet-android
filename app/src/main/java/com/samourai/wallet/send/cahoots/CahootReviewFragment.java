@@ -115,6 +115,7 @@ public class CahootReviewFragment extends Fragment {
             }
 
         });
+        showPayloadInfo();
     }
 
     private void calculateEntropy() {
