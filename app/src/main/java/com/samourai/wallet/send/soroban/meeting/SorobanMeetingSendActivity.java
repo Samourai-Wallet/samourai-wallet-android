@@ -32,6 +32,7 @@ import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 public class SorobanMeetingSendActivity extends SamouraiActivity {
 
@@ -113,11 +114,21 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
         }
     }
 
+    // TODO remove on next whirlpool-client upgrade
+    public static Optional<WhirlpoolAccount> findWhirlpoolAccount(int index) {
+        for (WhirlpoolAccount whirlpoolAccount : WhirlpoolAccount.values()) {
+            if (whirlpoolAccount.getAccountIndex() == index) {
+                return Optional.of(whirlpoolAccount);
+            }
+        }
+        return Optional.empty();
+    }
+
     private void parsePayloadIntent() {
 
         try {
             if (getIntent().hasExtra("_account")) {
-                account = WhirlpoolAccount.find(getIntent().getIntExtra("_account", 0)).get();
+                account = findWhirlpoolAccount(getIntent().getIntExtra("_account", 0)).get();
             }
             if (getIntent().hasExtra("type")) {
                 int type = getIntent().getIntExtra("type", -1);
