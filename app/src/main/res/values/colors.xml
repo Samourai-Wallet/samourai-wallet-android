@@ -5,7 +5,7 @@
     <item name="green" type="color">#FF99CC00</item>
     <item name="red" type="color">#FFFF4444</item>
     <item name="disabledRed" type="color">#A82D2D</item>
-    <item name="darkgrey" type="color">#FF1a1c1f</item>
+    <item name="darkgrey" type="color">#121212</item>
 
     <color name="window">#272c33</color>
     <color name="primary">#FF3d434c</color>

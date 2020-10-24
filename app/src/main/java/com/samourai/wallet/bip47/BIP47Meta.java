@@ -33,6 +33,7 @@ public class BIP47Meta {
     public static final int STATUS_NOT_SENT = -1;
     public static final int STATUS_SENT_NO_CFM = 0;
     public static final int STATUS_SENT_CFM = 1;
+    public static  boolean  directoryTaskCompleted=  false;
 
     private static ConcurrentHashMap<String,String> pcodeLabels = null;
     private static ConcurrentHashMap<String,Boolean> pcodeArchived = null;

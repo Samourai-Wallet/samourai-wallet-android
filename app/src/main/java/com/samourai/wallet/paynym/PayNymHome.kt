@@ -66,7 +66,6 @@ class PayNymHome : SamouraiActivity() {
 
     private var paynymTabLayout: TabLayout? = null
     private var payNymViewPager: ViewPager? = null
-    private val compositeDisposable: CompositeDisposable? = CompositeDisposable()
 
     //    private var payNymHomeViewModel: PayNymHomeViewModel? = null
     private var paynymSync: ProgressBar? = null
@@ -82,7 +81,7 @@ class PayNymHome : SamouraiActivity() {
     private var followers = ArrayList<String>()
     private var pcodeSyncLayout: ConstraintLayout? = null
     var swipeToRefreshPaynym: SwipeRefreshLayout? = null
-    val payNymHomeViewModel: PayNymHomeViewModel by viewModels()
+    private val payNymHomeViewModel: PayNymHomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -147,7 +146,6 @@ class PayNymHome : SamouraiActivity() {
         swipeToRefreshPaynym?.setOnRefreshListener {
             swipeToRefreshPaynym?.isRefreshing = false
             payNymHomeViewModel.refreshPayNym()
-            doDirectoryTask()
         }
 
         payNymHomeViewModel.refreshTaskProgressLiveData.observe(this, {
@@ -187,9 +185,6 @@ class PayNymHome : SamouraiActivity() {
             e.printStackTrace()
         }
         super.onDestroy()
-        if (compositeDisposable != null && !compositeDisposable.isDisposed) {
-            compositeDisposable.dispose()
-        }
     }
 
 
@@ -333,62 +328,6 @@ class PayNymHome : SamouraiActivity() {
         }
     }
 
-    private fun doTimer() {
-        val disposable = Observable.interval(30, TimeUnit.SECONDS, Schedulers.io()).subscribe { aLong: Long? -> refreshPayNym() }
-        compositeDisposable!!.add(disposable)
-    }
-
-    private fun doDirectoryTask() {
-        val pcodes = BIP47Meta.getInstance().getSortedByLabels(true)
-        if (pcodes != null && pcodes.size > 0) {
-            for (pcode in pcodes) {
-                if (!followers.contains(pcode)) {
-                    doUploadFollow(pcode, false)
-                }
-            }
-        }
-    }
-
-    private fun doUploadFollow(pcode: String, isTrust: Boolean) {
-        val disposable = Observable.fromCallable {
-            try {
-                var obj = JSONObject()
-                obj.put("code", BIP47Util.getInstance(this).paymentCode.toString())
-                //                    Log.d("PayNymDetailsActivity", obj.toString());
-                var res = WebUtil.getInstance(this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/token", obj.toString())
-                //                    Log.d("PayNymDetailsActivity", res);
-                var responseObj = JSONObject(res)
-                if (responseObj.has("token")) {
-                    val token = responseObj.getString("token")
-                    val sig = MessageSignUtil.getInstance(this).signMessage(BIP47Util.getInstance(this).notificationAddress.ecKey, token)
-                    //                        Log.d("PayNymDetailsActivity", sig);
-                    obj = JSONObject()
-                    obj.put("target", pcode)
-                    obj.put("signature", sig)
-
-//                        Log.d("PayNymDetailsActivity", "follow:" + obj.toString());
-                    val endPoint = if (isTrust) "api/v1/trust" else "api/v1/follow"
-                    res = WebUtil.getInstance(this).postURL("application/json", token, WebUtil.PAYNYM_API + endPoint, obj.toString())
-                    //                        Log.d("PayNymDetailsActivity", res);
-                    responseObj = JSONObject(res)
-                    if (responseObj.has("following")) {
-                        responseObj.has("token")
-                    }
-                }
-            } catch (je: JSONException) {
-                je.printStackTrace()
-                return@fromCallable false
-            } catch (e: Exception) {
-                e.printStackTrace()
-                return@fromCallable false
-            }
-            true
-        }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ success: Boolean? -> }) { error: Throwable? -> }
-        compositeDisposable!!.add(disposable)
-    }
 
     internal inner class ViewPagerAdapter(manager: FragmentManager?) : FragmentPagerAdapter(manager!!) {
         override fun getItem(position: Int): Fragment {

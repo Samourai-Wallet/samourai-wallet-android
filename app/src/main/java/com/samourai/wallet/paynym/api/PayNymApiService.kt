@@ -83,7 +83,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
             val status = response.body()?.string()
             val tokenResponse = JSONObject(status)
             if (tokenResponse.has("token")) {
-                this.payNymToken = BIP47Util.getInstance(context).notificationAddress.ecKey.signMessage(tokenResponse.getString("token"))
+                this.payNymToken = tokenResponse.getString("token")
             } else {
                 throw Exception("Invalid paynym token response")
             }
@@ -115,21 +115,23 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         val builder = Request.Builder();
         val body: RequestBody = RequestBody
                 .create(JSON, payload.toString())
+        builder  .addHeader("auth-token", payNymToken)
         builder.url("$URL/nym")
         return executeRequest(builder.post(body).build())
     }
 
 
     public suspend fun follow(pcode:String): Response {
-
         val builder = Request.Builder();
-        val sig = MessageSignUtil.getInstance(context).signMessage(BIP47Util.getInstance(context).notificationAddress.ecKey, payNymToken)
         val obj = JSONObject()
+
+        val sig = MessageSignUtil.getInstance(context).signMessage(BIP47Util.getInstance(context).notificationAddress.ecKey, payNymToken)
         obj.put("target", pcode)
         obj.put("signature", sig)
 
         val body: RequestBody = RequestBody
                 .create(JSON, obj.toString())
+
         builder.url("$URL/follow")
         return executeRequest(builder.post(body).build())
     }

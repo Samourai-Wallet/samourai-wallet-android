@@ -73,15 +73,15 @@
         <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:label=""
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.addPaynym.AddPaynymActivity"
             android:label="@string/add_new"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.PayNymHome"
             android:label="@string/paynyms"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
