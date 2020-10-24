@@ -4,6 +4,8 @@ import com.samourai.wallet.BuildConfig;
 
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
@@ -24,6 +26,13 @@ public class LogUtil {
     public static void error(final String tag, String message) {
         if (BuildConfig.DEBUG) {
             android.util.Log.e(tag, message);
+        }
+    }
+
+    public static void error(final String tag, Exception message) {
+        if (BuildConfig.DEBUG) {
+            android.util.Log.e(tag, Objects.requireNonNull(message.getMessage()));
+            message.printStackTrace();
         }
     }
 
