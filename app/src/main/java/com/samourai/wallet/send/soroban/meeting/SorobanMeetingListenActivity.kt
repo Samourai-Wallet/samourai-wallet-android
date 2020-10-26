@@ -106,7 +106,7 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
 
             val senderPaymentCode = PaymentCode(this.sender)
 
-            Picasso.with(applicationContext)
+            Picasso.get()
                     .load(WebUtil.PAYNYM_API + this.sender + "/avatar")
                     .into(paynymImage)
 

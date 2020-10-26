@@ -166,7 +166,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
         this.pcode = pcode;
 
         paynymDisplayName.setText(BIP47Meta.getInstance().getDisplayLabel(pcode));
-        Picasso.with(getApplicationContext())
+        Picasso.get()
                 .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + pcode + "/avatar")
                 .into(paynymAvatar);
 
@@ -186,7 +186,6 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(meetingRequest -> {
                                 textViewConnecting.setText("Have your mixing partner receive online Cahoots.");
-
                                 // meeting request sent, receive response
                                 sorobanDisposable = sorobanMeetingService.receiveMeetingResponse(paymentCode, meetingRequest, TIMEOUT_MS)
                                         .subscribeOn(Schedulers.io())
