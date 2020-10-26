@@ -601,7 +601,7 @@ public class BalanceActivity extends SamouraiActivity {
 
             ArrayList<String> paymentCodes = new ArrayList<>(BIP47Meta.getInstance().getSortedByLabels(false, true));
             for (String code : paymentCodes) {
-                Picasso.with(getBaseContext())
+                Picasso.get()
                         .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + code + "/avatar").fetch(new Callback() {
                     @Override
                     public void onSuccess() {
@@ -609,7 +609,7 @@ public class BalanceActivity extends SamouraiActivity {
                     }
 
                     @Override
-                    public void onError() {
+                    public void onError(Exception e) {
                         /*NO OP*/
                     }
                 });

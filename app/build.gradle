@@ -119,7 +119,7 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.4'
     implementation 'org.apache.commons:commons-lang3:3.3'
     implementation 'com.google.guava:guava:20.0'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.55'
     implementation 'com.madgag.spongycastle:prov:1.54.0.0'
     implementation 'com.lambdaworks:scrypt:1.4.0'

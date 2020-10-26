@@ -167,7 +167,7 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
                 label += " (not confirmed)"
             }
             holder.displayName.text = label
-            Picasso.with(context)
+            Picasso.get()
                     .load("${WebUtil.PAYNYM_API}${code}/avatar")
                     .into(holder.avatar)
         }
