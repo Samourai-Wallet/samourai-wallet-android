@@ -5,7 +5,8 @@
         <item name="toolbarStyle">@style/Widget.Samourai.Toolbar</item>
         <item name="colorAccent">@color/accent</item>
         <item name="colorPrimary">@color/white</item>
-        <item name="colorOnPrimary">?attr/colorOnSecondary</item>
+        <item name="colorSecondary">@color/blue</item>
+        <item name="colorOnPrimary">@color/primaryDarkColor</item>
         <item name="statusBarBackground">@color/grey_accent</item>
         <item name="android:windowBackground">@color/windowDark</item>
         <item name="android:statusBarColor">@color/grey_accent</item>
@@ -17,11 +18,8 @@
         <item name="actionModeBackground">@color/grey_accent</item>
         <item name="tabBackground">@color/grey_accent</item>
         <item name="snackbarStyle">@style/Widget.Samourai.SnackBar</item>
+        <item name="materialAlertDialogTheme">@style/Theme.Samourai.MaterialDialog.Rounded</item>
     </style>
 
-    <style name="AppTheme.MaterialDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="shapeAppearanceMediumComponent">@style/Widget.Samourai.Alert.Rounded</item>
-        <item name="colorPrimary">@color/accent</item>
-    </style>
 
 </resources>

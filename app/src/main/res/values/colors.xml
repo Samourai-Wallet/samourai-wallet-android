@@ -34,18 +34,20 @@
     <color name="whirlpoolGreen">#90ffee</color>
 
 
-
-    <color name="off_black" >#252525</color>
+    <color name="off_black">#252525</color>
 
     <color name="item_separator_grey">#333940</color>
 
-    <color name="disabled_grey" >#797979</color>
+    <color name="disabled_grey">#797979</color>
 
-    <color name="disabled_white" >#41FFFFFF</color>
+    <color name="disabled_white">#41FFFFFF</color>
 
     <color name="whirlpool_window_dark">#262c33</color>
     <color name="warning_yellow">#B6B260</color>
 
     <color name="select_overlay">#343B48</color>
 
+
+    <!--Material theming-->
+    <color name="primaryDarkColor">#404a5e</color>
 </resources>
