@@ -306,7 +306,6 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void setTorConnectionState(TorManager.TorState enabled) {
-        Log.i("CM",enabled.toString());
 
         if (enabled == TorManager.TorState.ON) {
             torButton.setText("Disable");

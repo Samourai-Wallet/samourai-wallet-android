@@ -792,7 +792,6 @@ class PayNymDetailsActivity : SamouraiActivity() {
     @Throws(MnemonicLengthException::class, DecryptionException::class, JSONException::class, IOException::class)
     private fun savePayLoad() {
         PayloadUtil.getInstance(this@PayNymDetailsActivity).saveWalletToJSON(CharSequenceX(AccessFactory.getInstance(this@PayNymDetailsActivity).guid + AccessFactory.getInstance(this@PayNymDetailsActivity).pin))
-        Log.i(TAG, "savePayLoad: ")
     }
 
     private fun doUpdatePayNymInfo(pcode: String?) {
@@ -820,7 +819,6 @@ class PayNymDetailsActivity : SamouraiActivity() {
                         savePayLoad()
                     }
                 }) { errror: Throwable ->
-                    Log.i(TAG, "doUpdatePayNymInfo: " + errror.message)
                     Toast.makeText(this, "Unable to update paynym", Toast.LENGTH_SHORT).show()
                 }
         disposables.add(disposable)
