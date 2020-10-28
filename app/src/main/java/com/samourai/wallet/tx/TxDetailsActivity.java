@@ -351,7 +351,7 @@ public class TxDetailsActivity extends SamouraiActivity {
         payNymUsername.setVisibility(View.VISIBLE);
         payNymAvatar.setVisibility(View.VISIBLE);
         payNymUsername.setText(paynymDisplayName);
-        Picasso.with(this)
+        Picasso.get()
                 .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + tx.getPaymentCode() + "/avatar")
                 .into(payNymAvatar);
 
