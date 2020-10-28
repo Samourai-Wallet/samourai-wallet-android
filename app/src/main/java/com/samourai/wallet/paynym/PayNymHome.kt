@@ -16,9 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.ViewModel
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -26,48 +24,35 @@ import com.google.common.base.Splitter
 import com.samourai.wallet.R
 import com.samourai.wallet.SamouraiActivity
 import com.samourai.wallet.access.AccessFactory
-import com.samourai.wallet.api.APIFactory
 import com.samourai.wallet.bip47.BIP47Meta
 import com.samourai.wallet.bip47.BIP47Util
 import com.samourai.wallet.bip47.paynym.WebUtil
-import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception
-import com.samourai.wallet.bip47.rpc.PaymentCode
 import com.samourai.wallet.crypto.DecryptionException
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.paynym.addPaynym.AddPaynymActivity
+import com.samourai.wallet.paynym.fragments.PayNymOnBoardBottomSheet
 import com.samourai.wallet.paynym.fragments.PaynymListFragment
 import com.samourai.wallet.paynym.fragments.ShowPayNymQRBottomSheet
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity
 import com.samourai.wallet.util.*
 import com.samourai.wallet.widgets.ViewPager
 import com.squareup.picasso.Picasso
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.schedulers.Schedulers
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.crypto.MnemonicException.MnemonicLengthException
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
-import java.security.InvalidKeyException
-import java.security.NoSuchAlgorithmException
-import java.security.NoSuchProviderException
-import java.security.spec.InvalidKeySpecException
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class PayNymHome : SamouraiActivity() {
 
     private var paynymTabLayout: TabLayout? = null
     private var payNymViewPager: ViewPager? = null
 
-    //    private var payNymHomeViewModel: PayNymHomeViewModel? = null
     private var paynymSync: ProgressBar? = null
     private var paynym: TextView? = null
     private var paynymCode: TextView? = null
@@ -81,7 +66,7 @@ class PayNymHome : SamouraiActivity() {
     private var followers = ArrayList<String>()
     private var pcodeSyncLayout: ConstraintLayout? = null
     var swipeToRefreshPaynym: SwipeRefreshLayout? = null
-    private val payNymHomeViewModel: PayNymHomeViewModel by viewModels()
+    private val payNymViewModel: PayNymViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,21 +92,21 @@ class PayNymHome : SamouraiActivity() {
         paynymCode?.text = BIP47Meta.getInstance().getDisplayLabel(pcode)
         followersFragment = PaynymListFragment.newInstance()
         followingFragment = PaynymListFragment.newInstance()
-        Picasso.with(applicationContext).load(WebUtil.PAYNYM_API + pcode + "/avatar")
+        Picasso.get().load(WebUtil.PAYNYM_API + pcode + "/avatar")
                 .into(userAvatar)
         paynymFab?.setOnClickListener {
             startActivity(Intent(this, AddPaynymActivity::class.java))
         }
-        payNymHomeViewModel.pcode.observe(this, { paymentCode: String? -> paynym?.text = paymentCode })
-        payNymHomeViewModel.loaderLiveData.observe(this, {
+        payNymViewModel.pcode.observe(this, { paymentCode: String? -> paynym?.text = paymentCode })
+        payNymViewModel.loaderLiveData.observe(this, {
             Log.i(TAG, "onCreate: ${it}")
             swipeToRefreshPaynym?.isRefreshing = it
         })
 
-        payNymHomeViewModel.errorsLiveData.observe(this, {
-            Snackbar.make(paynym!!,"Error : ${it}",Snackbar.LENGTH_LONG).show()
+        payNymViewModel.errorsLiveData.observe(this, {
+            Snackbar.make(paynym!!, "Error : ${it}", Snackbar.LENGTH_LONG).show()
         })
-        payNymHomeViewModel.followers.observe(this, { followersList: ArrayList<String>? ->
+        payNymViewModel.followers.observe(this, { followersList: ArrayList<String>? ->
             if (followersList == null || followersList.size == 0) {
                 return@observe
             }
@@ -131,7 +116,7 @@ class PayNymHome : SamouraiActivity() {
             adapter.notifyDataSetChanged()
             followers = followersList
         })
-        payNymHomeViewModel.following.observe(this, { followingList: ArrayList<String>? ->
+        payNymViewModel.following.observe(this, { followingList: ArrayList<String>? ->
             if (followingList == null || followingList.size == 0) {
                 return@observe
             }
@@ -145,10 +130,12 @@ class PayNymHome : SamouraiActivity() {
         }
         swipeToRefreshPaynym?.setOnRefreshListener {
             swipeToRefreshPaynym?.isRefreshing = false
-            payNymHomeViewModel.refreshPayNym()
+            payNymViewModel.refreshPayNym()
         }
-
-        payNymHomeViewModel.refreshTaskProgressLiveData.observe(this, {
+        if (PrefsUtil.getInstance(getApplication()).getValue(PrefsUtil.PAYNYM_CLAIMED, false)) {
+            payNymViewModel.refreshPayNym()
+        }
+        payNymViewModel.refreshTaskProgressLiveData.observe(this, {
             if (it.first != 0 || it.second != 0) {
                 paynymSync?.progress = it.first
                 paynymSync?.max = it.second
@@ -168,8 +155,11 @@ class PayNymHome : SamouraiActivity() {
     }
 
     private fun doClaimPayNym() {
-        val intent = Intent(this, ClaimPayNymActivity::class.java)
-        startActivityForResult(intent, CLAIM_PAYNYM)
+        val payNymOnBoardBottomSheet = PayNymOnBoardBottomSheet()
+        payNymOnBoardBottomSheet.show(supportFragmentManager, payNymOnBoardBottomSheet.tag)
+        payNymOnBoardBottomSheet.setOnClaimCallBack {
+           payNymViewModel.refreshPayNym()
+        }
     }
 
     override fun onDestroy() {
@@ -267,7 +257,7 @@ class PayNymHome : SamouraiActivity() {
         for ((i, pcode) in _pcodes.withIndex()) {
             pcodes[i] = pcode
         }
-        payNymHomeViewModel.refreshPayNym()
+        payNymViewModel.refreshPayNym()
         //
     }
 
@@ -284,8 +274,16 @@ class PayNymHome : SamouraiActivity() {
     }
 
     private fun doSyncAll() {
-        payNymHomeViewModel.doSyncAll()
+        payNymViewModel.doSyncAll()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(BIP47Meta.getInstance().isRequiredRefresh){
+            payNymViewModel.refreshPayNym()
+            BIP47Meta.getInstance().isRequiredRefresh = false
+        }
     }
 
     private fun processScan(data: String) {

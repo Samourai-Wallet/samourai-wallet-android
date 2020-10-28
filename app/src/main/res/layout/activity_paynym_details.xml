@@ -30,7 +30,7 @@
 
 
                 <com.samourai.wallet.widgets.CircleImageView
-                    android:id="@+id/paybyn_user_avatar"
+                    android:id="@+id/userAvatar"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_marginStart="8dp"
@@ -45,47 +45,45 @@
 
 
                 <TextView
-                    android:id="@+id/paynym_payment_code"
+                    android:id="@+id/paynymCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:gravity="center"
                     android:textAlignment="center"
-                    app:layout_constraintEnd_toEndOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintStart_toStartOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintTop_toBottomOf="@+id/paynym_label"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/userAvatar"
+                    app:layout_constraintStart_toStartOf="@+id/userAvatar"
+                    app:layout_constraintTop_toBottomOf="@+id/paynymChipLayout"
                     tools:text="PM8TJMf4QC1" />
 
                 <ProgressBar
-                    android:id="@+id/paynym_image_progress"
+                    android:id="@+id/paynymAvatarProgress"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintEnd_toEndOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintStart_toStartOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintTop_toTopOf="@+id/paybyn_user_avatar" />
+                    app:layout_constraintBottom_toBottomOf="@+id/userAvatar"
+                    app:layout_constraintEnd_toEndOf="@+id/userAvatar"
+                    app:layout_constraintStart_toStartOf="@+id/userAvatar"
+                    app:layout_constraintTop_toTopOf="@+id/userAvatar" />
 
-                <TextView
-                    android:id="@+id/paynym_label"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/paynymChipLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:gravity="center"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintStart_toStartOf="@+id/paybyn_user_avatar"
-                    app:layout_constraintTop_toBottomOf="@+id/paybyn_user_avatar"
-                    tools:text="+angrymol3" />
+                    app:layout_constraintEnd_toEndOf="@+id/userAvatar"
+                    app:layout_constraintStart_toStartOf="@+id/userAvatar"
+                    app:layout_constraintTop_toBottomOf="@+id/userAvatar"
+                     />
 
                 <TextView
-                    android:id="@+id/follows_you_text"
+                    android:id="@+id/followsYoutext"
                     android:layout_width="wrap_content"
                     android:layout_height="10dp"
                     android:layout_marginStart="4dp"
@@ -97,11 +95,11 @@
                     android:text="@string/follows_you"
                     android:textColor="@color/windowDark"
                     android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/paynym_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/paynymChipLayout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/paynym_label"
-                    app:layout_constraintTop_toTopOf="@+id/paynym_label"
+                    app:layout_constraintStart_toEndOf="@+id/paynymChipLayout"
+                    app:layout_constraintTop_toTopOf="@+id/paynymChipLayout"
                     android:visibility="invisible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -112,19 +110,23 @@
                 android:background="@color/grey_accent"
                 android:backgroundTint="@color/grey_accent"
                 android:minHeight="?attr/actionBarSize"
+                android:transitionName="totot"
                 app:layout_collapseMode="pin">
 
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.ProgressIndicator
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="-8dp"
             android:indeterminate="true"
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+            app:indicatorColor="@color/accent"
+            app:indicatorCornerRadius="5dp"
+            app:trackColor="@android:color/transparent"
+            app:indicatorSize="5dp"
             android:visibility="invisible" />
 
 
@@ -141,60 +143,68 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:id="@+id/followLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-
                 <TextView
-                    android:id="@+id/confirm_message"
-                    android:layout_width="0dp"
+                    android:id="@+id/followMessage"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/bip47_status_pending"
-                    android:textColor="@color/warning_yellow"
-                    app:layout_constraintBottom_toTopOf="@+id/paynym_follow_btn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/follow_message"
-                    tools:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/follow_message"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
-                    app:layout_constraintBottom_toTopOf="@+id/paynym_follow_btn"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintBottom_toTopOf="@+id/followBtn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
                     tools:text="Follow --USER-- " />
 
-                <Button
-                    android:id="@+id/paynym_follow_btn"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="0dp"
+
+                <TextView
+                    android:id="@+id/confirmMessage"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/border_round_button_light"
-                    android:drawableStart="@drawable/ic_person_add_24dp"
-                    android:paddingStart="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/bip47_status_pending"
+                    android:textColor="@color/warning_yellow"
+                    tools:visibility="visible" />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/followBtn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/follow"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/follow_message"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/follow_message" />
+                    android:layout_marginTop="24dp"
+                    app:backgroundTint="@color/select_overlay"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_person_add_24dp"
+                    app:strokeColor="@color/text_primary"
+                    app:strokeWidth="1dp" />
 
+                <TextView
+                    android:id="@+id/feeMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="16dp"
+                    android:textAlignment="textEnd"
+                    android:gravity="end"
+                    android:layout_marginBottom="8dp"
+                    tools:text="Follow --USER-- " />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/historyLayout"
@@ -227,7 +237,7 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_paynym_history"
+                    android:id="@+id/historyRecyclerView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -15,12 +15,10 @@ import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.tor.TorManager.getProxy
 import com.samourai.wallet.util.CharSequenceX
-import com.samourai.wallet.util.LogUtil
 import com.samourai.wallet.util.MessageSignUtil
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.bitcoinj.crypto.MnemonicException
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -47,6 +45,11 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         if (url.host().contains("onion")) {
             this.getHostNameVerifier(builder)
         }
+
+        builder.connectTimeout(45, TimeUnit.SECONDS)
+                .readTimeout(45, TimeUnit.SECONDS)
+                .callTimeout(45, TimeUnit.SECONDS)
+
         if (TorManager.isRequired()) {
             builder.proxy(getProxy())
             builder.connectTimeout(120, TimeUnit.SECONDS)
@@ -92,17 +95,74 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         }
     }
 
-    suspend fun createPayNym(): Response {
+
+    suspend fun claim(): Response {
+        createPayNym()
         if (payNymToken == null) {
             getToken()
         }
+        val payload = JSONObject().apply {
+            put("signature", getSig())
+        }
+        val builder = Request.Builder();
+        val body: RequestBody = RequestBody.create(JSON, payload.toString())
+        builder.url("$URL/claim")
+        val response = this.executeRequest(builder.post(body).build())
+        if (response.isSuccessful) {
+            val jsonStr = response.body()?.string();
+            val json = JSONObject(jsonStr);
+            if (json.has("token")) {
+                payNymToken = json.getString("token")
+            }
+            return addPayNym()
+        } else {
+            throw IOException("Unable to claim paynym")
+        }
+    }
+
+
+    suspend fun addPayNym(): Response {
+        if (payNymToken == null) {
+            getToken()
+        }
+        val paynymCode = BIP47Util.getInstance(context).paymentCode
+        val paynymCodeFeat = BIP47Util.getInstance(context).featurePaymentCode
+        val payload = JSONObject().apply {
+            put("nym", paynymCode)
+            put("code", paynymCodeFeat)
+            put("signature", getSig())
+        }
+        val builder = Request.Builder();
+        val body: RequestBody = RequestBody.create(JSON, payload.toString())
+        builder.url("$URL/create")
+        return this.executeRequest(builder.post(body).build())
+    }
+
+
+    suspend fun createPayNym(): JSONObject {
         val payload = JSONObject().apply {
             put("code", paynymCode)
         }
         val builder = Request.Builder();
         val body: RequestBody = RequestBody.create(JSON, payload.toString())
         builder.url("$URL/create")
-        return this.executeRequest(builder.post(body).build())
+        val response = this.executeRequest(builder.post(body).build())
+        if (response.isSuccessful) {
+            val jsonStr = response.body()?.string()
+            val jsonObject = JSONObject(jsonStr)
+            if (jsonObject.has("token")) {
+                this.payNymToken = jsonObject.getString("token")
+            }
+            return jsonObject
+        } else {
+            val jsonStr = response.body()?.string()
+            val jsonObject = JSONObject(jsonStr)
+            if (jsonObject.has("message")) {
+                throw IOException(jsonObject.getString("message"))
+            } else {
+                throw IOException("Unable to register paynym")
+            }
+        }
     }
 
     suspend fun getNymInfo(): Response {
@@ -115,24 +175,44 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         val builder = Request.Builder();
         val body: RequestBody = RequestBody
                 .create(JSON, payload.toString())
-        builder  .addHeader("auth-token", payNymToken)
         builder.url("$URL/nym")
         return executeRequest(builder.post(body).build())
     }
 
 
-    public suspend fun follow(pcode:String): Response {
+    public suspend fun follow(pcode: String): Response {
+
+        if (payNymToken == null) {
+            getToken()
+        }
         val builder = Request.Builder();
         val obj = JSONObject()
 
-        val sig = MessageSignUtil.getInstance(context).signMessage(BIP47Util.getInstance(context).notificationAddress.ecKey, payNymToken)
         obj.put("target", pcode)
-        obj.put("signature", sig)
+        obj.put("signature", getSig())
 
         val body: RequestBody = RequestBody
                 .create(JSON, obj.toString())
 
         builder.url("$URL/follow")
+        return executeRequest(builder.post(body).build())
+    }
+
+    public suspend fun unfollow(pcode: String): Response {
+
+        if (payNymToken == null) {
+            getToken()
+        }
+        val builder = Request.Builder();
+        val obj = JSONObject()
+
+        obj.put("target", pcode)
+        obj.put("signature", getSig())
+
+        val body: RequestBody = RequestBody
+                .create(JSON, obj.toString())
+
+        builder.url("$URL/unfollow")
         return executeRequest(builder.post(body).build())
     }
 
@@ -196,10 +276,15 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         }
     }
 
+    private fun getSig(): String? {
+        return MessageSignUtil.getInstance(context).signMessage(BIP47Util.getInstance(context).notificationAddress.ecKey, payNymToken)
+    }
+
 
     //This will be replaced using DI injection in the future
     companion object {
-        const val URL = "https://paynym.is/api/v1";
+        const val PAYNYM_API = "https://paynym.is/";
+        const val URL = "${PAYNYM_API}api/v1";
         var payNymApiService: PayNymApiService? = null
         fun getInstance(code: String, context: Context): PayNymApiService {
             if (payNymApiService == null) {
