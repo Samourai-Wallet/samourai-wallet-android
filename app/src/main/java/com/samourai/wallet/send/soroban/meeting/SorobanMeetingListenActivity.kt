@@ -124,7 +124,7 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
                 sorobanFee.text = "None"
             }
 
-            MaterialAlertDialogBuilder(this@SorobanMeetingListenActivity, R.style.AppTheme_MaterialDialog)
+            MaterialAlertDialogBuilder(this@SorobanMeetingListenActivity, R.style.Theme_Samourai_MaterialDialog_Rounded)
                     .setView(view)
                     .setPositiveButton(R.string.yes) { dialog, whichwhich ->
                         try {

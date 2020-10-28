@@ -833,5 +833,7 @@
     <string name="follow_paynym_fee_free">Fee : Free</string>
     <string name="connect_paynym_fee">Fee : 0.00015 BTC</string>
     <string name="connect">Connect</string>
+    <string name="blockchain_connect_with">BlockChain Connect with</string>
+    <string name="following">Following</string>
 
 </resources>

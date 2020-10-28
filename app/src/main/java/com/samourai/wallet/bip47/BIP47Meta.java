@@ -34,6 +34,7 @@ public class BIP47Meta {
     public static final int STATUS_SENT_NO_CFM = 0;
     public static final int STATUS_SENT_CFM = 1;
     public static  boolean  directoryTaskCompleted=  false;
+    public boolean  requiredRefresh=  false;
 
     private static ConcurrentHashMap<String,String> pcodeLabels = null;
     private static ConcurrentHashMap<String,Boolean> pcodeArchived = null;
@@ -102,15 +103,6 @@ public class BIP47Meta {
         String label = getLabel(pcode);
         if(label.length() == 0 || pcode.equals(label))    {
             label = getAbbreviatedPcode(pcode);
-        }
-        if (getArchived(pcode)) {
-            label += " (archived)";
-        }
-        if (getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT) {
-            label += " (not followed)";
-        }
-        if (getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
-            label += " (not confirmed)";
         }
         return label;
     }
@@ -394,9 +386,10 @@ public class BIP47Meta {
 //            info("BIP47Meta", "pcode:" + pcode.toString());
 //            info("BIP47Meta", "tx:" + pcodeOutgoingStatus.get(pcode).getLeft());
 //            info("BIP47Meta", "status:" + pcodeOutgoingStatus.get(pcode).getRight());
-            if(pcodeOutgoingStatus.get(pcode).getRight() != STATUS_SENT_CFM && pcodeOutgoingStatus.get(pcode).getLeft() != null && pcodeOutgoingStatus.get(pcode).getLeft().length() > 0)    {
-                ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
-            }
+//            if(pcodeOutgoingStatus.get(pcode).getRight() != STATUS_SENT_CFM && pcodeOutgoingStatus.get(pcode).getLeft() != null && pcodeOutgoingStatus.get(pcode).getLeft().length() > 0)    {
+//                ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
+//            }
+            ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
 
         }
 
@@ -511,6 +504,14 @@ public class BIP47Meta {
 
     public void setLatestEvent(String pcode, String event)    {
         pcodeLatestEvent.put(pcode, event);
+    }
+
+    public boolean isRequiredRefresh() {
+        return requiredRefresh;
+    }
+
+    public void setRequiredRefresh(boolean requiredRefresh) {
+        this.requiredRefresh = requiredRefresh;
     }
 
     public synchronized void pruneIncoming() {

@@ -106,7 +106,7 @@
         <activity
             android:name=".home.BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

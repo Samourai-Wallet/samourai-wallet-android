@@ -2,8 +2,9 @@ package com.samourai.wallet.home;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
@@ -45,11 +46,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.paynym.fragments.PayNymOnBoardBottomSheet;
 import com.samourai.wallet.settings.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -180,7 +183,7 @@ public class BalanceActivity extends SamouraiActivity {
                     if (BalanceActivity.this != null) {
 
                         if (rbfHash != null) {
-                            new AlertDialog.Builder(BalanceActivity.this)
+                            new MaterialAlertDialogBuilder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
                                     .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
                                     .setCancelable(true)
@@ -259,7 +262,7 @@ public class BalanceActivity extends SamouraiActivity {
                                     message += " ";
                                     message += hash + "-" + idx;
 
-                                    AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                    MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                                             .setTitle(R.string.dusting_tx)
                                             .setMessage(message)
                                             .setCancelable(false)
@@ -388,14 +391,14 @@ public class BalanceActivity extends SamouraiActivity {
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
-
-        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false) {
+         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
-        } else if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
-                PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false) {
-            doClaimPayNym();
-        } else {
+        } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
+                 !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false)) {
+             PayNymOnBoardBottomSheet payNymOnBoardBottomSheet = new PayNymOnBoardBottomSheet();
+             payNymOnBoardBottomSheet.show(getSupportFragmentManager(),payNymOnBoardBottomSheet.getTag());
         }
+        Log.i(TAG, "onCreate:PAYNYM_REFUSED ".concat(String.valueOf(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false))));
 
         if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
             if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
@@ -724,7 +727,7 @@ public class BalanceActivity extends SamouraiActivity {
                     doBackup();
                 } else {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                     builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
                     AlertDialog alert = builder.create();
 
@@ -786,6 +789,7 @@ public class BalanceActivity extends SamouraiActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == SCAN_COLD_STORAGE) {
 
             if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
@@ -827,8 +831,9 @@ public class BalanceActivity extends SamouraiActivity {
                 }
 
             }
-        }if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
-            refreshTx(false,false,false);
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
+            refreshTx(false, false, false);
             progressBar.setVisibility(View.VISIBLE);
         } else {
             ;
@@ -843,7 +848,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         if (account == 0) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setMessage(R.string.ask_you_sure_exit);
             AlertDialog alert = builder.create();
 
@@ -954,10 +959,6 @@ public class BalanceActivity extends SamouraiActivity {
         });
     }
 
-    private void doClaimPayNym() {
-        Intent intent = new Intent(BalanceActivity.this, ClaimPayNymActivity.class);
-        startActivity(intent);
-    }
 
     private void doSettings() {
         TimeOutUtil.getInstance().updatePin();
@@ -1038,7 +1039,7 @@ public class BalanceActivity extends SamouraiActivity {
 
     private void doSweep() {
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.action_sweep)
                 .setCancelable(true)
@@ -1048,7 +1049,7 @@ public class BalanceActivity extends SamouraiActivity {
                         final EditText privkey = new EditText(BalanceActivity.this);
                         privkey.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                                 .setTitle(R.string.app_name)
                                 .setMessage(R.string.enter_privkey)
                                 .setView(privkey)
@@ -1112,7 +1113,7 @@ public class BalanceActivity extends SamouraiActivity {
                 password38.setSingleLine(true);
                 password38.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.bip38_pw)
                         .setView(password38)
@@ -1191,7 +1192,7 @@ public class BalanceActivity extends SamouraiActivity {
         export_methods[0] = getString(R.string.export_to_clipboard);
         export_methods[1] = getString(R.string.export_to_email);
 
-        new AlertDialog.Builder(BalanceActivity.this)
+        new MaterialAlertDialogBuilder(BalanceActivity.this)
                 .setTitle(R.string.options_export)
                 .setSingleChoiceItems(export_methods, 0, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -1264,7 +1265,7 @@ public class BalanceActivity extends SamouraiActivity {
                                 )
                         ) {
 
-                            new AlertDialog.Builder(BalanceActivity.this)
+                            new MaterialAlertDialogBuilder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
                                     .setMessage(R.string.privkey_clipboard)
                                     .setCancelable(false)

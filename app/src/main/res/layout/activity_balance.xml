@@ -14,14 +14,14 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorAccent"
+        android:background="?attr/statusBarBackground"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="210dp"
-            app:contentScrim="?attr/colorAccent"
+            app:contentScrim="?attr/statusBarBackground"
             android:fitsSystemWindows="true"
             app:expandedTitleGravity="center_horizontal|center"
             app:expandedTitleMarginTop="82dp"
@@ -32,6 +32,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
+                android:elevation="0dp"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
 
