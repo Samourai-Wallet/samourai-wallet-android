@@ -9,12 +9,17 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.squareup.picasso.Cache;
+import com.squareup.picasso.Downloader;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -34,10 +39,15 @@ public class SamouraiApplication extends Application {
         super.onCreate();
         setUpTorService();
         setUpChannels();
-        RxJavaPlugins.setErrorHandler(throwable -> {}); 
+        RxJavaPlugins.setErrorHandler(throwable -> {});
+
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         // Write logcat output to a file
         if (BuildConfig.DEBUG) {
+            Picasso.get().setIndicatorsEnabled(true);
+
             try {
                 String logFile = Environment.getExternalStorageDirectory().getAbsolutePath().concat("/Samourai_debug_log.txt");
                 File file = new File(logFile);
