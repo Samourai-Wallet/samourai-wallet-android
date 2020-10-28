@@ -17,8 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#434343"
-            >
+            android:background="#434343">
 
             <TextView
                 android:id="@+id/textView41"
@@ -27,9 +26,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:text="Claim your PayNym Bot"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:text="Claim your PayNym Bot"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +57,7 @@
                 android:id="@+id/textView52"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:checkable="false"
                 android:text="PREVIEW"
                 android:textColor="@color/blue"
@@ -72,6 +71,7 @@
                 android:id="@+id/scrollView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:fillViewport="true"
                 app:layout_constraintBottom_toTopOf="@+id/claimButtonPaynym"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -79,116 +79,130 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView52"
                 app:layout_constraintVertical_bias="0.0">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical"
-                    android:weightSum="4">
+                    tools:layout_editor_absoluteY="12dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView17"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/ic_share_white_24dp"
+                        app:layout_constraintEnd_toStartOf="@+id/textView54"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView54"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="22dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:text="@string/share_and_reuse"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/imageView17" />
 
-                        <ImageView
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_share_white_24dp" />
 
-                        <TextView
-                            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Share and reuse without revealing your\nother transactions and balances" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/appCompatImageView"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="42dp"
+                        android:src="@drawable/party_popper"
+                        android:tint="@color/white"
+                        app:layout_constraintEnd_toEndOf="@+id/imageView17"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView17" />
 
-                    </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/textView61"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22dp"
-                        android:layout_marginBottom="22dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:lines="2"
+                        android:text="@string/unlocks_advanced"
+                        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/party_popper"
-                            android:tint="@color/white" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/appCompatImageView2"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="42dp"
+                        android:src="@drawable/ic_baseline_contacts_24"
+                        android:tint="@color/white"
+                        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
 
-                        <TextView
-                            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Share and reuse without revealing your\nother transactions and balances" />
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/textView63"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22dp"
-                        android:layout_marginBottom="22dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_baseline_contacts_24"
-                            android:tint="@color/white" />
-
-                        <TextView
-                            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Share and reuse without revealing your\nother transactions and balances" />
-
-                    </LinearLayout>
+                        android:text="@string/find_and_follow_your_friends"
+                        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/appCompatImageView2" />
 
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/appCompatImageView3"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="42dp"
+                        android:layout_marginBottom="16dp"
+                        android:src="@drawable/ic_casino_24px"
+                        android:tint="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView2"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/textView67"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22dp"
-                        android:layout_marginBottom="22dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/based_on_cryptography_and"
+                        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/appCompatImageView3" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_casino_24px"
-                            android:tint="@color/white" />
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline19"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.06" />
 
-                        <TextView
-                            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Share and reuse without revealing your\nother transactions and balances" />
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.21" />
 
-                    </LinearLayout>
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline21"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.9" />
 
-                </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             </ScrollView>
@@ -200,16 +214,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:padding="16dp"
-                android:text="Claim paynym"
+                android:text="@string/claim_paynym"
                 android:textColor="@color/white"
-                app:cornerRadius="16dp"
+                app:cornerRadius="18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:rippleColor="@color/text_primary"
                 app:strokeColor="@color/white"
-                app:strokeWidth="2dp" />
+                app:strokeWidth="1dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

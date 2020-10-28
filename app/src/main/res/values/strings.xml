@@ -835,5 +835,10 @@
     <string name="connect">Connect</string>
     <string name="blockchain_connect_with">BlockChain Connect with</string>
     <string name="following">Following</string>
+    <string name="based_on_cryptography_and">Based on cryptography and math, not your personal information</string>
+    <string name="find_and_follow_your_friends">Find and follow your friends and contacts without harming your privacy</string>
+    <string name="unlocks_advanced">Unlocks advanced privacy functionality in your wallet</string>
+    <string name="share_and_reuse">Share and reuse without revealing your other
+        transactions and balances</string>
 
 </resources>
