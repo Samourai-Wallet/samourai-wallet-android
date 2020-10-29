@@ -96,7 +96,7 @@
         <Button
             android:id="@+id/send_button"
             android:layout_width="0dp"
-            android:layout_height="84dp"
+            android:layout_height="64dp"
             android:background="@drawable/button_blue"
             android:text="Send Cahoots"
             android:visibility="invisible"

@@ -122,6 +122,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+
+import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -348,6 +350,12 @@ public class SendActivity extends SamouraiActivity {
                             strPcodeCounterParty = pcode;
                             if(type.getCahootsType() == CahootsType.STOWAWAY){
                                 strPCode = pcode;
+                            }
+                            if(type.getCahootsMode() == CahootsMode.SOROBAN){
+                                if(!TorManager.INSTANCE.isConnected()){
+                                    TorServiceController.startTor();
+                                    PrefsUtil.getInstance(getApplication()).setValue(PrefsUtil.ENABLE_TOR, true);
+                                }
                             }
                         }
                         chosen[0] = true;

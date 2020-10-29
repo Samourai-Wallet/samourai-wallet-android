@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,14 +86,19 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
 
         paynymSelect.setOnClickListener(v -> selectPCode());
         sendButton.setOnClickListener(v -> send());
+        parsePayloadIntent();
 
-        if (TorManager.INSTANCE.isConnected() && !PrefsUtil.getInstance(getApplication()).getValue(PrefsUtil.OFFLINE, false)) {
-            parsePayloadIntent();
-        } else {
-            String message = "";
-            if (!TorManager.INSTANCE.isConnected()) {
-                message = "Tor connection is required for online cahoots ? do you want to continue ?";
+        TorManager.INSTANCE.getTorStateLiveData().observe(SorobanMeetingSendActivity.this, torState -> {
+            if(torState == TorManager.TorState.WAITING){
+                textViewConnecting.setText("Waiting for tor...");
             }
+            if (torState == TorManager.TorState.ON) {
+                 startListen();
+            }
+        });
+
+        if (TorManager.INSTANCE.getTorState() == TorManager.TorState.OFF) {
+            String message = "Tor connection is required for online cahoots ? do you want to continue ?";
             new AlertDialog.Builder(this)
                     .setTitle("Confirm")
                     .setMessage(message)
@@ -101,12 +107,6 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                         progressBar.setVisibility(View.VISIBLE);
                         PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.OFFLINE, false);
                         TorServiceController.startTor();
-                        TorManager.INSTANCE.getTorStateLiveData().observe(SorobanMeetingSendActivity.this, torState -> {
-                            if (torState == TorManager.TorState.ON) {
-                                parsePayloadIntent();
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
                     }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
                 finish();
 
@@ -143,7 +143,6 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
             if (cahootsType == null || sendAmount <= 0) {
                 throw new Exception("Invalid arguments");
             }
-            sorobanMeetingService = AndroidSorobanCahootsService.getInstance(getApplicationContext()).getSorobanMeetingService();
 
             if (getIntent().hasExtra("pcode")) {
                 setPCode(getIntent().getStringExtra("pcode"));
@@ -162,6 +161,10 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
         paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
     }
 
+    private void startListen(){
+        sorobanMeetingService = AndroidSorobanCahootsService.getInstance(getApplicationContext()).getSorobanMeetingService();
+        send();
+    }
     private void setPCode(String pcode) {
         this.pcode = pcode;
 
@@ -171,7 +174,6 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
                 .into(paynymAvatar);
 
         sendButton.setVisibility(View.VISIBLE);
-        send();
     }
 
     private void send() {
