@@ -377,7 +377,7 @@ class TxDetailsActivity : SamouraiActivity() {
         payNymUsername!!.visibility = View.VISIBLE
         payNymAvatar!!.visibility = View.VISIBLE
         payNymUsername!!.text = paynymDisplayName
-        Picasso.with(this)
+        Picasso.get()
                 .load(WebUtil.PAYNYM_API + tx!!.paymentCode + "/avatar")
                 .into(payNymAvatar)
     }
