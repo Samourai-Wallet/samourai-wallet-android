@@ -154,12 +154,6 @@ public class BatchSendActivity extends SamouraiActivity {
         try    {
             balance = APIFactory.getInstance(BatchSendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).xpubstr());
         }
-        catch(IOException ioe)    {
-            balance = 0L;
-        }
-        catch(MnemonicException.MnemonicLengthException mle)    {
-            balance = 0L;
-        }
         catch(java.lang.NullPointerException npe)    {
             balance = 0L;
         }

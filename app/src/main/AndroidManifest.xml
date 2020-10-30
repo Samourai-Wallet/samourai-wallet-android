@@ -75,15 +75,15 @@
         <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:label=""
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.addPaynym.AddPaynymActivity"
             android:label="@string/add_new"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.PayNymHome"
             android:label="@string/paynyms"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -108,7 +108,7 @@
         <activity
             android:name=".home.BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -260,6 +260,18 @@
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"
+            android:theme="@style/SamouraiAppTheme" />
+        <activity
+            android:name=".send.cahoots.SorobanCahootsActivity"
+            android:label="Online Cahoots"
+            android:theme="@style/SamouraiAppTheme" />
+        <activity
+            android:name=".send.soroban.meeting.SorobanMeetingListenActivity"
+            android:label="Listen for online Cahoots"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
+            android:name=".send.soroban.meeting.SorobanMeetingSendActivity"
+            android:label="Send online Cahoots"
             android:theme="@style/SamouraiAppTheme" />
 
         <provider

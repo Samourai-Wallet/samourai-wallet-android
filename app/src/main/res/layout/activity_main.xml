@@ -16,7 +16,7 @@
         android:layout_marginBottom="32dp"
         app:indicatorColor="@color/accent"
         app:indicatorCornerRadius="4dp"
-        app:indicatorWidth="4dp"
+        app:indicatorSize="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -21,6 +21,7 @@ import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.widgets.CircleImageView;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class PaynymListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, int position) {
 
             String strPaymentCode = pcodes.get(position);
-            Picasso.with(getContext()).load(WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
+            Picasso.get().load(WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
                     .into(holder.avatar);
             holder.paynymCode.setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
             holder.avatar.getRootView().setOnClickListener(view -> onPayNymItemClick(pcodes.get(position),holder));

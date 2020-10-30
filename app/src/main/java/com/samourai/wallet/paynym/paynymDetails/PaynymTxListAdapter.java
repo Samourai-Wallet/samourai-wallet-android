@@ -25,7 +25,7 @@ import java.util.TimeZone;
 
 public class PaynymTxListAdapter extends RecyclerView.Adapter<PaynymTxListAdapter.ViewHolder> {
 
-    private List<Tx> txList = new ArrayList<>();
+    private List<Tx> txList;
     private Context context;
 
     public PaynymTxListAdapter(List<Tx> txList, Context context) {
@@ -76,7 +76,7 @@ public class PaynymTxListAdapter extends RecyclerView.Adapter<PaynymTxListAdapte
         return txList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView date, amount;
         private ImageView icon;
 
