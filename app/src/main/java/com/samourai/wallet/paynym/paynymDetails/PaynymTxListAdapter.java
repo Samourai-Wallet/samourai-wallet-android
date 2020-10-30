@@ -1,5 +1,6 @@
 package com.samourai.wallet.paynym.paynymDetails;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
@@ -26,9 +27,9 @@ import java.util.TimeZone;
 public class PaynymTxListAdapter extends RecyclerView.Adapter<PaynymTxListAdapter.ViewHolder> {
 
     private List<Tx> txList;
-    private Context context;
+    private Activity context;
 
-    public PaynymTxListAdapter(List<Tx> txList, Context context) {
+    public PaynymTxListAdapter(List<Tx> txList, Activity context) {
         this.txList = txList;
         this.context = context;
     }

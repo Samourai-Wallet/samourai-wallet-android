@@ -120,6 +120,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
+import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -880,12 +881,9 @@ public class BalanceActivity extends SamouraiActivity {
                 if (WhirlpoolNotificationService.isRunning(getApplicationContext()))
                     WhirlpoolNotificationService.stopService(getApplicationContext());
 
-//                if (TorManager.INSTANCE.isRequired()) {
-//                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-//                    startIntent.setAction(TorService.STOP_SERVICE);
-//                    startIntent.putExtra("KILL_TOR", true);
-//                    startService(startIntent);
-//                }
+                if (TorManager.INSTANCE.isConnected()) {
+                    TorServiceController.stopTor();
+                }
                 TimeOutUtil.getInstance().reset();
                 finishAffinity();
                 finish();

@@ -100,7 +100,7 @@ class PayNymDetailsActivity : SamouraiActivity() {
         if (intent.hasExtra("label")) {
             label = intent.getStringExtra("label")
         }
-        paynymTxListAdapter = PaynymTxListAdapter(txesList, applicationContext)
+        paynymTxListAdapter = PaynymTxListAdapter(txesList, this)
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = paynymTxListAdapter
         val drawable = ContextCompat.getDrawable(this, R.drawable.divider_grey)
