@@ -71,6 +71,7 @@ import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
+import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.send.soroban.meeting.SorobanMeetingSendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -2235,6 +2236,10 @@ public class SendActivity extends SamouraiActivity {
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
         }
+        else {
+            menu.findItem(R.id.action_soroban_collab).setVisible(false);
+        }
+
         if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
             MenuItem item = menu.findItem(R.id.action_send_menu_account);
             item.setVisible(true);
@@ -2278,7 +2283,13 @@ public class SendActivity extends SamouraiActivity {
             doBatchSpend();
         } else if (id == R.id.action_support) {
             doSupport();
-        } else {
+        }
+        else if(id == R.id.action_soroban_collab) {
+            Intent intent = new Intent(this, SorobanMeetingListenActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix());
+            startActivity(intent);
+        }
+        else {
             ;
         }
 

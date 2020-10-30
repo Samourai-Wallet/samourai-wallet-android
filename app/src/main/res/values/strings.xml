@@ -351,6 +351,8 @@
     <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
 
     <string name="options_sign">Sign message</string>
+    <string name="options_soroban_collab">Soroban receive/collaborate</string>
+    <string name="options_paste_cahoots">Paste cahoots payload</string>
 
     <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
 
