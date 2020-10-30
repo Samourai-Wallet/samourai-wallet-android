@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
->
+    >
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout2"
         android:layout_width="match_parent"
@@ -18,9 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
-
         </androidx.appcompat.widget.Toolbar>
-
 
         <com.samourai.wallet.widgets.HorizontalStepsViewIndicator
             android:id="@+id/step_view"
@@ -44,7 +42,6 @@
             android:textStyle="bold" />
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <com.samourai.wallet.widgets.ViewPager
         android:id="@+id/view_flipper"
         android:layout_width="match_parent"
@@ -54,9 +51,6 @@
         android:outAnimation="@anim/fab_slide_out_to_left"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
-
-
-
     </com.samourai.wallet.widgets.ViewPager>
 
     <Button
@@ -70,7 +64,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

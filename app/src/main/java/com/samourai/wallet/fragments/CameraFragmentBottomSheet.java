@@ -1,16 +1,17 @@
 package com.samourai.wallet.fragments;
 
 import android.os.Bundle;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.samourai.codescanner.CodeScanner;
-import com.samourai.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.samourai.wallet.R;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 
 public class CameraFragmentBottomSheet extends BottomSheetDialogFragment {

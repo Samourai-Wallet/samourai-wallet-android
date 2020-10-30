@@ -240,7 +240,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
                 ((TextView) paynymLayout.findViewById(R.id.paynym_code)).setText(BIP47Meta.getInstance().getDisplayLabel(pcode));
 
-                Picasso.with(getApplicationContext()).load(WebUtil.PAYNYM_API + pcode + "/avatar")
+                Picasso.get().load(WebUtil.PAYNYM_API + pcode + "/avatar")
                         .into(avatar);
 
             } else {

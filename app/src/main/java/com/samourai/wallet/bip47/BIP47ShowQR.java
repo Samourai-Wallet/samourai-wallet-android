@@ -265,7 +265,7 @@ public class BIP47ShowQR extends Activity {
                                     Log.d("BIP47Activity", strNymName);
 
                                     final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
-                                    Picasso.with(BIP47ShowQR.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+                                    Picasso.get().load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
 
                                     ((TextView)findViewById(R.id.nymName)).setText(strNymName);
 

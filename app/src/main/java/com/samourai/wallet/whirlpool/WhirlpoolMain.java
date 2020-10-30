@@ -418,9 +418,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss();
                 try {
                     if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("payload", code.trim());
-                        cahootIntent.putExtra("_account", WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix());
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix(), code.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         PSBTUtil.getInstance(getApplication()).doPSBT(code.trim());

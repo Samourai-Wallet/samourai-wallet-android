@@ -9,6 +9,7 @@ import androidx.transition.Slide;
 import androidx.transition.TransitionManager;
 import androidx.transition.TransitionSet;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
+import com.samourai.wallet.cahoots.CahootsMode;
 
 import java.text.DecimalFormat;
 
@@ -87,7 +89,7 @@ public class SendTransactionDetailsView extends FrameLayout {
         stoneWallLayout.setVisibility(enable ? INVISIBLE : VISIBLE);
     }
 
-    public void showStonewallX2Layout(String participant, long fee) {
+    public void showStonewallX2Layout(CahootsMode cahootsMode, String participant,  long fee) {
 
         stoneWallLayout.getRootView().post(() -> {
             stoneWallX2Layout.setVisibility(VISIBLE);
@@ -95,18 +97,16 @@ public class SendTransactionDetailsView extends FrameLayout {
             stoneWallLayout.setVisibility(GONE);
         });
         stoneWallx2mixingParticipant.setText(participant);
-
     }
 
-    public void showStowawayLayout(String participant, TxProcessorResult entropy, long fee) {
+    public void showStowawayLayout(CahootsMode cahootsMode, String participant, TxProcessorResult entropy, long fee) {
         stoneWallLayout.getRootView().post(() -> {
             stowawayLayout.setVisibility(VISIBLE);
             stoneWallLayout.setVisibility(GONE);
             stoneWallX2Layout.setVisibility(GONE);
         });
-
-        stowawayMixingParticipant.setText("____");
-
+        stowawayMixingParticipant.setText(participant);
+        stowawayMethod.setText(cahootsMode.getLabel());
     }
 
     public void showStonewallx1Layout(TxProcessorResult entropyResult) {

@@ -690,7 +690,8 @@
     <string name="create_to_existing_dojo">Create wallet and pair to Dojo</string>
     <string name="preorder">preorder</string>
     <string name="add_new">Add New</string>
-    <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
+    <string name="paynym_follow_message_2">to your Follow instantly.Follow PayNym to participate in Cahoots CoinJoin\ntransactions with them.</string>
+    <string name="paynym_connect_message">to generate unique private addresses for sending bitcoin\nto this contact</string>
     <string name="follow">Follow</string>
     <string name="wallet_locked">Wallet Locked</string>
     <string name="address">Address</string>
@@ -827,5 +828,17 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="no_cahoots_detected">No cahoots detected.Refresh to search again</string>
+    <string name="waiting_for_cahoots_request">Waiting for Cahoots request...</string>
+    <string name="follow_paynym_fee_free">Fee : Free</string>
+    <string name="connect_paynym_fee">Fee : 0.00015 BTC</string>
+    <string name="connect">Connect</string>
+    <string name="blockchain_connect_with">BlockChain Connect with</string>
+    <string name="following">Following</string>
+    <string name="based_on_cryptography_and">Based on cryptography and math, not your personal information</string>
+    <string name="find_and_follow_your_friends">Find and follow your friends and contacts without harming your privacy</string>
+    <string name="unlocks_advanced">Unlocks advanced privacy functionality in your wallet</string>
+    <string name="share_and_reuse">Share and reuse without revealing your other
+        transactions and balances</string>
 
 </resources>

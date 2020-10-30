@@ -131,16 +131,7 @@ public class SMSReceiver extends BroadcastReceiver {
 
                     }
 
-                    String seed = null;
-                    try {
-                        seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
-                    }
-                    catch(IOException ioe) {
-                        ioe.printStackTrace();
-                    }
-                    catch(MnemonicException.MnemonicLengthException mle) {
-                        mle.printStackTrace();
-                    }
+                    String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
 
 //            Log.i("SMSReceiver", "sending to:" + incomingTelNo);
                     SMSSender.getInstance(context).send(seed, incomingTelNo);

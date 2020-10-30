@@ -55,16 +55,8 @@ public class WebSocketService extends Service {
 
         }).start();
 
-        try {
-            if(HD_WalletFactory.getInstance(context).get() == null)    {
-                return;
-            }
-        }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        catch(MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
+        if(HD_WalletFactory.getInstance(context).get() == null)    {
+            return;
         }
 
         //

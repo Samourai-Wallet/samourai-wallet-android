@@ -216,12 +216,9 @@ public class BalanceViewModel extends AndroidViewModel {
                                     AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
 
-                                    try {
-                                        HD_WalletFactory.getInstance(getApplication()).get().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                                        HD_WalletFactory.getInstance(getApplication()).get().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                    } catch (IOException | MnemonicException.MnemonicLengthException e) {
-                                        ;
-                                    }
+                                    HD_WalletFactory.getInstance(getApplication()).get().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    HD_WalletFactory.getInstance(getApplication()).get().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+
                                 } else {
                                     ;
                                 }

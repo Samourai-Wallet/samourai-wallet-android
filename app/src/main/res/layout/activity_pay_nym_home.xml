@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -48,6 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
                     app:layout_constraintEnd_toEndOf="@+id/paybyn_user_avatar"
                     app:layout_constraintStart_toStartOf="@+id/paybyn_user_avatar"
                     app:layout_constraintTop_toBottomOf="@+id/paybyn_user_avatar"
@@ -106,8 +106,10 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="12dp"
         android:clickable="true"
-        android:src="@drawable/fab_add"
-        app:backgroundTint="@color/accent" />
+        app:tint="@color/white"
+        app:backgroundTint="@color/accent"
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        android:contentDescription="Add new paynym" />
 
     <LinearLayout
         android:layout_width="match_parent"
