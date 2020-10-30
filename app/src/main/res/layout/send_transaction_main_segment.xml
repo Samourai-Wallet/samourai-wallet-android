@@ -33,6 +33,22 @@
             android:orientation="vertical">
 
 
+            <TextView
+                android:id="@+id/addons_not_available_message"
+                android:layout_width="match_parent"
+                android:paddingTop="14dp"
+                android:paddingBottom="12dp"
+                android:paddingStart="16dp"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:gravity="center"
+                android:textColor="#afd2d2d2"
+                android:paddingEnd="16dp"
+                android:layout_height="wrap_content"
+                android:text="@string/note_privacy_addons_are_not_available_for_selected_utxo_s" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/premium_addons"
                 android:layout_width="match_parent"
@@ -65,7 +81,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
-                    android:text="Privacy Addons"
+                    android:text="@string/privacy_addons"
                     android:textColor="@color/green_ui_2"
                     app:layout_constraintBottom_toTopOf="@+id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="8dp"
-                    android:text="Ricochet"
+                    android:text="@string/ricochet_"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -107,10 +123,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Staggered delivery"
+                    android:text="@string/staggered_delivery"
                     android:textColor="@color/white"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/ricochet_desc"
+                    app:layout_constraintStart_toStartOf="@+id/guideline18"
                     app:layout_constraintTop_toBottomOf="@+id/ricochet_desc" />
 
                 <TextView
@@ -119,11 +135,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    android:text="For extra privacy and analysis resistance, each hop will appear in mempool 1 block apart. Final delivery can take between 30 min and 2 hours."
+                    android:text="@string/for_extra_privacy_message"
                     android:textColor="#afd2d2d2"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toStartOf="@+id/ricochet_staggered_option"
-                    app:layout_constraintStart_toStartOf="@+id/tx_staggered_delivery"
+                    app:layout_constraintStart_toStartOf="@+id/guideline18"
                     app:layout_constraintTop_toBottomOf="@+id/tx_staggered_delivery" />
 
                 <View
@@ -151,6 +167,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintGuide_begin="44dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.07" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -199,7 +222,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Off"
+                    android:text="@string/off"
                     android:textColor="@color/warning_yellow"
                     app:layout_constraintEnd_toEndOf="@+id/textView74"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -211,7 +234,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="NOTE: You are making a post-mix spend. If #Cahoots\nis not selected Samourai will attempt to make a STONEWALL spend."
+                    android:text="@string/note_you_are_making_a_post_mix_spend_if_cahoots_nis_not_selected_samourai_will"
                     android:textAlignment="viewStart"
                     android:textColor="@color/white"
                     android:textSize="13sp"

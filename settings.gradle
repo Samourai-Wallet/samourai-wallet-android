@@ -1,2 +1,2 @@
-include ':app', ':torservice'
+include ':app'
 include ':app'

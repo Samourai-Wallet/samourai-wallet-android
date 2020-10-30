@@ -448,7 +448,7 @@ public class PayloadUtil	{
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("cahoots", CahootsFactory.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
-            meta.put("tor", TorManager.getInstance(context).toJSON());
+            meta.put("tor", TorManager.INSTANCE.toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
             meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
             meta.put("utxo_notes", UTXOUtil.getInstance().toJSON_notes());
@@ -681,7 +681,7 @@ public class PayloadUtil	{
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
                 }
                 if(meta.has("tor")) {
-                    TorManager.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
+                     TorManager.INSTANCE.fromJSON((JSONObject) meta.get("tor"));
                 }
                 if(meta.has("blocked_utxos")) {
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));

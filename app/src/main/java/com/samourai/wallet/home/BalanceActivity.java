@@ -45,12 +45,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SettingsActivity;
+import com.samourai.wallet.settings.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -81,7 +80,6 @@ import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -241,8 +239,12 @@ public class BalanceActivity extends SamouraiActivity {
                         final long amount = out.getValue().longValue();
 
                         if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
-                                !BlockedUTXO.getInstance().contains(hash, idx) &&
-                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx)) {
+                                ((!BlockedUTXO.getInstance().contains(hash, idx) &&
+                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx))
+                                ||
+                                (!BlockedUTXO.getInstance().containsPostMix(hash, idx) &&
+                                !BlockedUTXO.getInstance().containsNotDustedPostMix(hash, idx)))
+                                ){
 
 //                            BalanceActivity.this.runOnUiThread(new Runnable() {
 //                            @Override
@@ -267,13 +269,23 @@ public class BalanceActivity extends SamouraiActivity {
                                             .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    BlockedUTXO.getInstance().add(hash, idx, amount);
+                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
+                                                        BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
+                                                    }
+                                                    else    {
+                                                        BlockedUTXO.getInstance().add(hash, idx, amount);
+                                                    }
 
                                                 }
                                             }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    BlockedUTXO.getInstance().addNotDusted(hash, idx);
+                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
+                                                        BlockedUTXO.getInstance().addNotDustedPostMix(hash, idx);
+                                                    }
+                                                    else    {
+                                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
+                                                    }
 
                                                 }
                                             });
@@ -767,32 +779,27 @@ public class BalanceActivity extends SamouraiActivity {
 
 
     private void setUpTor() {
-        Disposable disposable = TorManager.getInstance(this)
-                .getTorStatus()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(state -> {
-                    if (state == TorProxyManager.ConnectionStatus.CONNECTED) {
-                        PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
-                        if (this.progressBarMenu != null) {
-                            this.progressBarMenu.setVisibility(View.INVISIBLE);
-                            this.menuTorIcon.setImageResource(R.drawable.tor_on);
-                        }
+        TorManager.INSTANCE.getTorStateLiveData().observe(this,torState -> {
+            if (torState == TorManager.TorState.ON) {
+                PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
+                if (this.progressBarMenu != null) {
+                    this.progressBarMenu.setVisibility(View.INVISIBLE);
+                    this.menuTorIcon.setImageResource(R.drawable.tor_on);
+                }
 
-                    } else if (state == TorProxyManager.ConnectionStatus.CONNECTING) {
-                        if (this.progressBarMenu != null) {
-                            this.progressBarMenu.setVisibility(View.VISIBLE);
-                            this.menuTorIcon.setImageResource(R.drawable.tor_on);
-                        }
-                    } else {
-                        if (this.progressBarMenu != null) {
-                            this.progressBarMenu.setVisibility(View.INVISIBLE);
-                            this.menuTorIcon.setImageResource(R.drawable.tor_off);
-                        }
+            } else if (torState == TorManager.TorState.WAITING) {
+                if (this.progressBarMenu != null) {
+                    this.progressBarMenu.setVisibility(View.VISIBLE);
+                    this.menuTorIcon.setImageResource(R.drawable.tor_on);
+                }
+            } else {
+                if (this.progressBarMenu != null) {
+                    this.progressBarMenu.setVisibility(View.INVISIBLE);
+                    this.menuTorIcon.setImageResource(R.drawable.tor_off);
+                }
 
-                    }
-                });
-        compositeDisposable.add(disposable);
+            }
+        });
     }
 
 
@@ -876,12 +883,12 @@ public class BalanceActivity extends SamouraiActivity {
                 if (WhirlpoolNotificationService.isRunning(getApplicationContext()))
                     WhirlpoolNotificationService.stopService(getApplicationContext());
 
-                if (TorManager.getInstance(getApplicationContext()).isRequired()) {
-                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-                    startIntent.setAction(TorService.STOP_SERVICE);
-                    startIntent.putExtra("KILL_TOR", true);
-                    startService(startIntent);
-                }
+//                if (TorManager.INSTANCE.isRequired()) {
+//                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+//                    startIntent.setAction(TorService.STOP_SERVICE);
+//                    startIntent.putExtra("KILL_TOR", true);
+//                    startService(startIntent);
+//                }
                 TimeOutUtil.getInstance().reset();
                 finishAffinity();
                 finish();

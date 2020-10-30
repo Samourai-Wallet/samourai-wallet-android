@@ -144,7 +144,7 @@ public class WebSocketHandler {
 
         protected Void doInBackground(Void... args) {
 
-            if(AppUtil.getInstance(context).isOfflineMode() || TorManager.getInstance(context).isRequired())    {
+              if(AppUtil.getInstance(context).isOfflineMode() || TorManager.INSTANCE.isRequired())    {
                 return null;
             }
 

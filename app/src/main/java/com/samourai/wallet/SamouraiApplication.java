@@ -5,18 +5,19 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
+
 import androidx.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.tor.TorService;
-import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
+
+import io.matthewnelson.topl_service.TorServiceController;
 
 public class SamouraiApplication extends Application {
 
@@ -28,10 +29,9 @@ public class SamouraiApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        setUpTorService();
         setUpChannels();
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            startService();
-        }
+
         // Write logcat output to a file
         if (BuildConfig.DEBUG) {
             try {
@@ -50,15 +50,10 @@ public class SamouraiApplication extends Application {
                 e.printStackTrace();
             }
         }
-
     }
 
     public void startService() {
-        if (ConnectivityStatus.hasConnectivity(getApplicationContext()) && PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            Intent startIntent = new Intent(this, TorService.class);
-            startIntent.setAction(TorService.START_SERVICE);
-            startService(startIntent);
-        }
+        TorServiceController.startTor();
     }
 
     private void setUpChannels() {
@@ -106,7 +101,6 @@ public class SamouraiApplication extends Application {
         }
     }
 
-
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
@@ -114,7 +108,15 @@ public class SamouraiApplication extends Application {
 
     @Override
     public void onTerminate() {
-        TorManager.getInstance(getApplicationContext()).dispose();
+        TorServiceController.stopTor();
         super.onTerminate();
     }
+
+    private void setUpTorService() {
+        TorManager.INSTANCE.setUp(this);
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+            startService();
+        }
+    }
+
 }

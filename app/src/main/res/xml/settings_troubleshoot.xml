@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:title="@string/options_passphrase_test"
         android:summary="@string/options_passphrase_test2"
         android:key="troubleshoot"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_send_backup_to_support"
         android:summary="@string/options_send_backup_to_support2"
         android:key="send_backup_support"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_prune"
         android:summary="@string/options_prune2"
         android:key="prune"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_indexes"
         android:summary="@string/options_indexes2"
         android:key="idx"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_address_calc"
         android:summary="@string/options_address_calc2"
         android:key="acalc"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_paynym_calc"
         android:summary="@string/options_paynym_calc2"
         android:key="pcalc"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_whirlpool_state"
         android:summary="@string/options_whirlpool_state2"
         android:key="wpstate"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
 </PreferenceScreen>

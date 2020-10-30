@@ -53,8 +53,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher_round"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/SamouraiAppTheme"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        >
         <activity
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
@@ -122,13 +124,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
+            android:theme="@style/SamouraiAppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
-        <activity
-            android:name=".SettingsActivity2"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+
         <activity
             android:name=".AboutActivity"
             android:label="@string/app_name"
@@ -174,12 +174,13 @@
         <activity
             android:name=".PayNymCalcActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+            android:label="PayNym Calculator" />
 
         <activity
             android:name=".AddressCalcActivity"
+            android:theme="@style/SamouraiAppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+            android:label="Address Calculator" />
 
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
@@ -271,15 +272,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <receiver android:name=".whirlpool.service.WhirlpoolBroadCastReceiver" />
-        <receiver android:name=".tor.TorBroadCastReceiver" />
-        <receiver
-            android:name="com.msopentech.thali.android.toronionproxy.ConnectionChangeReceiver"
-            android:label="NetworkChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
+
         <receiver
             android:name=".util.ConnectionChangeReceiver"
             android:label="NetworkChangeReceiver">
@@ -293,10 +286,6 @@
             android:name=".service.WebSocketService"
             android:enabled="true" />
 
-        <service
-            android:name=".tor.TorService"
-            android:enabled="true"
-            android:stopWithTask="true" />
         <service
             android:name=".service.JobRefreshService"
             android:permission="android.permission.BIND_JOB_SERVICE" />

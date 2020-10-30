@@ -351,7 +351,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 return true;
             }
-            else if(!TorManager.getInstance(context).isRequired())    {
+            else if(!TorManager.INSTANCE.isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("apikey=");
@@ -407,7 +407,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
             }
-            else if(!TorManager.getInstance(context).isRequired())    {
+            else if(!TorManager.INSTANCE.isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -461,7 +461,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorManager.getInstance(context).isRequired())    {
+            if(!TorManager.INSTANCE.isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("xpub=");
@@ -972,7 +972,7 @@ public class APIFactory	{
                             break;
                     }
 
-                    if(!TorManager.getInstance(context).isRequired())    {
+                    if(!TorManager.INSTANCE.isRequired())    {
                         StringBuilder args = new StringBuilder();
                         args.append("address=");
                         args.append(address);
@@ -1334,7 +1334,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
             }
-            else if(!TorManager.getInstance(context).isRequired())    {
+            else if(!TorManager.INSTANCE.isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
@@ -1888,6 +1888,14 @@ public class APIFactory	{
                 }
             }
 
+            for(String _s : BlockedUTXO.getInstance().getNotDustedUTXOPostMix())   {
+//                debug("APIFactory", "not dusted postmix:" + _s);
+                if(!seenOutputsPostMix.contains(_s))    {
+                    BlockedUTXO.getInstance().removeNotDustedPostMix(_s);
+//                    debug("APIFactory", "not dusted postmix removed:" + _s);
+                }
+            }
+
             for(String _s : BlockedUTXO.getInstance().getBlockedUTXOPostMix().keySet())   {
                 debug("APIFactory", "blocked post-mix:" + _s);
                 if(!seenOutputsPostMix.contains(_s))    {
@@ -2312,7 +2320,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorManager.getInstance(context).isRequired())    {
+            if(!TorManager.INSTANCE.isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(address);
@@ -2430,7 +2438,7 @@ public class APIFactory	{
                     response = PayloadUtil.getInstance(context).deserializeMultiAddrBadBank().toString();
                 }
             }
-            else if(!TorManager.getInstance(context).isRequired())    {
+            else if(!TorManager.INSTANCE.isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -2492,7 +2500,7 @@ public class APIFactory	{
                     return  new JSONObject("{}");
                 }
             }
-            else if(!TorManager.getInstance(context).isRequired())    {
+            else if(!TorManager.INSTANCE.isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
