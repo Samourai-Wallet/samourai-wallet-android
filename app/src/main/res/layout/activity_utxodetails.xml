@@ -11,7 +11,7 @@
         android:id="@+id/appBarLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_accent"
+        android:background="?attr/statusBarBackground"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +21,7 @@
             android:id="@+id/toolbar_utxo_activity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/grey_accent">
+            android:background="?attr/statusBarBackground">
 
 
         </androidx.appcompat.widget.Toolbar>

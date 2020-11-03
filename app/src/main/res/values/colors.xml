@@ -32,6 +32,7 @@
     <color name="green_ui_2">#0ecf96</color>
     <color name="whirlpoolBlue">#00aaff</color>
     <color name="whirlpoolGreen">#90ffee</color>
+    <color name="transparent">#00FFFFFF</color>
 
 
     <color name="off_black">#252525</color>

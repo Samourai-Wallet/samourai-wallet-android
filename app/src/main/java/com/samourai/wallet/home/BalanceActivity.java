@@ -314,11 +314,14 @@ public class BalanceActivity extends SamouraiActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Switch themes based on accounts (blue theme for whirlpool account)
+        setSwitchThemes(true);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_balance);
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
         balanceViewModel.setAccount(account);
+
 
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

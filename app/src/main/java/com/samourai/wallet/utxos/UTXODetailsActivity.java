@@ -18,12 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -74,7 +76,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class UTXODetailsActivity extends AppCompatActivity {
+public class UTXODetailsActivity extends SamouraiActivity {
     final DecimalFormat df = new DecimalFormat("#");
     private String hash, addr, hashIdx;
     private TextView addressTextView, amountTextView, statusTextView, notesTextView, hashTextView;
@@ -91,6 +93,8 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Switch themes based on accounts (blue theme for whirlpool account)
+        setSwitchThemes(true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utxodetails);
 
@@ -183,7 +187,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
         setNoteState();
 
-        addressTextView.setOnClickListener((event) -> new AlertDialog.Builder(UTXODetailsActivity.this)
+        addressTextView.setOnClickListener((event) -> new MaterialAlertDialogBuilder(UTXODetailsActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.receive_address_to_clipboard)
                 .setCancelable(false)
@@ -197,7 +201,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                 }).show());
 
         hashTextView.setOnClickListener(view -> {
-            new android.app.AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.txid_to_clipboard)
                     .setCancelable(false)
@@ -281,7 +285,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
             selected = 1;
         }
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Set status")
                 .setSingleChoiceItems(export_methods, selected, (dialog, which) -> {
 
@@ -410,7 +414,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
         WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
         final WhirlpoolUtxo mixableUtxo = (whirlpoolWallet != null ? getWhirlpoolUtxoWhenMixable(whirlpoolWallet) : null);
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setMessage(mixableUtxo!=null ? "Mix now?" : "Send utxo to Whirlpool?")
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
@@ -577,7 +581,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
         privkeyLayout.addView(showQR);
         privkeyLayout.addView(showText);
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.app_name)
                 .setView(privkeyLayout)
                 .setCancelable(false)
@@ -599,7 +603,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
             showText.setPadding(40, 10, 40, 10);
             showText.setTextSize(18.0f);
 
-            new AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.app_name)
                     .setView(showText)
                     .setCancelable(false)

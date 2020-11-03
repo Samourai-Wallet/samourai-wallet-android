@@ -14,7 +14,7 @@ import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 public class SamouraiActivity extends AppCompatActivity {
 
     protected int account = 0;
-
+    private boolean switchThemes = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,9 +28,14 @@ public class SamouraiActivity extends AppCompatActivity {
     }
 
     private void setUpTheme() {
-        if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
-            setTheme(R.style.SamouraiAppWhirlpoolTheme);
-        }
+        if (switchThemes)
+            if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+                setTheme(R.style.Theme_Samourai_Whirlpool_Material);
+            }
+    }
+
+    public void setSwitchThemes(boolean switchThemes) {
+        this.switchThemes = switchThemes;
     }
 
     @Override

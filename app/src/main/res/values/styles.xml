@@ -147,6 +147,11 @@
         <item name="android:background">@color/grey_accent</item>
         <item name="elevation">0dp</item>
     </style>
+    <style name="Widget.Samourai.Whirlpool.Toolbar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface">
+        <!-- Toolbar should always be within an AppBarLayout which provides the background. -->
+        <item name="android:background">@color/whirlpoolBlue</item>
+        <item name="elevation">0dp</item>
+    </style>
 
     <style name="Widget.Samourai.SnackBar" parent="@style/Widget.MaterialComponents.Snackbar">
 

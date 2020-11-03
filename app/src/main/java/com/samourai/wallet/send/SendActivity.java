@@ -200,11 +200,14 @@ public class SendActivity extends SamouraiActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Switch themes based on accounts (blue theme for whirlpool account)
+        setSwitchThemes(true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
         setSupportActionBar(findViewById(R.id.toolbar_send));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
+
         //CustomView for showing and hiding body of th UI
         sendTransactionDetailsView = findViewById(R.id.sendTransactionDetailsView);
 
@@ -332,6 +335,7 @@ public class SendActivity extends SamouraiActivity {
 
 
     }
+
 
     private void setUpCahoots() {
         if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {

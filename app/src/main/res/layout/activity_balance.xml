@@ -33,6 +33,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:elevation="0dp"
+                android:backgroundTint="?attr/statusBarBackground"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
 

@@ -61,7 +61,7 @@
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
             android:parentActivityName=".utxos.UTXOSActivity"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".network.NetworkDashboard"
             android:label="@string/title_activity_network_dashboard"
@@ -71,7 +71,7 @@
             android:name=".utxos.UTXOSActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/unspent_outputs"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:label=""
@@ -125,7 +125,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:theme="@style/SamouraiAppTheme"
+            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
 
@@ -233,7 +233,7 @@
         <activity
             android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/SamouraiAppTheme"
+            android:theme="@style/Theme.Samourai.Material"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlpoolMain"
