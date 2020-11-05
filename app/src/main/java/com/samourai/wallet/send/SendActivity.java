@@ -448,9 +448,11 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
-        SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-        compoundButton.setChecked(checked);
-        new Handler().postDelayed(this::prepareSpend, 100);
+        if(compoundButton.isPressed()){
+            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+            compoundButton.setChecked(checked);
+            new Handler().postDelayed(this::prepareSpend, 100);
+        }
     };
 
     private void setUpBoltzman() {
@@ -1606,7 +1608,9 @@ public class SendActivity extends SamouraiActivity {
             if (!canDoBoltzmann) {
                 restoreChangeIndexes();
                 sendTransactionDetailsView.getStoneWallSwitch().setOnClickListener(null);
+                sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(null);
                 sendTransactionDetailsView.getStoneWallSwitch().setEnabled(false);
+                sendTransactionDetailsView.getStoneWallSwitch().setChecked(false);
                 sendTransactionDetailsView.enableStonewall(false);
                 sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
                 sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
@@ -1942,6 +1946,10 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void backToTransactionView() {
+        SPEND_TYPE = SPEND_BOLTZMANN;
+        //Revert to default
+        selectedUTXO = new ArrayList<>();
+        receivers = new HashMap<>();
         amountViewSwitcher.showPrevious();
         sendTransactionDetailsView.showTransaction();
 
@@ -2219,6 +2227,7 @@ public class SendActivity extends SamouraiActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
             ;
         } else if (resultCode == Activity.RESULT_OK && requestCode == RICOCHET) {
