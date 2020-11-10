@@ -78,7 +78,7 @@ public class BalanceViewModel extends AndroidViewModel {
 
             }
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
-                response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddrPost();
+                response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddrMix();
             }
 
             if (response != null) {
@@ -589,7 +589,7 @@ public class BalanceViewModel extends AndroidViewModel {
                     }
 
                 }
-
+/*
                 try {
                     if (account_type == POST_MIX) {
                         PayloadUtil.getInstance(getApplication()).serializeMultiAddrPost(jsonObject);
@@ -601,7 +601,7 @@ public class BalanceViewModel extends AndroidViewModel {
                 } catch (IOException | DecryptionException e) {
                     ;
                 }
-
+*/
                 return true;
 
             }
