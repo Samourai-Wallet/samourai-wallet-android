@@ -1515,7 +1515,7 @@ public class APIFactory	{
 //            info("APIFactory", "Dynamic fees:" + url.toString());
             String response = null;
             if(!AppUtil.getInstance(context).isOfflineMode())    {
-                response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
+                response = WebUtil.getInstance(null).getURL(_url + "wallet" + "?active=3BURndogb6z8w7S7U3iAzZGCBxvpA4o5Ld&at=" + getAccessToken());
             }
             else    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
