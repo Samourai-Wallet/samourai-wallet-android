@@ -393,19 +393,19 @@ public class BalanceViewModel extends AndroidViewModel {
             final int POST_MIX = 1;
             final int BAD_BANK = 2;
 
-            int account_type = 0;
+//            int account_type = 0;
 
             if (jsonObject != null) {
 
                 long xpub_mix_balance = 0;
-
+/*
                 if (jsonObject.has("wallet")) {
                     JSONObject walletObj = (JSONObject) jsonObject.get("wallet");
                     if (walletObj.has("final_balance")) {
                         xpub_mix_balance = walletObj.getLong("final_balance");
                     }
                 }
-
+*/
                 if (jsonObject.has("info")) {
                     JSONObject infoObj = (JSONObject) jsonObject.get("info");
                     if (infoObj.has("latest_block")) {
@@ -432,40 +432,45 @@ public class BalanceViewModel extends AndroidViewModel {
                                         addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).zpubstr())) {
 
                                     if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
-                                        xpub_balance = xpub_mix_balance;
+                                        xpub_mix_balance = addrObj.getLong("final_balance");
                                         APIFactory.getInstance(getApplication()).setXpubPostMixBalance(xpub_mix_balance);
                                     }
-                                    account_type = POST_MIX;
+//                                    account_type = POST_MIX;
 
                                     AddressFactory.getInstance().setHighestPostReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestPostChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                } else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
+                                }
+                                /*
+                                else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
                                         addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).zpubstr())) {
 
                                     if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()) {
                                         xpub_balance = xpub_mix_balance;
                                     }
-                                    account_type = PRE_MIX;
+//                                    account_type = PRE_MIX;
 
                                     AddressFactory.getInstance().setHighestPreReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestPreChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                } else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).xpubstr()) ||
+                                }
+                                else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).xpubstr()) ||
                                         addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).zpubstr())) {
 
                                     if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()) {
                                         xpub_balance = xpub_mix_balance;
                                     }
-                                    account_type = BAD_BANK;
+//                                    account_type = BAD_BANK;
 
                                     AddressFactory.getInstance().setHighestBadBankReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestBadBankChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                } else {
+                                }
+                                */
+                                else {
                                     ;
                                 }
                             }
@@ -556,9 +561,10 @@ public class BalanceViewModel extends AndroidViewModel {
                                     }
                                 }
 
-                            } else if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
+                            }
+                            /*
+                            else if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
                                     addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).zpubstr())) {
-
                                 if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()) {
 
                                     if (!xpub_txs.containsKey(addr)) {
@@ -570,9 +576,9 @@ public class BalanceViewModel extends AndroidViewModel {
                                         xpub_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
                                     }
                                 }
-                            } else if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).xpubstr()) ||
+                            }
+                            else if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).xpubstr()) ||
                                     addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).zpubstr())) {
-
                                 if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()) {
 
                                     if (!xpub_txs.containsKey(addr)) {
@@ -584,6 +590,10 @@ public class BalanceViewModel extends AndroidViewModel {
                                         xpub_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
                                     }
                                 }
+                            }
+                            */
+                            else    {
+                                ;
                             }
                         }
                     }

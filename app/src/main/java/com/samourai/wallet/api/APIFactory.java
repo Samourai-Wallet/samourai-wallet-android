@@ -2681,7 +2681,9 @@ public class APIFactory	{
                                 postmix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
                             }
 
-                        } else if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()) ||
+                        }
+                        /*
+                        else if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()) ||
                                 addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr())) {
                             if (!premix_txs.containsKey(addr)) {
                                 premix_txs.put(addr, new ArrayList<Tx>());
@@ -2691,7 +2693,8 @@ public class APIFactory	{
                             } else {
                                 premix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
                             }
-                        } else if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr()) ||
+                        }
+                        else if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr()) ||
                                 addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).zpubstr())) {
 
                             if (!badbank_txs.containsKey(addr)) {
@@ -2703,6 +2706,10 @@ public class APIFactory	{
                                 badbank_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
                             }
                         }
+                        else {
+                        ;
+                        }
+                        */
                     }
                 }
 
