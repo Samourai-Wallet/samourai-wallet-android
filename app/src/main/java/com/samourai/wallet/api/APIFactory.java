@@ -1828,7 +1828,7 @@ public class APIFactory {
 
             String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
             String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
-            String strBadBank = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr();
+//            String strBadBank = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr();
 /*
             JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix }, XPUB_PREMIX);
             JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix }, XPUB_PREMIX);
@@ -1848,7 +1848,7 @@ public class APIFactory {
             parseMixXPUB(badbankMultiAddrObj);
             parseMixUnspentOutputs(badbankUnspentObj.toString());
 */
-            JSONObject mixMultiAddrObj = getRawXPUB(new String[] { strPreMix, strPostMix, strBadBank });
+            JSONObject mixMultiAddrObj = getRawXPUB(new String[] { strPreMix, strPostMix });
 //            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix }, XPUB_PREMIX);
             if (mixMultiAddrObj != null)    {
                 parseMixXPUB(mixMultiAddrObj);
