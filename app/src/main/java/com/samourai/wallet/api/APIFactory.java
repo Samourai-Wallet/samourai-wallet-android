@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 
 import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
@@ -46,7 +47,6 @@ import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
-import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.Address;
@@ -54,7 +54,6 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
-import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
@@ -76,13 +75,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
-import java8.util.Optional;
 
 import static com.samourai.wallet.util.LogUtil.debug;
 import static com.samourai.wallet.util.LogUtil.info;
 
-public class APIFactory	{
+public class APIFactory {
 
     private static String APP_TOKEN = null;         // API app token
     private static String ACCESS_TOKEN = null;      // API access token
@@ -868,12 +867,14 @@ public class APIFactory	{
 
     }
 
-    private synchronized void bip47Lookahead(String pcode, String addr)  {
+    private synchronized void bip47Lookahead(String pcode, String addr) {
+        if (addr == null || pcode == null) {
+            return;
+        }
         debug("APIFactory", "bip47Lookahead():" + addr);
         debug("APIFactory", "bip47Lookahead():" + pcode);
         debug("APIFactory", "bip47Lookahead():" + BIP47Meta.getInstance().getPCode4Addr(addr));
         int idx = BIP47Meta.getInstance().getIdx4Addr(addr);
-        debug("APIFactory", "bip47Lookahead():" + idx);
         try {
             idx++;
             for (int i = idx; i < (idx + BIP47Meta.INCOMING_LOOKAHEAD); i++) {
@@ -1309,49 +1310,49 @@ public class APIFactory	{
 /*
     public synchronized JSONObject getUnspentOutputs(String[] xpubs) {
 
-        String _url =  WebUtil.getAPIUrl(context);
+            String _url =  WebUtil.getAPIUrl(context);
 
-        JSONObject jsonObject  = null;
-        String response = null;
+            JSONObject jsonObject  = null;
+            String response = null;
 
-        try {
-
-            if(AppUtil.getInstance(context).isOfflineMode())    {
-                response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
-            }
-            else if(!TorManager.INSTANCE.isRequired())    {
-                StringBuilder args = new StringBuilder();
-                args.append("active=");
-                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                debug("APIFactory", "UTXO args:" + args.toString());
-                args.append("&at=");
-                args.append(getAccessToken());
-                response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
-                debug("APIFactory", "UTXO:" + response);
-            }
-            else    {
-                HashMap<String,String> args = new HashMap<String,String>();
-                args.put("active", StringUtils.join(xpubs, "|"));
-                args.put("at", getAccessToken());
-                response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
-            }
-
-            parseUnspentOutputs(response);
-
-        }
-        catch(Exception e) {
-            jsonObject = null;
-            e.printStackTrace();
-        }
-
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
             try {
-                jsonObject = new JSONObject(response);
+
+                if(AppUtil.getInstance(context).isOfflineMode())    {
+                    response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
+                }
+                else if(!TorManager.INSTANCE.isRequired())    {
+                    StringBuilder args = new StringBuilder();
+                    args.append("active=");
+                    args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                    debug("APIFactory", "UTXO args:" + args.toString());
+                    args.append("&at=");
+                    args.append(getAccessToken());
+                    response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
+                    debug("APIFactory", "UTXO:" + response);
+                }
+                else    {
+                    HashMap<String,String> args = new HashMap<String,String>();
+                    args.put("active", StringUtils.join(xpubs, "|"));
+                    args.put("at", getAccessToken());
+                    response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
+                }
+
+                parseUnspentOutputs(response);
+
             }
-            catch(JSONException je) {
-                ;
+            catch(Exception e) {
+                jsonObject = null;
+                e.printStackTrace();
             }
-        }
+
+            if(!AppUtil.getInstance(context).isOfflineMode())    {
+                try {
+                    jsonObject = new JSONObject(response);
+                }
+                catch(JSONException je) {
+                    ;
+                }
+            }
 
         return jsonObject;
     }
@@ -2469,50 +2470,50 @@ public class APIFactory	{
 /*
     public synchronized JSONObject getRawUnspentOutputs(String[] xpubs, int type) {
 
-        String _url =  WebUtil.getAPIUrl(context);
+            String _url =  WebUtil.getAPIUrl(context);
 
-        JSONObject jsonObject  = null;
-        String response = null;
+            JSONObject jsonObject  = null;
+            String response = null;
 
-        try {
+            try {
 
-            if(AppUtil.getInstance(context).isOfflineMode())    {
-                try {
-                    response = PayloadUtil.getInstance(context).deserializeMultiAddrMix().toString();
-                } catch (IOException | JSONException | NullPointerException e ) {
-//                    e.printStackTrace();
-                    return  new JSONObject("{}");
+                if(AppUtil.getInstance(context).isOfflineMode())    {
+                    try {
+                        response = PayloadUtil.getInstance(context).deserializeMultiAddrMix().toString();
+                    } catch (IOException | JSONException | NullPointerException e ) {
+    //                    e.printStackTrace();
+                        return  new JSONObject("{}");
+                    }
                 }
+                else if(!TorManager.INSTANCE.isRequired())    {
+                    StringBuilder args = new StringBuilder();
+                    args.append("active=");
+                    args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                    debug("APIFactory", "UTXO args:" + args.toString());
+                    args.append("&at=");
+                    args.append(getAccessToken());
+                    response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
+                    debug("APIFactory", "UTXO:" + response);
+                }
+                else    {
+                    HashMap<String,String> args = new HashMap<String,String>();
+                    args.put("active", StringUtils.join(xpubs, "|"));
+                    args.put("at", getAccessToken());
+                    response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
+                }
+
             }
-            else if(!TorManager.INSTANCE.isRequired())    {
-                StringBuilder args = new StringBuilder();
-                args.append("active=");
-                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                debug("APIFactory", "UTXO args:" + args.toString());
-                args.append("&at=");
-                args.append(getAccessToken());
-                response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
-                debug("APIFactory", "UTXO:" + response);
-            }
-            else    {
-                HashMap<String,String> args = new HashMap<String,String>();
-                args.put("active", StringUtils.join(xpubs, "|"));
-                args.put("at", getAccessToken());
-                response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
+            catch(Exception e) {
+                jsonObject = null;
+                e.printStackTrace();
             }
 
-        }
-        catch(Exception e) {
-            jsonObject = null;
-            e.printStackTrace();
-        }
-
-        try {
-            jsonObject = new JSONObject(response);
-        }
-        catch(JSONException je) {
-            ;
-        }
+            try {
+                jsonObject = new JSONObject(response);
+            }
+            catch(JSONException je) {
+                ;
+            }
         return jsonObject;
     }
 */
@@ -2919,6 +2920,22 @@ public class APIFactory	{
 
         return true;
 
+    }
+
+    public Observable<Pair<List<Tx>, Long>> parseXPUBObservable(JSONObject jsonObject) {
+        return Observable.fromCallable(() -> {
+            parseXPUB(jsonObject);
+            List<Tx> txes = getAllXpubTxs();
+            return new Pair<>(txes, xpub_balance);
+        });
+    }
+
+    public Observable<Pair<List<Tx>, Long>> parseMixXPUBObservable(JSONObject jsonObject) {
+        return Observable.fromCallable(() -> {
+            parseMixXPUB(jsonObject);
+            List<Tx> txes = getAllPostMixTxs();
+            return new Pair<>(txes, xpub_postmix_balance);
+        });
     }
 
     public static class TxMostRecentDateComparator implements Comparator<Tx> {
