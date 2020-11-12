@@ -2004,6 +2004,7 @@ public class SendActivity extends SamouraiActivity {
                 startActivity(cahootsIntent);
             } catch (Exception e) {
                 Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
             return;
         }
