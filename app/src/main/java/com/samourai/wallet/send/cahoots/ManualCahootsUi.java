@@ -7,16 +7,15 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.samourai.soroban.cahoots.CahootsContext;
+import com.samourai.soroban.cahoots.ManualCahootsMessage;
+import com.samourai.soroban.cahoots.ManualCahootsService;
 import com.samourai.soroban.cahoots.TxBroadcastInteraction;
-import com.samourai.soroban.client.OnlineSorobanInteraction;
 import com.samourai.wallet.cahoots.AndroidSorobanCahootsService;
 import com.samourai.wallet.cahoots.CahootsMode;
 import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.CahootsTypeUser;
 import com.samourai.wallet.home.BalanceActivity;
-import com.samourai.soroban.cahoots.CahootsContext;
-import com.samourai.soroban.cahoots.ManualCahootsMessage;
-import com.samourai.soroban.client.SorobanInteraction;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
 import com.samourai.wallet.widgets.ViewPager;
 
@@ -26,28 +25,25 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import java8.util.function.Function;
 
-public class CahootsUi {
+public class ManualCahootsUi {
     private Activity activity;
     private HorizontalStepsViewIndicator stepsViewGroup;
     private TextView stepCounts;
     private ViewPager viewPager;
 
-    private CahootReviewFragment cahootReviewFragment;
+    protected CahootReviewFragment cahootReviewFragment;
     private ArrayList<Fragment> steps = new ArrayList<>();
 
     // intent
     private int account;
-    private CahootsTypeUser typeUser;
-    private CahootsType cahootsType;
-
-    private AndroidSorobanCahootsService sorobanCahootsService;
+    protected CahootsTypeUser typeUser;
+    protected CahootsType cahootsType;
 
     private ManualCahootsMessage cahootsMessage;
-    private CahootsContext cahootsContext;
+
+    protected AndroidSorobanCahootsService sorobanCahootsService;
 
     static Intent createIntent(Context ctx, Class activityClass, int account, CahootsType type, CahootsTypeUser typeUser) {
         Intent intent = new Intent(ctx, activityClass);
@@ -57,9 +53,9 @@ public class CahootsUi {
         return intent;
     }
 
-    CahootsUi(HorizontalStepsViewIndicator stepsViewGroup, TextView stepCounts, ViewPager viewPager,
-              Intent intent, FragmentManager fragmentManager, Function<Integer, Fragment> fragmentProvider,
-               Activity activity) throws Exception {
+    ManualCahootsUi(HorizontalStepsViewIndicator stepsViewGroup, TextView stepCounts, ViewPager viewPager,
+                    Intent intent, FragmentManager fragmentManager, Function<Integer, Fragment> fragmentProvider,
+                    Activity activity) throws Exception {
         this.activity = activity;
         this.stepsViewGroup = stepsViewGroup;
         this.stepCounts = stepCounts;
@@ -93,48 +89,6 @@ public class CahootsUi {
 
         // setup cahoots
         sorobanCahootsService = AndroidSorobanCahootsService.getInstance(activity.getApplicationContext());
-
-        // listen for interactions
-        sorobanCahootsService.getSorobanService().getOnInteraction().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(interaction -> {
-            setInteraction(interaction);
-        });
-    }
-
-    public CahootsContext setCahootsContextInitiator(long sendAmount, String sendAddress) throws Exception {
-        switch (cahootsType) {
-            case STONEWALLX2:
-                cahootsContext = CahootsContext.newInitiatorStonewallx2(sendAmount, sendAddress);
-                break;
-            case STOWAWAY:
-                cahootsContext = CahootsContext.newInitiatorStowaway(sendAmount);
-                break;
-            default:
-                throw new Exception("Unknown #Cahoots");
-        }
-
-        // verify
-        if (!typeUser.equals(cahootsContext.getTypeUser())) {
-            throw new Exception("context.typeUser mismatch");
-        }
-        if (!cahootsType.equals(cahootsContext.getCahootsType())) {
-            throw new Exception("context.typeUser mismatch");
-        }
-        return cahootsContext;
-    }
-
-    public CahootsContext setCahootsContextCounterparty() throws Exception {
-        cahootsContext = CahootsContext.newCounterparty(cahootsType);
-
-        // verify
-        if (!typeUser.equals(cahootsContext.getTypeUser())) {
-            throw new Exception("context.typeUser mismatch");
-        }
-        if (!cahootsType.equals(cahootsContext.getCahootsType())) {
-            throw new Exception("context.typeUser mismatch");
-        }
-        return cahootsContext;
     }
 
     private void createSteps(FragmentManager fragmentManager, Function<Integer, Fragment> fragmentProvider) {
@@ -155,7 +109,7 @@ public class CahootsUi {
     }
 
     void setCahootsMessage(ManualCahootsMessage msg) throws Exception {
-        Log.d("CahootsUi", "# Cahoots => " + msg.toString());
+        Log.d("ManualCahootsUi", "# Cahoots => " + msg.toString());
 
         // check cahootsType
         if (cahootsType != null) {
@@ -180,7 +134,6 @@ public class CahootsUi {
         }
 
         if (cahootsMessage.isDone()) {
-            activity.runOnUiThread(() -> Toast.makeText(activity, "Cahoots success", Toast.LENGTH_LONG).show());
             notifyWalletAndFinish();
         } else {
             activity.runOnUiThread(() -> Toast.makeText(activity, "Cahoots progress: " + (cahootsMessage.getStep() + 1) + "/" + cahootsMessage.getNbSteps(), Toast.LENGTH_SHORT).show());
@@ -190,21 +143,12 @@ public class CahootsUi {
     void setInteraction(TxBroadcastInteraction interaction) throws Exception {
         // review last step
         cahootReviewFragment.setCahoots(interaction.getSignedCahoots());
+        cahootReviewFragment.setOnBroadcast(() -> {
+            // manual cahoots => finish on broadcast success
+            notifyWalletAndFinish();
+            return null;
+        });
         setStep(interaction.getTypeInteraction().getStep());
-    }
-
-    void setInteraction(OnlineSorobanInteraction onlineInteraction) throws Exception {
-        SorobanInteraction originInteraction = onlineInteraction.getInteraction();
-        if (originInteraction instanceof TxBroadcastInteraction) {
-            setInteraction((TxBroadcastInteraction)originInteraction);
-            cahootReviewFragment.setOnBroadcast(() -> {
-                // notify Soroban partner
-                onlineInteraction.sorobanAccept();
-                return null;
-            });
-        } else {
-            throw new Exception("Unknown interaction: "+originInteraction.getTypeInteraction());
-        }
     }
 
     private void setStep(final int step) {
@@ -230,6 +174,8 @@ public class CahootsUi {
     }
 
     private void notifyWalletAndFinish() {
+        activity.runOnUiThread(() -> Toast.makeText(activity, "Cahoots success", Toast.LENGTH_LONG).show());
+
         // refresh txs
         Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
         intent.putExtra("notifTx", false);
@@ -244,6 +190,17 @@ public class CahootsUi {
 
     public String getTitle(CahootsMode cahootsMode) {
         return (CahootsTypeUser.SENDER.equals(typeUser) ? "Sending" : "Receiving") + " " + cahootsMode.getLabel().toLowerCase() + " " + cahootsType.getLabel();
+    }
+
+    public CahootsContext computeCahootsContextInitiator(long sendAmount, String sendAddress) throws Exception {
+        switch (cahootsType) {
+            case STONEWALLX2:
+                return CahootsContext.newInitiatorStonewallx2(sendAmount, sendAddress);
+            case STOWAWAY:
+                return CahootsContext.newInitiatorStowaway(sendAmount);
+            default:
+                throw new Exception("Unknown #Cahoots");
+        }
     }
 
     public int getAccount() {
@@ -262,11 +219,7 @@ public class CahootsUi {
         return cahootsMessage;
     }
 
-    public AndroidSorobanCahootsService getSorobanCahootsService() {
-        return sorobanCahootsService;
-    }
-
-    public CahootsContext getCahootsContext() {
-        return cahootsContext;
+    public ManualCahootsService getManualCahootsService() {
+        return sorobanCahootsService.getManualCahootsService();
     }
 }

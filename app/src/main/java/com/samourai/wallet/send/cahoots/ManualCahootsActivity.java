@@ -52,7 +52,7 @@ import androidx.core.content.FileProvider;
 public class ManualCahootsActivity extends SamouraiActivity {
     private static final String TAG = "ManualCahootsActivity";
 
-    private CahootsUi cahootsUi;
+    private ManualCahootsUi cahootsUi;
 
     private AppCompatDialog dialog;
 
@@ -60,13 +60,13 @@ public class ManualCahootsActivity extends SamouraiActivity {
         ManualCahootsService manualCahootsService = AndroidSorobanCahootsService.getInstance(ctx).getManualCahootsService();
         ManualCahootsMessage msg = manualCahootsService.parse(payload);
         CahootsTypeUser typeUser = msg.getTypeUser().getPartner();
-        Intent intent = CahootsUi.createIntent(ctx, ManualCahootsActivity.class, account, msg.getType(), typeUser);
+        Intent intent = ManualCahootsUi.createIntent(ctx, ManualCahootsActivity.class, account, msg.getType(), typeUser);
         intent.putExtra("payload", payload);
         return intent;
     }
 
     public static Intent createIntentSender(Context ctx, int account, CahootsType type, long amount, String address) {
-        Intent intent = CahootsUi.createIntent(ctx, ManualCahootsActivity.class, account, type, CahootsTypeUser.SENDER);
+        Intent intent = ManualCahootsUi.createIntent(ctx, ManualCahootsActivity.class, account, type, CahootsTypeUser.SENDER);
         intent.putExtra("sendAmount", amount);
         intent.putExtra("sendAddress", address);
         return intent;
@@ -97,7 +97,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
                     }
                 }
             };
-            cahootsUi = new CahootsUi(
+            cahootsUi = new ManualCahootsUi(
                     findViewById(R.id.step_view),
                     findViewById(R.id.step_numbers),
                     findViewById(R.id.view_flipper),
@@ -131,8 +131,8 @@ public class ManualCahootsActivity extends SamouraiActivity {
         }
         String sendAddress = getIntent().getStringExtra("sendAddress");
 
-        ManualCahootsService manualCahootsService = cahootsUi.getSorobanCahootsService().getManualCahootsService();
-        CahootsContext cahootsContext = cahootsUi.setCahootsContextInitiator(sendAmount, sendAddress);
+        ManualCahootsService manualCahootsService = cahootsUi.getManualCahootsService();
+        CahootsContext cahootsContext = cahootsUi.computeCahootsContextInitiator(sendAmount, sendAddress);
         cahootsUi.setCahootsMessage(manualCahootsService.initiate(account, cahootsContext));
     }
 
@@ -179,14 +179,9 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private void onScanCahootsPayload(String qrData) {
         try {
             // continue cahoots
-            ManualCahootsService manualCahootsService = cahootsUi.getSorobanCahootsService().getManualCahootsService();
+            ManualCahootsService manualCahootsService = cahootsUi.getManualCahootsService();
             ManualCahootsMessage cahootsMessage = manualCahootsService.parse(qrData);
-            CahootsContext cahootsContext = cahootsUi.getCahootsContext();
-            if (cahootsContext == null) {
-                // first scan => counterparty
-                cahootsContext = cahootsUi.setCahootsContextCounterparty();
-            }
-            SorobanReply reply = manualCahootsService.reply(account, cahootsContext, cahootsMessage);
+            SorobanReply reply = manualCahootsService.reply(account, cahootsMessage);
             if (reply instanceof ManualCahootsMessage) {
                 cahootsUi.setCahootsMessage((ManualCahootsMessage)reply);
             }

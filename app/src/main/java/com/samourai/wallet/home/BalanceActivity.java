@@ -717,6 +717,7 @@ public class BalanceActivity extends SamouraiActivity {
                         startActivity(cahootIntent);
                     } catch (Exception e) {
                         Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
                 }else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();

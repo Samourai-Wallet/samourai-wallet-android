@@ -26,7 +26,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
     private static final String TAG = "SorobanCahootsActivity";
     private static final int TIMEOUT_MS = 60000;
 
-    private CahootsUi cahootsUi;
+    private SorobanCahootsUi cahootsUi;
 
     // intent
     private PaymentCode paymentCode;
@@ -34,7 +34,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
     private Disposable sorobanDisposable;
 
     public static Intent createIntentSender(Context ctx, int account, CahootsType type, long amount, String address, String pcode) {
-        Intent intent = CahootsUi.createIntent(ctx, SorobanCahootsActivity.class, account, type, CahootsTypeUser.SENDER);
+        Intent intent = ManualCahootsUi.createIntent(ctx, SorobanCahootsActivity.class, account, type, CahootsTypeUser.SENDER);
         intent.putExtra("sendAmount", amount);
         intent.putExtra("sendAddress", address);
         intent.putExtra("pcode", pcode);
@@ -42,7 +42,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
     }
 
     public static Intent createIntentCounterparty(Context ctx, int account, CahootsType type, String pcode) {
-        Intent intent = CahootsUi.createIntent(ctx, SorobanCahootsActivity.class, account, type, CahootsTypeUser.COUNTERPARTY);
+        Intent intent = ManualCahootsUi.createIntent(ctx, SorobanCahootsActivity.class, account, type, CahootsTypeUser.COUNTERPARTY);
         intent.putExtra("pcode", pcode);
         return intent;
     }
@@ -56,7 +56,7 @@ public class SorobanCahootsActivity extends SamouraiActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         try {
-            cahootsUi = new CahootsUi(
+            cahootsUi = new SorobanCahootsUi(
                 findViewById(R.id.step_view),
                 findViewById(R.id.step_numbers),
                 findViewById(R.id.view_flipper),

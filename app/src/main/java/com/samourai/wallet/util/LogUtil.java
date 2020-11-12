@@ -1,5 +1,7 @@
 package com.samourai.wallet.util;
 
+import android.util.Log;
+
 import com.samourai.wallet.BuildConfig;
 
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 public class LogUtil {
+    private static final String TAG = "LogUtil";
 
     public static void debug(final String tag, String message) {
         if (BuildConfig.DEBUG) {
@@ -48,7 +51,9 @@ public class LogUtil {
         ((Logger) LoggerFactory.getLogger("com.samourai.xmanager")).setLevel(Level.DEBUG);
 
         // skip noisy logs
-        ((Logger) LoggerFactory.getLogger("com.samourai.wallet.staging")).setLevel(Level.ERROR);
+        ((Logger) LoggerFactory.getLogger("com.samourai.wallet.staging")).setLevel(Level.DEBUG);
+
+        Log.d("LogUtil", "Debug logs enabled");
     }
 
 }
