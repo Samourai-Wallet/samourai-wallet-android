@@ -23,6 +23,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.transition.Transition
 import com.dm.zbar.android.scanner.ZBarConstants
 import com.dm.zbar.android.scanner.ZBarScannerActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.client.android.Contents
@@ -40,18 +41,26 @@ import com.samourai.wallet.segwit.BIP49Util
 import com.samourai.wallet.segwit.BIP84Util
 import com.samourai.wallet.send.PushTx
 import com.samourai.wallet.send.RBFUtil
+import com.samourai.wallet.service.JobRefreshService
+import com.samourai.wallet.service.WebSocketService
+import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.util.*
 import com.samourai.wallet.whirlpool.WhirlpoolMeta
+import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo
 import com.yanzhenjie.zbar.Symbol
+import io.matthewnelson.topl_service.TorServiceController
+import kotlinx.coroutines.*
+import org.apache.commons.io.FileUtils
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.crypto.MnemonicException.MnemonicLengthException
 import org.bouncycastle.util.encoders.Hex
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.*
+import java.util.concurrent.CancellationException
 
 
 class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentCompat() {
@@ -60,7 +69,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     private var progress: ProgressDialog? = null
     private val steathActivating = false
     private val SCAN_HEX_TX = 2011
-
+    private val scope = CoroutineScope(Dispatchers.IO);
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         targetTransition?.addTarget(view)
@@ -138,26 +147,61 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
         val wipePref = findPreference("wipe") as Preference?
         wipePref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AlertDialog.Builder(requireContext())
+
+            MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.sure_to_erase)
                     .setCancelable(false)
                     .setPositiveButton(R.string.ok) { dialog, whichButton ->
                         val progress = ProgressDialog(requireContext())
                         progress.setTitle(R.string.app_name)
-                        progress.setMessage(requireContext().getResources().getString(R.string.securely_wiping_wait))
+                        progress.setMessage(requireContext().resources.getString(R.string.securely_wiping_wait))
                         progress.setCancelable(false)
                         progress.show()
-                        Thread {
-                            Looper.prepare()
+
+                        WhirlpoolMeta.getInstance(requireContext().applicationContext).scode = null
+                        WhirlpoolNotificationService.stopService(requireContext().applicationContext)
+                        if(TorManager.isConnected()){
+                            TorServiceController.startTor()
+                        }
+                        scope.launch {
                             AppUtil.getInstance(requireContext()).wipeApp()
-                            Toast.makeText(requireContext(), R.string.wallet_erased, Toast.LENGTH_SHORT).show()
-                            AppUtil.getInstance(requireContext()).restartApp()
-                            if (progress != null && progress.isShowing) {
-                                progress.dismiss()
+
+                            delay(500)
+                            val walletDir = requireContext().getDir("wallet", Context.MODE_PRIVATE)
+                            val filesDir = requireContext().filesDir
+                            val cacheDir = requireContext().cacheDir
+
+                            if (walletDir.exists()) {
+                                FileUtils.deleteDirectory(walletDir);
                             }
-                            Looper.loop()
-                        }.start()
+                            if (filesDir.exists()) {
+                                FileUtils.deleteDirectory(filesDir);
+                            }
+                            if (cacheDir.exists()) {
+                                FileUtils.deleteDirectory(cacheDir);
+
+                            }
+                        }.invokeOnCompletion {
+                            scope.launch(Dispatchers.Main) {
+                                if (it == null) {
+                                    if (progress.isShowing) {
+                                        progress.dismiss();
+                                    }
+                                    Toast.makeText(requireContext(), R.string.wallet_erased, Toast.LENGTH_SHORT).show()
+                                    AppUtil.getInstance(requireContext()).restartApp()
+                                } else {
+                                    if (progress.isShowing) {
+                                        progress.dismiss();
+                                    }
+                                    Toast.makeText(requireContext(), "Error ${it.message}", Toast.LENGTH_SHORT).show()
+                                    if (BuildConfig.DEBUG) {
+                                        it.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
                     }.setNegativeButton(R.string.cancel) { dialog, whichButton -> }.show()
             true
         }
@@ -273,7 +317,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         }
     }
 
-    private fun transactionsSettings(){
+    private fun transactionsSettings() {
 
         val cbPref0 = findPreference("segwit") as CheckBoxPreference?
         cbPref0?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
@@ -306,7 +350,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         }
 
         val cbPref10 = findPreference("broadcastTx") as CheckBoxPreference?
-        cbPref10?.onPreferenceChangeListener =Preference.OnPreferenceChangeListener { preference, newValue ->
+        cbPref10?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
             if (cbPref10!!.isChecked) {
                 PrefsUtil.getInstance(activity).setValue(PrefsUtil.BROADCAST_TX, false)
             } else {
@@ -316,13 +360,13 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         }
 
         val broadcastHexPref = findPreference("broadcastHex") as Preference?
-        broadcastHexPref!!.onPreferenceClickListener =  Preference.OnPreferenceClickListener {
+        broadcastHexPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             doBroadcastHex()
             true
         }
 
         val cbPref11 = findPreference("strictOutputs") as CheckBoxPreference?
-        cbPref11?.onPreferenceChangeListener =Preference.OnPreferenceChangeListener { preference, newValue ->
+        cbPref11?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
             if (cbPref11!!.isChecked) {
                 PrefsUtil.getInstance(activity).setValue(PrefsUtil.STRICT_OUTPUTS, false)
             } else {
@@ -332,13 +376,13 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         }
 
 
-        val psbtPref = findPreference("psbt") as  Preference?
+        val psbtPref = findPreference("psbt") as Preference?
         psbtPref?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             doPSBT()
             true
         }
 
-        val whirlpoolGUIPref = findPreference("whirlpool_gui") as  Preference?
+        val whirlpoolGUIPref = findPreference("whirlpool_gui") as Preference?
         whirlpoolGUIPref?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             doWhirlpoolGUIPairing()
             true
@@ -346,7 +390,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
     }
 
-    private fun troubleShootSettings(){
+    private fun troubleShootSettings() {
         val troubleshootPref = findPreference("troubleshoot") as Preference?
         troubleshootPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             doTroubleshoot()
@@ -395,7 +439,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
     }
 
-    private fun otherSettings(){
+    private fun otherSettings() {
         val aboutPref = findPreference("about") as Preference?
         aboutPref?.summary = "Samourai," + " " + resources.getString(R.string.version_name)
         aboutPref?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
@@ -985,5 +1029,12 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 }
                 .setNegativeButton(R.string.close) { dialog, whichButton -> }
                 .show()
+    }
+
+    override fun onDestroy() {
+        if (scope.isActive) {
+            scope.cancel(CancellationException())
+        }
+        super.onDestroy()
     }
 }

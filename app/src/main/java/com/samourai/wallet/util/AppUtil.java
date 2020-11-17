@@ -91,9 +91,6 @@ public class AppUtil {
 
     public void wipeApp() {
 
-        WhirlpoolMeta.getInstance(context).setSCODE(null);
-        WhirlpoolNotificationService.stopService(context.getApplicationContext());
-
         try  {
             HD_Wallet bip84w = BIP84Util.getInstance(context).getWallet();
             String strIdentifier84 = WhirlpoolUtils.getInstance().computeWalletIdentifier(bip84w);
@@ -103,6 +100,7 @@ public class AppUtil {
             whirlpoolIndexes.delete();
         }
         catch(Exception e) {
+            e.printStackTrace();
             ;
         }
 
