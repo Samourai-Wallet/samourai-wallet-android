@@ -80,6 +80,7 @@ import io.reactivex.subjects.BehaviorSubject;
 
 import static com.samourai.wallet.util.LogUtil.debug;
 import static com.samourai.wallet.util.LogUtil.info;
+import static com.samourai.wallet.util.WebUtil.SAMOURAI_API2;
 
 public class APIFactory {
 
@@ -333,7 +334,7 @@ public class APIFactory {
             return true;
         }
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : SAMOURAI_API2;
 
         if(DojoUtil.getInstance(context).getDojoParams() != null || setupDojo)    {
             _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR :  WebUtil.SAMOURAI_API2_TOR;
@@ -434,6 +435,7 @@ public class APIFactory {
                 }
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
+                parseDynamicFees_bitcoind(jsonObject);
                 xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
                 walletBalanceObserver.onNext( System.currentTimeMillis());
             }
@@ -1513,15 +1515,13 @@ public class APIFactory {
 
         try {
             String _url =  WebUtil.getAPIUrl(context);
-//            info("APIFactory", "Dynamic fees:" + url.toString());
             String response = null;
             if(!AppUtil.getInstance(context).isOfflineMode())    {
-                response = WebUtil.getInstance(null).getURL(_url + "wallet" + "?active=3BURndogb6z8w7S7U3iAzZGCBxvpA4o5Ld&at=" + getAccessToken());
+                response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
             }
             else    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
             }
-//            info("APIFactory", "Dynamic fees response:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseDynamicFees_bitcoind(jsonObject);
@@ -1539,7 +1539,20 @@ public class APIFactory {
         return jsonObject;
     }
 
-    private synchronized boolean parseDynamicFees_bitcoind(JSONObject jsonObject) throws JSONException  {
+    private synchronized void parseDynamicFees_bitcoind(JSONObject payload) throws JSONException  {
+        JSONObject jsonObject  = new JSONObject();
+        if(payload ==null){
+            return;
+        }
+
+        if(payload.has("info")){
+            if(payload.getJSONObject("info").has("fees")){
+                jsonObject =  payload.getJSONObject("info").getJSONObject("fees");
+             }
+        }else if(payload.has("2")){
+            jsonObject= payload;
+        }
+        info("APIFactory", "Dynamic fees:" + jsonObject.toString(2));
 
         if(jsonObject != null)  {
 
@@ -1590,11 +1603,8 @@ public class APIFactory {
                 ;
             }
 */
-            return true;
 
         }
-
-        return false;
 
     }
 
@@ -1784,8 +1794,7 @@ public class APIFactory {
                     parseDynamicFees_bitcoind(jObj);
                 }
 
-                parseDynamicFees_bitcoind(jObj);
-            }
+             }
 /*
             try {
                 List<JSONObject> utxoObjs = new ArrayList<JSONObject>();
