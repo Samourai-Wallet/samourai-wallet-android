@@ -22,7 +22,7 @@
         <item name="materialAlertDialogTheme">@style/Theme.Samourai.MaterialDialog.Rounded</item>
     </style>
 
-   <style name="Theme.Samourai.Whirlpool.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Samourai.Whirlpool.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarStyle">@style/Widget.Samourai.Whirlpool.Toolbar</item>
         <item name="colorAccent">@color/whirlpoolBlue</item>
         <item name="colorPrimary">@color/white</item>
@@ -35,9 +35,10 @@
         <item name="background">@color/windowDark</item>
         <item name="android:colorControlActivated">@color/blue</item>
         <item name="android:navigationBarColor">@color/windowDark</item>
-       <item name="windowActionModeOverlay">true</item>
-       <item name="android:actionModeBackground">?attr/statusBarBackground</item>
-       <item name="actionModeBackground">?attr/statusBarBackground</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:actionModeBackground">?attr/statusBarBackground</item>
+        <item name="actionModeBackground">?attr/statusBarBackground</item>
         <item name="tabBackground">@color/grey_accent</item>
         <item name="snackbarStyle">@style/Widget.Samourai.SnackBar</item>
         <item name="materialAlertDialogTheme">@style/Theme.Samourai.MaterialDialog.Rounded</item>
