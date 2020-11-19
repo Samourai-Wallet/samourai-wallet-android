@@ -3,15 +3,15 @@ package com.samourai.wallet.paynym
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.google.gson.Gson
+import com.samourai.wallet.access.AccessFactory
 import com.samourai.wallet.bip47.BIP47Meta
 import com.samourai.wallet.bip47.BIP47Util
 import com.samourai.wallet.bip47.paynym.WebUtil
 import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.paynym.api.PayNymApiService
-import com.samourai.wallet.util.AppUtil
-import com.samourai.wallet.util.LogUtil
-import com.samourai.wallet.util.MessageSignUtil
-import com.samourai.wallet.util.PrefsUtil
+import com.samourai.wallet.paynym.models.NymResponse
+import com.samourai.wallet.util.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -23,6 +23,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 
 class PayNymViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -56,11 +57,10 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
 
 
     private suspend fun setPaynymPayload(jsonObject: JSONObject) = withContext(Dispatchers.IO) {
-        val _pcodes = BIP47Meta.getInstance().getSortedByLabels(false)
         var array = JSONArray()
-        val followings = ArrayList<String>()
-        val followers = ArrayList<String>()
         try {
+            val nym = Gson().fromJson(jsonObject.toString(), NymResponse::class.java);
+
             array = jsonObject.getJSONArray("codes")
             if (array.getJSONObject(0).has("claimed") && array.getJSONObject(0).getBoolean("claimed")) {
                 val strNymName = jsonObject.getString("nymName")
@@ -68,46 +68,35 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
                     paymentCode.postValue(strNymName)
                 }
             }
-            if (jsonObject.has("following")) {
-                val _following = jsonObject.getJSONArray("following")
 
-                for (i in 0 until _following.length()) {
-                    followings.add((_following[i] as JSONObject).getString("code"))
-                    if ((_following[i] as JSONObject).has("segwit")) {
-                        BIP47Meta.getInstance().setSegwit((_following[i] as JSONObject).getString("code"), (_following[i] as JSONObject).getBoolean("segwit"))
-                    }
-                    val paynym = _following[i] as JSONObject
-                    if (BIP47Meta.getInstance().getDisplayLabel(paynym.getString("code")).contains(paynym.getString("code").substring(0, 4))) {
-                        BIP47Meta.getInstance().setLabel(paynym.getString("code"), paynym.getString("nymName"))
+            nym.following?.let { codes ->
+                codes.forEach { paynym ->
+                    BIP47Meta.getInstance().setSegwit(paynym.code, paynym.segwit)
+                    if (BIP47Meta.getInstance().getDisplayLabel(paynym.code).contains(paynym.code.substring(0, 4))) {
+                        BIP47Meta.getInstance().setLabel(paynym.code, paynym.nymName)
                     }
                 }
-                for (pcode in _pcodes) {
-                    if (!followings.contains(pcode)) {
-                        followings.add(pcode)
-                    }
-                }
-                sortByLabel(followings)
+                val followings = ArrayList(codes.distinctBy { it.code }.map { it.code })
+                BIP47Meta.getInstance().addFollowings(followings)
+                sortByLabel(followings);
                 viewModelScope.launch(Dispatchers.Main) {
                     followingList.postValue(followings)
                 }
             }
-            if (jsonObject.has("followers")) {
-                val _follower = jsonObject.getJSONArray("followers")
-                for (i in 0 until _follower.length()) {
-                    followers.add((_follower[i] as JSONObject).getString("code"))
-                    if ((_follower[i] as JSONObject).has("segwit")) {
-                        BIP47Meta.getInstance().setSegwit((_follower[i] as JSONObject).getString("code"), (_follower[i] as JSONObject).getBoolean("segwit"))
-                    }
-                    val paynym = _follower[i] as JSONObject
-                    if (BIP47Meta.getInstance().getDisplayLabel(paynym.getString("code")).contains(paynym.getString("code").substring(0, 4))) {
-                        BIP47Meta.getInstance().setLabel(paynym.getString("code"), paynym.getString("nymName"))
+            nym.followers?.let { codes ->
+                codes.forEach { paynym ->
+                    BIP47Meta.getInstance().setSegwit(paynym.code, paynym.segwit)
+                    if (BIP47Meta.getInstance().getDisplayLabel(paynym.code).contains(paynym.code.substring(0, 4))) {
+                        BIP47Meta.getInstance().setLabel(paynym.code, paynym.nymName)
                     }
                 }
-                sortByLabel(followers)
+                val followers = ArrayList(codes.distinctBy { it.code }.map { it.code })
+                 sortByLabel(followers);
                 viewModelScope.launch(Dispatchers.Main) {
                     followersList.postValue(followers)
                 }
             }
+            PayloadUtil.getInstance(getApplication()).serializePayNyms(jsonObject);
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -139,9 +128,6 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
                 else
                     throw Exception("Invalid response ")
             }
-            if (!BIP47Meta.directoryTaskCompleted) {
-                directoryTask()
-            }
         } catch (ex: Exception) {
             LogUtil.error(TAG, ex)
         }
@@ -153,17 +139,17 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
         }
         refreshJob = viewModelScope.launch(Dispatchers.Main) {
             loader.postValue(true)
-            val job = withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 try {
                     getPayNymData()
                 } catch (error: Exception) {
                     error.printStackTrace()
-//                    throw CancellationException(error.message)
+                    throw CancellationException(error.message)
                 }
             }
         }
         refreshJob.invokeOnCompletion {
-            viewModelScope.launch(Dispatchers.Main){
+            viewModelScope.launch(Dispatchers.Main) {
                 loader.postValue(false)
             }
         }
@@ -208,33 +194,6 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun directoryTask() {
-        val strPaymentCode = BIP47Util.getInstance(getApplication()).paymentCode.toString()
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val pcodes = BIP47Meta.getInstance().getSortedByLabels(true)
-                val apiService = PayNymApiService.getInstance(strPaymentCode, getApplication())
-                val jobs = arrayListOf<Deferred<Response>>()
-
-                pcodes.forEach {
-                    val job = async { apiService.follow(it) }
-                    jobs.add(job)
-                    job.invokeOnCompletion {
-                        if (it == null) {
-                            BIP47Meta.directoryTaskCompleted = true
-                        }
-                    }
-                }
-                jobs.awaitAll()
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-
-        }
-
-
-    }
 
     fun init() {
         paymentCode.postValue("")
@@ -242,15 +201,6 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val _pcodes = BIP47Meta.getInstance().getSortedByLabels(false)
-                    val list: ArrayList<String> = ArrayList<String>()
-                    for (pcode in _pcodes) {
-                        list.add(pcode)
-                    }
-                    sortByLabel(list)
-                    viewModelScope.launch(Dispatchers.Main) {
-                        followingList.postValue(list)
-                    }
                     val res = PayloadUtil.getInstance(getApplication()).deserializePayNyms().toString()
                     setPaynymPayload(JSONObject(res))
                 } catch (ex: Exception) {
@@ -262,7 +212,7 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
 
     public fun doFollow(pcode: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 loader.postValue(true)
             }
             withContext(Dispatchers.IO) {
@@ -271,6 +221,7 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
                     val apiService = PayNymApiService.getInstance(strPaymentCode, getApplication())
                     apiService.follow(pcode)
                     BIP47Meta.getInstance().isRequiredRefresh = true
+                    PayloadUtil.getInstance(getApplication()).saveWalletToJSON(CharSequenceX(AccessFactory.getInstance(getApplication()).guid + AccessFactory.getInstance(getApplication()).pin))
                     //Refresh
                     getPayNymData()
                 } catch (ex: Exception) {
@@ -278,18 +229,18 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
                 }
             }
         }.invokeOnCompletion {
-            viewModelScope.launch (Dispatchers.Main){
+            viewModelScope.launch(Dispatchers.Main) {
                 loader.postValue(false)
             }
-            if(it != null){
+            if (it != null) {
                 errors.postValue(it.message)
             }
         }
     }
 
     public fun doUnFollow(pcode: String): Job {
-      val job =  viewModelScope.launch {
-            withContext(Dispatchers.Main){
+        val job = viewModelScope.launch {
+            withContext(Dispatchers.Main) {
                 loader.postValue(true)
             }
             withContext(Dispatchers.IO) {
@@ -300,6 +251,7 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
                     BIP47Meta.getInstance().remove(pcode)
                     BIP47Meta.getInstance().isRequiredRefresh = true
                     //Refresh
+                    PayloadUtil.getInstance(getApplication()).saveWalletToJSON(CharSequenceX(AccessFactory.getInstance(getApplication()).guid + AccessFactory.getInstance(getApplication()).pin))
                     getPayNymData()
                 } catch (ex: Exception) {
                     throw CancellationException(ex.message)
@@ -307,10 +259,10 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
         job.invokeOnCompletion {
-            viewModelScope.launch (Dispatchers.Main){
+            viewModelScope.launch(Dispatchers.Main) {
                 loader.postValue(false)
             }
-            if(it != null){
+            if (it != null) {
                 errors.postValue(it.message)
             }
         }

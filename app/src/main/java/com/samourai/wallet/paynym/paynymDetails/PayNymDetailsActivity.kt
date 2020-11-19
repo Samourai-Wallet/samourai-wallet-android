@@ -133,15 +133,17 @@ class PayNymDetailsActivity : SamouraiActivity() {
         if (BIP47Meta.getInstance().getIncomingIdx(pcode) >= 0) {
             historyLayout!!.visibility = View.VISIBLE
         }
-        if (BIP47Meta.getInstance().exists(pcode, true)) {
+        if (BIP47Meta.getInstance().isFollowing(pcode)) {
             followBtn.text = getString(R.string.connect)
             feeMessage.text = getString(R.string.connect_paynym_fee)
-            followMessage.text =  "${getString(R.string.blockchain_connect_with)} ${getLabel()} ${resources.getText(R.string.paynym_connect_message)}"
+            followMessage.text = "${getString(R.string.blockchain_connect_with)} ${getLabel()} ${resources.getText(R.string.paynym_connect_message)}"
             if (!following)
                 addChip(getString(R.string.following))
             following = true
         } else {
-            feeMessage.text = getString(R.string.follow_paynym_fee_free)
+            if (!BIP47Meta.getInstance().exists(pcode, true)) {
+                feeMessage.text = getString(R.string.follow_paynym_fee_free)
+            }
         }
         paynymCode.text = BIP47Meta.getInstance().getAbbreviatedPcode(pcode)
         title = getLabel()
@@ -235,9 +237,8 @@ class PayNymDetailsActivity : SamouraiActivity() {
     }
 
     private fun followPaynym() {
-
-        if (BIP47Meta.getInstance().exists(pcode, true)) {
-            doNotifTx()
+        if (BIP47Meta.getInstance().isFollowing(pcode)) {
+                doNotifTx()
         } else {
             MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.confirm)
@@ -250,6 +251,7 @@ class PayNymDetailsActivity : SamouraiActivity() {
                     .setNegativeButton("No") { _, _ -> }
                     .show()
         }
+
     }
 
     private fun getLabel(): String {
@@ -689,18 +691,12 @@ class PayNymDetailsActivity : SamouraiActivity() {
                         var tx = SendFactory.getInstance(this@PayNymDetailsActivity).makeTransaction(0, outpoints, receivers)
                         if (tx != null) {
                             val input0hash = tx.getInput(0L).outpoint.hash.toString()
-                            Log.d("PayNymDetailsActivity", "input0 hash:$input0hash")
-                            Log.d("PayNymDetailsActivity", "_outPoint hash:" + _outPoint.txHash.toString())
                             val input0index = tx.getInput(0L).outpoint.index.toInt()
-                            Log.d("PayNymDetailsActivity", "input0 index:$input0index")
-                            Log.d("PayNymDetailsActivity", "_outPoint index:" + _outPoint.txOutputN)
                             if (input0hash != _outPoint.txHash.toString() || input0index != _outPoint.txOutputN) {
                                 throw  Exception(getString(R.string.bip47_cannot_compose_notif_tx))
                             }
                             tx = SendFactory.getInstance(this@PayNymDetailsActivity).signTransaction(tx, 0)
                             val hexTx = String(Hex.encode(tx.bitcoinSerialize()))
-                            Log.d("SendActivity", tx.hashAsString)
-                            Log.d("SendActivity", hexTx)
                             var isOK = false
                             var response: String? = null
                             try {

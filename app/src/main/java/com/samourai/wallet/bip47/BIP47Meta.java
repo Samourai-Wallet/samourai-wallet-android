@@ -1,6 +1,7 @@
 package com.samourai.wallet.bip47;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 
@@ -48,6 +49,7 @@ public class BIP47Meta {
     private static ConcurrentHashMap<String,String> pcodeIncomingStatus = null;
     private static ConcurrentHashMap<String,String> pcodeLatestEvent = null;
     private static ConcurrentHashMap<String,Boolean> pcodeSegwit = null;
+    private static ArrayList<String> followingPcodes = new ArrayList();
 
     private static BIP47Meta instance = null;
 
@@ -97,6 +99,15 @@ public class BIP47Meta {
         else    {
             return pcodeLabels.get(pcode);
         }
+    }
+
+    public void addFollowings(ArrayList<String> pcodes){
+        followingPcodes.clear();
+        followingPcodes.addAll(pcodes);
+    }
+
+    public boolean isFollowing(String pcode){
+        return followingPcodes.contains(pcode);
     }
 
     public String getDisplayLabel(String pcode)   {

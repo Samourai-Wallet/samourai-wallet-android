@@ -1261,6 +1261,12 @@ public class APIFactory {
 
     public synchronized int getNotifTxConfirmations(String hash) {
 
+        if(hash==null){
+            return  0;
+        }
+        if(hash.isEmpty()){
+            return 0;
+        }
         String _url =  WebUtil.getAPIUrl(context);
 
 //        info("APIFactory", "Notif tx:" + hash);
@@ -1272,7 +1278,6 @@ public class APIFactory {
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
-//            info("APIFactory", "Notif tx:" + url.toString());
             url.append("&at=");
             url.append(getAccessToken());
             String response = WebUtil.getInstance(null).getURL(url.toString());
