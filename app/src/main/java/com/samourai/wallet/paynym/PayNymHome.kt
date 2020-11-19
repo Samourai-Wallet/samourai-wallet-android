@@ -99,7 +99,6 @@ class PayNymHome : SamouraiActivity() {
         }
         payNymViewModel.pcode.observe(this, { paymentCode: String? -> paynym?.text = paymentCode })
         payNymViewModel.loaderLiveData.observe(this, {
-            Log.i(TAG, "onCreate: ${it}")
             swipeToRefreshPaynym?.isRefreshing = it
         })
 
@@ -107,7 +106,7 @@ class PayNymHome : SamouraiActivity() {
             Snackbar.make(paynym!!, "Error : ${it}", Snackbar.LENGTH_LONG).show()
         })
         payNymViewModel.followers.observe(this, { followersList: ArrayList<String>? ->
-            if (followersList == null || followersList.size == 0) {
+            if (followersList == null) {
                 return@observe
             }
             val filtered = filterArchived(followersList)
@@ -117,7 +116,7 @@ class PayNymHome : SamouraiActivity() {
             followers = followersList
         })
         payNymViewModel.following.observe(this, { followingList: ArrayList<String>? ->
-            if (followingList == null || followingList.size == 0) {
+            if (followingList == null ) {
                 return@observe
             }
             val filtered = filterArchived(followingList)

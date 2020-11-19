@@ -1,6 +1,5 @@
 package com.samourai.wallet.paynym.fragments;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +21,14 @@ import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.widgets.CircleImageView;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
 
 
 public class PaynymListFragment extends Fragment {
 
-    private PaynymListFragmentViewModel mViewModel;
     private RecyclerView list;
     private static final String TAG = "PaynymListFragment";
     private PaynymAdapter paynymAdapter;
@@ -57,18 +56,15 @@ public class PaynymListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(PaynymListFragmentViewModel.class);
         paynymAdapter = new PaynymAdapter();
         list.setAdapter(paynymAdapter);
-        mViewModel.pcodes.observe(this, paynymAdapter::setPcodes);
 
     }
 
     public void addPcodes(ArrayList<String> list) {
-        if (mViewModel == null) {
-            mViewModel = ViewModelProviders.of(this).get(PaynymListFragmentViewModel.class);
+        if(isAdded()){
+            paynymAdapter.setPcodes(list);
         }
-        mViewModel.addPcodes(list);
     }
 
     private ArrayList<String> filterArchived(ArrayList<String> list) {
