@@ -65,6 +65,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
+import kotlin.Unit;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -152,6 +153,13 @@ public class NewPoolActivity extends AppCompatActivity {
             enableConfirmButton(selectedPoolViewModel != null);
         });
 
+        reviewPoolFragment.setLoadingListener((aBoolean, e) -> {
+            if(e==null){
+                enableBroadcastButton(!aBoolean);
+            }
+            return Unit.INSTANCE;
+        });
+
         confirmButton.setOnClickListener(view -> {
             switch (newPoolViewPager.getCurrentItem()) {
                 case 0: {
@@ -171,7 +179,7 @@ public class NewPoolActivity extends AppCompatActivity {
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
                     confirmButton.setBackgroundResource(R.drawable.button_green);
-                    reviewPoolFragment.setTx0(tx0);
+                    reviewPoolFragment.setTx0(tx0,tx0FeeTarget,selectedPoolViewModel);
                     break;
                 }
                 case 2: {
@@ -489,6 +497,15 @@ public class NewPoolActivity extends AppCompatActivity {
         if (enable) {
             confirmButton.setEnabled(true);
             confirmButton.setBackgroundResource(R.drawable.button_blue);
+        } else {
+            confirmButton.setEnabled(false);
+            confirmButton.setBackgroundResource(R.drawable.disabled_grey_button);
+        }
+    }
+    private void enableBroadcastButton(boolean enable) {
+        if (enable) {
+            confirmButton.setEnabled(true);
+            confirmButton.setBackgroundResource(R.drawable.button_green);
         } else {
             confirmButton.setEnabled(false);
             confirmButton.setBackgroundResource(R.drawable.disabled_grey_button);
