@@ -22,11 +22,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
+
+        <com.google.android.material.progressindicator.ProgressIndicator
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
             android:id="@+id/whirlpool_loader_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
+            app:indicatorCornerRadius="4dp"
+            app:indicatorSize="4dp"
+            app:trackColor="#373737"
+            app:growMode="bidirectional"
+            app:indicatorColor="?attr/colorAccent"
+            android:indeterminate="false"
             android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="@+id/imageView8"
             app:layout_constraintStart_toStartOf="@+id/imageView8"
