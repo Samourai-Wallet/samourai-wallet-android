@@ -66,7 +66,9 @@ class ReviewPoolFragment : Fragment() {
         minerFees.text = ""
         feePerUtxo.text = ""
         poolFees.text = ""
-        poolTotalFees.text = ""
+        uncycledAmount.text = ""
+        amountToCycle.text = ""
+        totalPoolAmount.text = ""
         poolAmount.text = getBTCDisplayAmount(tx0.pool)
         totalUtxoCreated.text = "${tx0.premixRequested}";
     }
