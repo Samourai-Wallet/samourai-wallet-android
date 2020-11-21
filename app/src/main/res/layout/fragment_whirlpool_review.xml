@@ -1,8 +1,16 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:id="@+id/reviewLayout"
+    android:layout_height="wrap_content"
     tools:context="com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment">
 
     <TextView
@@ -15,19 +23,19 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/pool_review_amount"
+        app:layout_constraintEnd_toStartOf="@+id/poolAmount"
         app:layout_constraintHorizontal_bias="0.03"
         app:layout_constraintStart_toStartOf="@+id/guideline12"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/pool_review_amount"
+        android:id="@+id/poolAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="0.05 BTC Pool"
+        tools:text="0.05 BTC Pool"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView51"
@@ -40,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="UTXO's CREATED"
+        android:text="UTXO's Created"
         android:textColor="#858586"
         android:typeface="monospace"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,14 +57,14 @@
         app:layout_constraintTop_toBottomOf="@+id/textView51" />
 
     <TextView
-        android:id="@+id/pool_review_total_txes"
+        android:id="@+id/totalUtxoCreated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="15"
         android:textColor="#858586"
         app:layout_constraintBottom_toBottomOf="@+id/textView53"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_amount"
+        app:layout_constraintEnd_toEndOf="@+id/poolAmount"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView53"
         app:layout_constraintTop_toTopOf="@+id/textView53" />
@@ -65,25 +73,25 @@
         android:id="@+id/textView55"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="monospace"
-        android:text="DETERMINISTIC LINKS "
+        android:text="Deterministic Links "
         android:textColor="#858586"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_total_txes"
+        app:layout_constraintEnd_toEndOf="@+id/totalUtxoCreated"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView53"
         app:layout_constraintTop_toBottomOf="@+id/textView53" />
 
     <TextView
-        android:id="@+id/pool_review_deterministic_links_per_tx"
+        android:id="@+id/deterMinisticLinksPerTx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="0"
         android:textColor="#858586"
         app:layout_constraintBottom_toBottomOf="@+id/textView55"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_total_txes"
+        app:layout_constraintEnd_toEndOf="@+id/totalUtxoCreated"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView55"
         app:layout_constraintTop_toTopOf="@+id/textView55" />
@@ -92,9 +100,9 @@
         android:id="@+id/textView57"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="COMBINATIONS "
+        android:text="Combinations "
         android:textColor="#858586"
         android:typeface="monospace"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,14 +111,14 @@
         app:layout_constraintTop_toBottomOf="@+id/textView55" />
 
     <TextView
-        android:id="@+id/pool_review_combination_per_tx"
+        android:id="@+id/combinationPerTxs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="10,546"
         android:textColor="#858586"
         app:layout_constraintBottom_toBottomOf="@+id/textView57"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_deterministic_links_per_tx"
+        app:layout_constraintEnd_toEndOf="@+id/deterMinisticLinksPerTx"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView57"
         app:layout_constraintTop_toTopOf="@+id/textView57" />
@@ -119,9 +127,9 @@
         android:id="@+id/textView59"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="ENTROPY "
+        android:text="Entropy "
         android:textAllCaps="false"
         android:textColor="#858586"
         android:typeface="monospace"
@@ -131,12 +139,12 @@
         app:layout_constraintTop_toBottomOf="@+id/textView57" />
 
     <com.samourai.wallet.widgets.EntropyBar
-        android:id="@+id/pool_review_entropy_bar"
+        android:id="@+id/entropyBar"
         android:layout_width="24dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView59"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_combination_per_tx"
+        app:layout_constraintEnd_toEndOf="@+id/combinationPerTxs"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView59"
         app:layout_constraintTop_toTopOf="@+id/textView59" />
@@ -165,41 +173,32 @@
         app:layout_constraintStart_toStartOf="@+id/guideline12"
         app:layout_constraintTop_toBottomOf="@+id/textView59" />
 
-    <View
-        android:id="@+id/view9"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="24dp"
-        android:background="#A1CFCFCF"
-        app:layout_constraintEnd_toStartOf="@+id/guideline13"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline12"
-        app:layout_constraintTop_toBottomOf="@+id/textView64" />
-
     <TextView
         android:id="@+id/textView60"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="Fees"
+        android:text="Total Fees"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView51"
-        app:layout_constraintTop_toBottomOf="@+id/view8" />
+        app:layout_constraintTop_toBottomOf="@+id/textView68" />
+
+
 
     <TextView
-        android:id="@+id/pool_review_total_fees"
+        android:id="@+id/poolTotalFees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0.00259855 BTC"
+        tools:text="0.00259855 BTC"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView60"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_amount"
+        app:layout_constraintEnd_toEndOf="@+id/poolAmount"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView60"
         app:layout_constraintTop_toTopOf="@+id/textView60" />
@@ -210,48 +209,98 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="POOL FEE"
+        android:text="Pool Fee"
         android:textColor="#858586"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView60"
-        app:layout_constraintTop_toBottomOf="@+id/textView60" />
+        app:layout_constraintTop_toBottomOf="@+id/view8" />
 
     <TextView
-        android:id="@+id/pool_review_pool_fee"
+        android:id="@+id/textView81"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Total premix fee"
+        android:textColor="#858586"
+        app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView60"
+        app:layout_constraintTop_toBottomOf="@+id/textView62" />
+
+
+    <TextView
+        android:id="@+id/poolFees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="0.0025 BTC"
         android:textColor="#858586"
+        android:maxLines="3"
+        android:gravity="end"
+        android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="@+id/textView62"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_total_fees"
+        app:layout_constraintEnd_toEndOf="@+id/poolTotalFees"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView62"
-        app:layout_constraintTop_toTopOf="@+id/textView62" />
+        app:layout_constraintTop_toTopOf="@+id/textView62"
+        tools:text="0.0025 BTC" />
+
+
+    <TextView
+        android:id="@+id/feePerUtxo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="#858586"
+        android:tooltipText="Per utxo embeded fees"
+        app:layout_constraintBottom_toBottomOf="@+id/textView81"
+        app:layout_constraintEnd_toEndOf="@+id/poolTotalFees"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView62"
+        app:layout_constraintTop_toTopOf="@+id/textView81"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="0.0025 BTC" />
 
     <TextView
         android:id="@+id/textView64"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="MINER FEE"
+        android:layout_marginTop="16dp"
+        android:text="Miner Fee"
         android:textColor="#858586"
         app:layout_constraintStart_toStartOf="@+id/textView62"
-        app:layout_constraintTop_toBottomOf="@+id/textView62" />
+        app:layout_constraintTop_toBottomOf="@+id/textView81" />
+
+    <com.google.android.material.progressindicator.ProgressIndicator
+        android:id="@+id/loadingFeeDetails"
+        style="@style/Widget.MaterialComponents.ProgressIndicator.Circular.Indeterminate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:indeterminate="true"
+        app:circularInset="8dp"
+        app:circularRadius="8dp"
+        app:indicatorColor="?attr/colorAccent"
+        app:indicatorSize="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView66"
+        app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView64"
+        app:layout_constraintTop_toBottomOf="@+id/view8" />
 
     <TextView
-        android:id="@+id/pool_review_miner_fee"
+        android:id="@+id/minerFees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        tools:text="0.00009855 BTC"
         android:textColor="#858586"
         app:layout_constraintBottom_toBottomOf="@+id/textView64"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_pool_fee"
+        app:layout_constraintEnd_toEndOf="@+id/feePerUtxo"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView64"
-        app:layout_constraintTop_toTopOf="@+id/textView64" />
+        app:layout_constraintTop_toTopOf="@+id/textView64"
+        tools:text="0.00009855 BTC" />
 
     <TextView
         android:id="@+id/textView66"
@@ -266,20 +315,20 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView60"
-        app:layout_constraintTop_toBottomOf="@+id/view9" />
+        app:layout_constraintTop_toBottomOf="@+id/textView60" />
 
     <TextView
-        android:id="@+id/pool_review_total_pool_amount"
+        android:id="@+id/totalPoolAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        tools:text="0.79077218 BTC"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/textView66"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_total_fees"
+        app:layout_constraintEnd_toEndOf="@+id/poolTotalFees"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView66"
-        app:layout_constraintTop_toTopOf="@+id/textView66" />
+        app:layout_constraintTop_toTopOf="@+id/textView66"
+        tools:text="0.79077218 BTC" />
 
     <TextView
         android:id="@+id/textView68"
@@ -289,17 +338,18 @@
         android:text="Amount to Whirlpool "
         android:textColor="#858586"
         app:layout_constraintStart_toStartOf="@+id/textView66"
-        app:layout_constraintTop_toBottomOf="@+id/textView66" />
+        app:layout_constraintTop_toBottomOf="@+id/textView70" />
+
 
     <TextView
-        android:id="@+id/pool_review_amount_to_cycle"
+        android:id="@+id/amountToCycle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         tools:text="0.75 BTC"
         android:textColor="#858586"
         app:layout_constraintBottom_toBottomOf="@+id/textView68"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_total_pool_amount"
+        app:layout_constraintEnd_toEndOf="@+id/totalPoolAmount"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView68"
         app:layout_constraintTop_toTopOf="@+id/textView68" />
@@ -308,42 +358,42 @@
         android:id="@+id/textView70"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="Unmixed Change "
         android:textColor="#858586"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView68"
-        app:layout_constraintTop_toBottomOf="@+id/textView68" />
+        app:layout_constraintTop_toBottomOf="@+id/textView64" />
 
     <TextView
-        android:id="@+id/pool_review_uncycled_amount"
+        android:id="@+id/uncycledAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         tools:text="0.03817363 BTC"
         android:textColor="#858586"
         app:layout_constraintBottom_toBottomOf="@+id/textView70"
-        app:layout_constraintEnd_toEndOf="@+id/pool_review_amount_to_cycle"
+        app:layout_constraintEnd_toEndOf="@+id/amountToCycle"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView70"
         app:layout_constraintTop_toTopOf="@+id/textView70" />
 
     <TextView
-        android:id="@+id/pool_review_entropy_txt"
+        android:id="@+id/entropyPerTxs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:text="10.1 bits"
         android:textColor="#858586"
-        app:layout_constraintBottom_toBottomOf="@+id/pool_review_entropy_bar"
-        app:layout_constraintEnd_toStartOf="@+id/pool_review_entropy_bar"
-        app:layout_constraintTop_toTopOf="@+id/pool_review_entropy_bar" />
+        app:layout_constraintBottom_toBottomOf="@+id/entropyBar"
+        app:layout_constraintEnd_toStartOf="@+id/entropyBar"
+        app:layout_constraintTop_toTopOf="@+id/entropyBar" />
 
     <ProgressBar
-        android:id="@+id/pool_review_progress"
+        android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -353,4 +403,16 @@
         app:layout_constraintStart_toStartOf="@+id/guideline12"
         app:layout_constraintTop_toBottomOf="@+id/textView70" />
 
+    <TextView
+        android:id="@+id/discountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/green_ui_2"
+        app:layout_constraintEnd_toEndOf="@+id/uncycledAmount"
+        app:layout_constraintStart_toStartOf="@+id/textView70"
+        app:layout_constraintTop_toBottomOf="@+id/textView70" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
