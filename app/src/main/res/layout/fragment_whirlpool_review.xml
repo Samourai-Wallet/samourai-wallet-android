@@ -411,7 +411,7 @@
         android:textColor="@color/green_ui_2"
         app:layout_constraintEnd_toEndOf="@+id/uncycledAmount"
         app:layout_constraintStart_toStartOf="@+id/textView70"
-        app:layout_constraintTop_toBottomOf="@+id/textView70" />
+        app:layout_constraintTop_toBottomOf="@+id/textView66" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
