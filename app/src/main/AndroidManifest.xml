@@ -238,11 +238,12 @@
         <activity
             android:name=".whirlpool.WhirlpoolMain"
             android:label=""
-            android:theme="@style/SamouraiAppWhirlpoolTheme" />
+            android:theme="@style/Theme.Samourai.Whirlpool.Material" />
         <activity
             android:name=".whirlpool.newPool.NewPoolActivity"
             android:label=""
-            android:theme="@style/SamouraiAppWhirlpoolTheme" />
+            android:theme="@style/Theme.Samourai.Whirlpool.Material" />
+
         <activity
             android:name=".whirlpool.CycleDetail"
             android:label=""
