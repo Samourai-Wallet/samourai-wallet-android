@@ -1,6 +1,8 @@
 package com.samourai.wallet.home;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
@@ -159,7 +161,7 @@ public class BalanceActivity extends SamouraiActivity {
 
             if (ACTION_INTENT.equals(intent.getAction())) {
                 if (progressBar != null) {
-                    progressBar.setVisibility(View.VISIBLE);
+                    showProgress();
                 }
                 final boolean notifTx = intent.getBooleanExtra("notifTx", false);
                 final boolean fetch = intent.getBooleanExtra("fetch", false);
@@ -395,7 +397,7 @@ public class BalanceActivity extends SamouraiActivity {
         txSwipeLayout.setOnRefreshListener(() -> {
             refreshTx(false, true, false);
             txSwipeLayout.setRefreshing(false);
-            progressBar.setVisibility(View.VISIBLE);
+            showProgress();
         });
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
@@ -435,7 +437,7 @@ public class BalanceActivity extends SamouraiActivity {
         }
         setUpTor();
         initViewModel();
-        progressBar.setVisibility(View.VISIBLE);
+        showProgress();
 
         if (account == 0) {
             final Handler delayedHandler = new Handler();
@@ -491,6 +493,15 @@ public class BalanceActivity extends SamouraiActivity {
 
         updateDisplay(false);
         checkDeepLinks();
+    }
+
+    private void hideProgress() {
+        progressBar.hide();
+    }
+
+    private void showProgress() {
+       progressBar.setIndeterminate(true);
+       progressBar.show();
     }
 
     private void checkDeepLinks() {
@@ -853,7 +864,7 @@ public class BalanceActivity extends SamouraiActivity {
         }
         if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
             refreshTx(false, false, false);
-            progressBar.setVisibility(View.VISIBLE);
+            showProgress();
         } else {
             ;
         }
@@ -926,7 +937,7 @@ public class BalanceActivity extends SamouraiActivity {
                     }
 
                     if (progressBar.getVisibility() == View.VISIBLE && fromRefreshService) {
-                        progressBar.setVisibility(View.INVISIBLE);
+                        hideProgress();
                     }
                 });
 

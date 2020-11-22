@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputType;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -54,10 +55,6 @@ public class PinEntryActivity extends AppCompatActivity {
 
     private ImageButton tsend = null;
     private ImageButton tback = null;
-    private Vibrator vibrator;
-
-//    private TextView tvPrompt = null;
-//    private TextView tvUserInput = null;
 
 
     private StringBuilder userInput = null;
@@ -90,10 +87,7 @@ public class PinEntryActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.toolbar_pinEntry));
         pinEntryMaskLayout = findViewById(R.id.pin_entry_mask_layout);
         progressBar = findViewById(R.id.progress_pin_entry);
-//        tvUserInput = (TextView) findViewById(R.id.userInput);
 //        tvUserInput.setText("");
-
-        vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
         pinEntryView.setEntryListener((key, view) -> {
             if (userInput.length() <= (AccessFactory.MAX_PIN_LENGTH - 1)){
@@ -243,9 +237,9 @@ public class PinEntryActivity extends AppCompatActivity {
     }
 
     public void OnNumberPadClick(View view) {
-        if (PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true) {
-            vibrator.vibrate(55);
-        }
+        if (PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true)) {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK,HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+         }
         userInput.append(((Button) view).getText().toString());
         displayUserInput();
     }

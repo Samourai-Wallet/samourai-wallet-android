@@ -3,8 +3,13 @@ package com.samourai.wallet.whirlpool.newPool;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -84,7 +89,7 @@ public class NewPoolActivity extends AppCompatActivity {
     private ReviewPoolFragment reviewPoolFragment;
     private ViewPager newPoolViewPager;
     private int account = 0;
-    private Button confirmButton;
+    private MaterialButton confirmButton;
     private CompositeDisposable disposables = new CompositeDisposable();
 
     private List<UTXOCoin> selectedCoins = new ArrayList<>();
@@ -178,7 +183,8 @@ public class NewPoolActivity extends AppCompatActivity {
                     calculateTx0(selectedPoolViewModel.getDenomination(),selectedPoolViewModel.getMinerFee());
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
-                    confirmButton.setBackgroundResource(R.drawable.button_green);
+                    confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.green_ui_2));
+
                     reviewPoolFragment.setTx0(tx0,tx0FeeTarget,selectedPoolViewModel);
                     break;
                 }
@@ -394,7 +400,7 @@ public class NewPoolActivity extends AppCompatActivity {
                 switch (position) {
                     case 0: {
                         enableStep1(true);
-                        confirmButton.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+                        confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.blue_ui_2));
                         confirmButton.setText(R.string.next);
                         break;
                     }
@@ -437,7 +443,8 @@ public class NewPoolActivity extends AppCompatActivity {
                 reviewMessage.length() - 1, spannable.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         );
-        confirmButton.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+        confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.blue_ui_2));
+
         confirmButton.setText(spannable);
     }
 
@@ -462,8 +469,8 @@ public class NewPoolActivity extends AppCompatActivity {
     public void onBackPressed() {
         switch (newPoolViewPager.getCurrentItem()) {
             case 0: {
-                new androidx.appcompat.app.AlertDialog
-                        .Builder(this)
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.confirm)
                         .setMessage("Are you sure want to cancel?")
                         .setPositiveButton(R.string.yes, (dialogInterface, i) -> super.onBackPressed())
                         .setNegativeButton(R.string.no, (dialogInterface, i) -> {
@@ -473,8 +480,7 @@ public class NewPoolActivity extends AppCompatActivity {
             }
             case 1: {
                 if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                    new androidx.appcompat.app.AlertDialog
-                            .Builder(this)
+                    new MaterialAlertDialogBuilder(this)
                             .setMessage("Are you sure want to cancel?")
                             .setPositiveButton(R.string.yes, (dialogInterface, i) -> super.onBackPressed())
                             .setNegativeButton(R.string.no, (dialogInterface, i) -> {
@@ -496,19 +502,23 @@ public class NewPoolActivity extends AppCompatActivity {
     private void enableConfirmButton(boolean enable) {
         if (enable) {
             confirmButton.setEnabled(true);
-            confirmButton.setBackgroundResource(R.drawable.button_blue);
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.blue_ui_2));
+
         } else {
             confirmButton.setEnabled(false);
-            confirmButton.setBackgroundResource(R.drawable.disabled_grey_button);
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.disabled_grey));
+
         }
     }
     private void enableBroadcastButton(boolean enable) {
         if (enable) {
             confirmButton.setEnabled(true);
-            confirmButton.setBackgroundResource(R.drawable.button_green);
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.green_ui_2));
+
         } else {
             confirmButton.setEnabled(false);
-            confirmButton.setBackgroundResource(R.drawable.disabled_grey_button);
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.disabled_grey));
+
         }
     }
 

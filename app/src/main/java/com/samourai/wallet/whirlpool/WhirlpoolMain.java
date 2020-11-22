@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -278,7 +280,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 } catch (Exception ex) {
                     Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
                     ex.printStackTrace();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                     builder.setMessage("Tx0 is not possible with selected utxo.")
                             .setCancelable(true);
                     builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
@@ -286,7 +288,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                     return;
                 }
                 if (tx0.getTx0() == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    MaterialAlertDialogBuilder builder= new MaterialAlertDialogBuilder(this);
                     builder.setMessage("Tx0 is not possible with selected utxo.")
                             .setCancelable(true);
                     builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
@@ -465,7 +467,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             scode.setText(strCurrentCode);
         }
 
-        new AlertDialog.Builder(WhirlpoolMain.this)
+        new MaterialAlertDialogBuilder(WhirlpoolMain.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.enter_scode)
                 .setView(scode)

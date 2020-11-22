@@ -72,12 +72,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/utxo_selection_confirm_btn"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/button_blue"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:backgroundTint="@color/blue_ui_2"
         android:text="@string/next"
+        app:rippleColor="@color/white"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,6 +91,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.92" />
+        app:layout_constraintGuide_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
