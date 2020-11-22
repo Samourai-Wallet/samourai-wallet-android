@@ -45,13 +45,13 @@
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:indicatorColor="@color/accent"
             app:indicatorCornerRadius="5dp"
-            app:indicatorSize="5dp"
-            android:layout_marginBottom="-2dp"
+            app:indicatorSize="3dp"
+            app:growMode="bidirectional"
+            app:linearSeamless="true"
             app:trackColor="@android:color/transparent"
             android:indeterminate="true"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
