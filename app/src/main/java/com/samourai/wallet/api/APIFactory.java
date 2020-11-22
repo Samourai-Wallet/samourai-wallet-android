@@ -737,7 +737,7 @@ public class APIFactory {
             }
 
             if(jsonObject.has("txs"))  {
-
+                xpub_txs.clear();
                 List<String> seenHashes = new ArrayList<String>();
 
                 JSONArray txArray = (JSONArray)jsonObject.get("txs");
@@ -2615,7 +2615,7 @@ public class APIFactory {
             }
 
             if(jsonObject.has("txs"))  {
-
+                postmix_txs.clear();
                 JSONArray txArray = (JSONArray)jsonObject.get("txs");
                 JSONObject txObj = null;
                 for(int i = 0; i < txArray.length(); i++)  {
