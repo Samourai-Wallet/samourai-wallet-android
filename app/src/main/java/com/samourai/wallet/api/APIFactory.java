@@ -828,6 +828,10 @@ public class APIFactory {
                             xpub_txs.get(addr).add(tx);
                         }
                         else    {
+                            if(!xpub_txs.containsKey(AddressFactory.getInstance().account2xpub().get(0)))    {
+                                xpub_txs.put(AddressFactory.getInstance().account2xpub().get(0), new ArrayList<Tx>());
+
+                            }
                             xpub_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
                         }
 
