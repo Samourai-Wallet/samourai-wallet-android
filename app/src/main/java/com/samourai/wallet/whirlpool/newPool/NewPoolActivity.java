@@ -190,16 +190,18 @@ public class NewPoolActivity extends AppCompatActivity {
                 }
                 case 2: {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                     builder.setMessage(R.string.block_tx0_change).setCancelable(false);
-                    AlertDialog alert = builder.create();
-                    alert.setTitle(R.string.doxxic_change_warning);
-                    alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
+                    builder.setTitle(R.string.doxxic_change_warning);
+                    builder.setPositiveButton( getString(R.string.yes), (dialog, id) -> {
                         dialog.dismiss();
                         blockChangeOutput = true;
                         processWhirlPool();
                     });
-                    alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
+                    builder.setNeutralButton(R.string.cancel,(dialog, which) -> {
+                        dialog.cancel();
+                    });
+                    builder.setNegativeButton( getString(R.string.no), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
                             blockChangeOutput = false;
@@ -207,7 +209,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         }
                     });
                     if (!isFinishing()) {
-                        alert.show();
+                        builder.show();
                     }
 
                     break;
