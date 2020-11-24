@@ -38,6 +38,12 @@ public class LogUtil {
             message.printStackTrace();
         }
     }
+    public static void error(final String tag, Throwable message) {
+        if (BuildConfig.DEBUG) {
+            android.util.Log.e(tag, Objects.requireNonNull(message.getMessage()));
+            message.printStackTrace();
+        }
+    }
 
     public static void setLoggersDebug() {
         // skip noisy logs

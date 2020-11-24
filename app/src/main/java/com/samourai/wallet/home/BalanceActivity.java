@@ -282,7 +282,7 @@ public class BalanceActivity extends SamouraiActivity {
                                                     else    {
                                                         BlockedUTXO.getInstance().add(hash, idx, amount);
                                                     }
-
+                                                    saveState();
                                                 }
                                             }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
