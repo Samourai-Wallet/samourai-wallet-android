@@ -1866,7 +1866,8 @@ public class APIFactory {
             parseMixXPUB(badbankMultiAddrObj);
             parseMixUnspentOutputs(badbankUnspentObj.toString());
 */
-            JSONObject mixMultiAddrObj = getRawXPUB(new String[] { strPreMix, strPostMix });
+            JSONObject mixMultiAddrObj = getRawXPUB(new String[] {  strPostMix });
+//            JSONObject preMixMultiAddrObj = getRawXPUB(new String[] {  strPreMix });
 //            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix }, XPUB_PREMIX);
             if (mixMultiAddrObj != null)    {
                 parseMixXPUB(mixMultiAddrObj);
