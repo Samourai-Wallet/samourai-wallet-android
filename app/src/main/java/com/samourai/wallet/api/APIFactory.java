@@ -1866,7 +1866,7 @@ public class APIFactory {
             parseMixXPUB(badbankMultiAddrObj);
             parseMixUnspentOutputs(badbankUnspentObj.toString());
 */
-            JSONObject mixMultiAddrObj = getRawXPUB(new String[] {  strPostMix });
+            JSONObject mixMultiAddrObj = getRawXPUB(new String[] {  strPreMix, strPostMix });
 //            JSONObject preMixMultiAddrObj = getRawXPUB(new String[] {  strPreMix });
 //            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix }, XPUB_PREMIX);
             if (mixMultiAddrObj != null)    {
@@ -2625,6 +2625,8 @@ public class APIFactory {
                 JSONObject txObj = null;
                 for(int i = 0; i < txArray.length(); i++)  {
 
+                    boolean hasPreMix = false;
+
                     txObj = (JSONObject)txArray.get(i);
                     long height = 0L;
                     long amount = 0L;
@@ -2658,9 +2660,10 @@ public class APIFactory {
                                 if(prevOutObj.has("xpub"))  {
                                     JSONObject xpubObj = (JSONObject)prevOutObj.get("xpub");
                                     addr = (String)xpubObj.get("m");
-                                }
-                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr((String)prevOutObj.get("addr")) != null)  {
-                                    _addr = (String)prevOutObj.get("addr");
+                                    if(addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()) ||
+                                            addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr()))  {
+                                        hasPreMix = true;
+                                    }
                                 }
                                 else  {
                                     _addr = (String)prevOutObj.get("addr");
@@ -2677,6 +2680,10 @@ public class APIFactory {
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = (String)xpubObj.get("m");
+                                if(hasPreMix && (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr()) ||
+                                        addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).zpubstr())))  {
+                                    amount = outObj.getLong("value");
+                                }
                             }
                             else  {
                                 _addr = (String)outObj.get("addr");
@@ -2698,7 +2705,11 @@ public class APIFactory {
                             if (FormatsUtil.getInstance().isValidXpub(addr)) {
                                 postmix_txs.get(addr).add(tx);
                             } else {
-                                postmix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                                if(!xpub_txs.containsKey(AddressFactory.getInstance().account2xpub().get(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())))    {
+                                    xpub_txs.put(AddressFactory.getInstance().account2xpub().get(AddressFactory.getInstance().account2xpub().get(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())), new ArrayList<Tx>());
+
+                                }
+                                xpub_txs.get(AddressFactory.getInstance().account2xpub().get(AddressFactory.getInstance().account2xpub().get(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()))).add(tx);
                             }
 
                         }
