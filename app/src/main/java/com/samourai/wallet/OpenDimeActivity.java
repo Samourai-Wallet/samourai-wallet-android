@@ -201,9 +201,9 @@ public class OpenDimeActivity extends SamouraiActivity {
             public void onClick(View v) {
 
                 if(strAddress != null)    {
-                    String blockExplorer = "https://m.oxt.me/transaction/";
+                    String blockExplorer = "https://m.oxt.me/address/";
                     if (SamouraiWallet.getInstance().isTestNet()) {
-                        blockExplorer = "https://blockstream.info/testnet/";
+                        blockExplorer = "https://blockstream.info/testnet/address/";
                     }
 
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + strAddress));
