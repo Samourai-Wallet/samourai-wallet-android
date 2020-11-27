@@ -2,6 +2,7 @@ package com.samourai.wallet.widgets;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -28,10 +29,10 @@ public class HorizontalStepsViewIndicator extends View {
     private Path path = new Path();
     private int points = 3;
     private int animationDuration = 1000;
-    private float circleRadius = 32f;
+    private float circleRadius = dpToPx(14);
     private float center = 0f;
-    private float pathStrokeSize = 12f;
-    private float animatedPoint = circleRadius - 5;
+    private float pathStrokeSize = dpToPx(6);
+    private float animatedPoint = dpToPx(10) ;
     private static final String TAG = "HorizontalStepsViewIndicator";
     private ValueAnimator animator;
 
@@ -203,5 +204,7 @@ public class HorizontalStepsViewIndicator extends View {
         invalidate();
     }
 
-
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    } 
 }
