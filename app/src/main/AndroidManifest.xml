@@ -152,6 +152,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".OpenDimeActivity"
+            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name">
             <intent-filter>
