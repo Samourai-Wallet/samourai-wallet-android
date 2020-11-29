@@ -52,8 +52,7 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
         if (TorManager.torState == TorManager.TorState.OFF || TorManager.torState == TorManager.TorState.WAITING) {
             if(TorManager.torState == TorManager.TorState.OFF){
                 TorServiceController.startTor()
-                PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.OFFLINE, true)
-
+                PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.ENABLE_TOR, true)
             }
             loaderText.text = "Initializing Tor..."
             TorManager.getTorStateLiveData().observe(this, {
@@ -174,48 +173,6 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
 
         }
 
-
-
-        return
-//        if (!bip47Meta.exists(cahootsRequest.sender, false)) {
-//            val senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.sender)
-//            Toast.makeText(this, "Ignored Cahoots request from unknown sender: $senderDisplayLabel", Toast.LENGTH_LONG).show()
-//            return
-//        }
-//        val senderDisplayLabel = bip47Meta.getDisplayLabel(cahootsRequest.sender)
-//        val senderPaymentCode = PaymentCode(cahootsRequest.sender)
-//        var alert = """
-//                From: $senderDisplayLabel
-//                Type: ${cahootsRequest.type.label}
-//                Miner fee: ${if (cahootsRequest.type.isMinerFeeShared) "shared" else "paid by sender"}
-//
-//                """.trimIndent()
-//        alert += "Do you want to collaborate?"
-//        AlertDialog.Builder(this@SorobanMeetingListenActivity)
-//                .setTitle("Cahoots request received!")
-//                .setMessage(alert)
-//                .setCancelable(true)
-//                .setPositiveButton(R.string.yes) { dialog: DialogInterface?, whichButton: Int ->
-//                    try {
-//                        Toast.makeText(this, "Accepting Cahoots request...", Toast.LENGTH_SHORT).show()
-//                        sorobanMeetingService!!.sendMeetingResponse(senderPaymentCode, cahootsRequest, true).subscribe { sorobanResponseMessage: SorobanResponseMessage? ->
-//                            val intent = SorobanCahootsActivity.createIntentCounterparty(applicationContext, account, cahootsRequest.type, cahootsRequest.sender)
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                        Toast.makeText(this, "Error: " + e.message, Toast.LENGTH_SHORT).show()
-//                    }
-//                }.setNegativeButton(R.string.no) { dialog: DialogInterface?, whichButton: Int ->
-//                    try {
-//                        Toast.makeText(this, "Refusing Cahoots request...", Toast.LENGTH_SHORT).show()
-//                        sorobanMeetingService!!.sendMeetingResponse(senderPaymentCode, cahootsRequest, false).subscribe { sorobanResponseMessage: SorobanResponseMessage? -> finish() }
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                        Toast.makeText(this, "Error: " + e.message, Toast.LENGTH_SHORT).show()
-//                    }
-//                }.show()
     }
 
     override fun finish() {
