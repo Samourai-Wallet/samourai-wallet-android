@@ -55,6 +55,7 @@ import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.paynym.fragments.PayNymOnBoardBottomSheet;
+import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.settings.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -697,6 +698,9 @@ public class BalanceActivity extends SamouraiActivity {
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         }
+        else {
+            menu.findItem(R.id.action_soroban_collab).setVisible(false);
+        }
         this.menu = menu;
 
         return super.onCreateOptionsMenu(menu);
@@ -726,11 +730,13 @@ public class BalanceActivity extends SamouraiActivity {
                     try {
                         Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, clipItem.getText().toString().trim());
                         startActivity(cahootIntent);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
-                }else {
+                }
+                else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
                 }
             }
@@ -740,22 +746,28 @@ public class BalanceActivity extends SamouraiActivity {
         }
         if (id == R.id.action_settings) {
             doSettings();
-        } else if (id == R.id.action_support) {
+        }
+        else if (id == R.id.action_support) {
             doSupport();
-        } else if (id == R.id.action_sweep) {
+        }
+        else if (id == R.id.action_sweep) {
             if (!AppUtil.getInstance(BalanceActivity.this).isOfflineMode()) {
                 doSweep();
-            } else {
+            }
+            else {
                 Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
-        } else if (id == R.id.action_utxo) {
+        }
+        else if (id == R.id.action_utxo) {
             doUTXO();
-        } else if (id == R.id.action_backup) {
+        }
+        else if (id == R.id.action_backup) {
 
             if (SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
                 if (HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
                     doBackup();
-                } else {
+                }
+                else {
 
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                     builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
@@ -772,19 +784,28 @@ public class BalanceActivity extends SamouraiActivity {
                     }
 
                 }
-            } else {
+            }
+            else {
                 Toast.makeText(BalanceActivity.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
             }
 
-        } else if (id == R.id.action_scan_qr) {
+        }
+        else if (id == R.id.action_scan_qr) {
             doScan();
-        } else if (id == R.id.action_postmix) {
+        }
+        else if (id == R.id.action_postmix) {
 
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
             startActivity(intent);
 
-        } else {
+        }
+        else if(id == R.id.action_soroban_collab) {
+            Intent intent = new Intent(this, SorobanMeetingListenActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
+            startActivity(intent);
+        }
+        else {
             ;
         }
         return super.onOptionsItemSelected(item);
