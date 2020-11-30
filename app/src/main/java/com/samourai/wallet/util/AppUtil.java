@@ -14,7 +14,6 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Wallet;
-import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
@@ -22,15 +21,16 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
-import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 public class AppUtil {
 
@@ -103,7 +103,7 @@ public class AppUtil {
             e.printStackTrace();
             ;
         }
-
+/*
         try {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             String[] s = hdw.getXPUBs();
@@ -112,10 +112,17 @@ public class AppUtil {
             }
             String _s = BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr();
 //            APIFactory.getInstance(context).deleteXPUB(_s, true);
-            PayloadUtil.getInstance(context).wipe();
         }
         catch(Exception e) {
             e.printStackTrace();
+        }
+*/
+
+        try {
+            PayloadUtil.getInstance(context).wipe();
+        }
+        catch(IOException ioe) {
+            ioe.printStackTrace();
         }
 
         BIP49Util.getInstance(context).reset();
@@ -144,6 +151,13 @@ public class AppUtil {
         SentToFromBIP47Util.getInstance().reset();
         BatchSendUtil.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
+
+        try {
+            clearApplicationData();
+        }
+        catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
 	}
 
 	public void restartApp() {
@@ -202,7 +216,7 @@ public class AppUtil {
 
     public boolean isServiceRunning(Class<?> serviceClass) {
 
-        ActivityManager manager = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 Log.d("AppUtil", "service class name:" + serviceClass.getName() + " is running");
@@ -295,6 +309,34 @@ public class AppUtil {
 
     public void setClipboardSeen(boolean seen) {
         CLIPBOARD_SEEN = seen;
+    }
+
+    private void clearApplicationData() throws IOException {
+        File cacheDirectory = context.getCacheDir();
+        File applicationDirectory = new File(cacheDirectory.getParent());
+        if (applicationDirectory.exists()) {
+            String[] fileNames = applicationDirectory.list();
+            for (String fileName : fileNames) {
+                deleteFiles(new File(applicationDirectory, fileName));
+            }
+        }
+    }
+
+    private synchronized boolean deleteFiles(File file) throws IOException {
+        boolean deletedAll = true;
+        if (file != null) {
+            if (file.isDirectory()) {
+                String[] children = file.list();
+                for (int i = 0; i < children.length; i++) {
+                    deletedAll = deleteFiles(new File(file, children[i])) && deletedAll;
+                }
+            }
+            else {
+                deletedAll = file.delete();
+            }
+        }
+
+        return deletedAll;
     }
 
 }

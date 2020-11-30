@@ -916,10 +916,10 @@ public class PayloadUtil	{
 
     private synchronized void secureDelete(File file) throws IOException {
         if (file.exists()) {
-            long length = file.length();
-            SecureRandom random = new SecureRandom();
-            RandomAccessFile raf = new RandomAccessFile(file, "rws");
-            for(int i = 0; i < 5; i++) {
+            for(int i = 0; i < 3; i++)   {
+                long length = file.length();
+                SecureRandom random = new SecureRandom();
+                RandomAccessFile raf = new RandomAccessFile(file, "rws");
                 raf.seek(0);
                 raf.getFilePointer();
                 byte[] data = new byte[64];
@@ -929,8 +929,8 @@ public class PayloadUtil	{
                     raf.write(data);
                     pos += data.length;
                 }
+                raf.close();
             }
-            raf.close();
             file.delete();
         }
     }
