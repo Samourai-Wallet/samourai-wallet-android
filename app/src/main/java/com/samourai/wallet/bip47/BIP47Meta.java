@@ -49,7 +49,7 @@ public class BIP47Meta {
     private static ConcurrentHashMap<String,String> pcodeIncomingStatus = null;
     private static ConcurrentHashMap<String,String> pcodeLatestEvent = null;
     private static ConcurrentHashMap<String,Boolean> pcodeSegwit = null;
-    private static ArrayList<String> followingPcodes = new ArrayList();
+    private static ArrayList<String> followingPcodes = null;
 
     private static BIP47Meta instance = null;
 
@@ -70,6 +70,7 @@ public class BIP47Meta {
             pcodeIncomingStatus = new ConcurrentHashMap<String,String>();
             pcodeLatestEvent = new ConcurrentHashMap<String,String>();
             pcodeSegwit = new ConcurrentHashMap<String,Boolean>();
+            followingPcodes = new ArrayList<String>();
 
             instance = new BIP47Meta();
         }
@@ -90,6 +91,7 @@ public class BIP47Meta {
         pcodeIncomingStatus.clear();
         pcodeLatestEvent.clear();
         pcodeSegwit.clear();
+        followingPcodes.clear();
     }
 
     public String getLabel(String pcode)   {
