@@ -106,7 +106,7 @@ object TorManager {
                 torServiceNotificationBuilder = serviceNotificationBuilder,
                 backgroundManagerPolicy = generateBackgroundManagerPolicy(),
                 buildConfigVersionCode = BuildConfig.VERSION_CODE,
-                torSettings = TorSettings(),
+                defaultTorSettings = TorSettings(),
                 geoipAssetPath = "common/geoip",
                 geoip6AssetPath = "common/geoip6",
 
