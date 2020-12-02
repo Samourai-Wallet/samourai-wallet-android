@@ -32,6 +32,11 @@
         android:title="@string/action_sync_all"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_claim_paynym"
+        android:orderInCategory="100"
+        android:title="Claim Paynym"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_support"
         android:orderInCategory="100"
         android:title="@string/action_support"
