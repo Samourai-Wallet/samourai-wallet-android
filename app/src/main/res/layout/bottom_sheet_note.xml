@@ -26,14 +26,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/submit_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_blue"
+            app:backgroundTint="?attr/colorAccent"
             android:text="Add note"
+            app:rippleColor="@color/text_primary"
             android:layout_marginTop="12dp"
             android:textAllCaps="false"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

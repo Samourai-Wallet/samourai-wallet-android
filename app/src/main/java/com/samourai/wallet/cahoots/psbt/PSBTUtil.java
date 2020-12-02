@@ -65,13 +65,13 @@ public class PSBTUtil {
         PSBT _psbt = null;
         PSBT.setDebug(true);
         try {
-            _psbt = PSBT.fromBytes(Hex.decode(strPSBT));
+            _psbt = PSBT.fromBytes(Hex.decode(strPSBT), SamouraiWallet.getInstance().getCurrentNetworkParams());
         }
         catch(Exception e) {
             Toast.makeText(context, R.string.psbt_error, Toast.LENGTH_SHORT).show();
             return;
         }
-        final PSBT psbt = PSBT.fromBytes(_psbt.toBytes());
+        final PSBT psbt = PSBT.fromBytes(_psbt.toBytes(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
         final EditText edPSBT = new EditText(context);
         edPSBT.setSingleLine(false);

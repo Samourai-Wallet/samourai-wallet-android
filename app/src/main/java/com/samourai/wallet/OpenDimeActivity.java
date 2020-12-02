@@ -53,6 +53,8 @@ import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.FileSystemFactory;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileInputStream;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -88,9 +90,9 @@ public class OpenDimeActivity extends SamouraiActivity {
 
     private ImageView ivQR = null;
 
-    private Button btTopUp = null;
-    private Button btView = null;
-    private Button btSweep = null;
+    private MaterialButton btTopUp = null;
+    private MaterialButton btView = null;
+    private MaterialButton btSweep = null;
 
     private String strAddress = null;
     private CharSequenceX strPrivKey = null;
@@ -182,9 +184,9 @@ public class OpenDimeActivity extends SamouraiActivity {
         tvBalance = (TextView)findViewById(R.id.balanceAmount);
         tvKey = (TextView)findViewById(R.id.keyStatus);
         ivQR = (ImageView)findViewById(R.id.qr);
-        btTopUp = (Button)findViewById(R.id.topup);
-        btView = (Button)findViewById(R.id.view);
-        btSweep = (Button)findViewById(R.id.sweep);
+        btTopUp = (MaterialButton)findViewById(R.id.topup);
+        btView = (MaterialButton)findViewById(R.id.view);
+        btSweep = (MaterialButton)findViewById(R.id.sweep);
 
         btTopUp.setVisibility(View.GONE);
 /*
@@ -196,14 +198,14 @@ public class OpenDimeActivity extends SamouraiActivity {
             }
         });
 */
-        btView = (Button)findViewById(R.id.view);
+        btView = (MaterialButton)findViewById(R.id.view);
         btView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 if(strAddress != null)    {
-                    String blockExplorer = "https://m.oxt.me/transaction/";
+                    String blockExplorer = "https://m.oxt.me/address/";
                     if (SamouraiWallet.getInstance().isTestNet()) {
-                        blockExplorer = "https://blockstream.info/testnet/";
+                        blockExplorer = "https://blockstream.info/testnet/address/";
                     }
 
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + strAddress));
@@ -213,7 +215,7 @@ public class OpenDimeActivity extends SamouraiActivity {
             }
         });
 
-        btSweep = (Button)findViewById(R.id.sweep);
+        btSweep = (MaterialButton)findViewById(R.id.sweep);
         btSweep.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -230,7 +232,7 @@ public class OpenDimeActivity extends SamouraiActivity {
 
                 if(strAddress != null)    {
 
-                    new AlertDialog.Builder(OpenDimeActivity.this)
+                    new MaterialAlertDialogBuilder(OpenDimeActivity.this)
                             .setTitle(R.string.app_name)
                             .setMessage(R.string.receive_address_to_clipboard)
                             .setCancelable(false)
@@ -297,7 +299,7 @@ public class OpenDimeActivity extends SamouraiActivity {
 
             if(strAddress != null)    {
 
-                new AlertDialog.Builder(OpenDimeActivity.this)
+                new MaterialAlertDialogBuilder(OpenDimeActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.receive_address_to_share)
                         .setCancelable(false)

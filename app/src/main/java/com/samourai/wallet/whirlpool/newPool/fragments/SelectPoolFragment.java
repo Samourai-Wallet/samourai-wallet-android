@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.samourai.wallet.R;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
@@ -48,7 +49,7 @@ public class SelectPoolFragment extends Fragment {
     private RecyclerView recyclerView;
     private PoolsAdapter poolsAdapter;
     private ArrayList<PoolViewModel> poolViewModels = new ArrayList<PoolViewModel>();
-    private Button feeNormalBtn, feeLowBtn, feeHighBtn;
+    private MaterialButton feeNormalBtn, feeLowBtn, feeHighBtn;
     private TextView poolFee;
     private PoolCyclePriority poolCyclePriority = PoolCyclePriority.NORMAL;
     private OnPoolSelectionComplete onPoolSelectionComplete;
@@ -171,9 +172,9 @@ public class SelectPoolFragment extends Fragment {
 
         switch (poolCyclePriority) {
             case LOW: {
-                feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
-                feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
-                feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+                setButtonColor(feeNormalBtn,R.color.window);
+                setButtonColor(feeHighBtn,R.color.window);
+                setButtonColor(feeLowBtn,R.color.blue_ui_2);
                 if (fees.size() >= 1)
                     poolFee.setText(String.valueOf(fees.get(0)).concat(" ").concat(getString(R.string.sat_b)));
                 if (fees.size() >= 1)
@@ -181,9 +182,9 @@ public class SelectPoolFragment extends Fragment {
                 break;
             }
             case NORMAL: {
-                feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
-                feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
-                feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
+                setButtonColor(feeLowBtn,R.color.window);
+                setButtonColor(feeHighBtn,R.color.window);
+                setButtonColor(feeNormalBtn,R.color.blue_ui_2);
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
                 if (fees.size() >= 2)
@@ -192,9 +193,9 @@ public class SelectPoolFragment extends Fragment {
             }
 
             case HIGH: {
-                feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
-                feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
-                feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
+                setButtonColor(feeLowBtn,R.color.window);
+                setButtonColor(feeNormalBtn,R.color.window);
+                setButtonColor(feeHighBtn,R.color.blue_ui_2);
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(2)).concat(" ").concat(getString(R.string.sat_b)));
                 if (fees.size() >= 2)
@@ -207,6 +208,9 @@ public class SelectPoolFragment extends Fragment {
     }
 
 
+    void setButtonColor(MaterialButton button, int color){
+        button.setBackgroundTintList(ContextCompat.getColorStateList(getContext(),color));
+    }
     @Override
     public void onDetach() {
         this.onPoolSelectionComplete = null;

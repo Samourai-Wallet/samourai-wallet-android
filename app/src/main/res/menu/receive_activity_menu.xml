@@ -16,4 +16,10 @@
         android:title="@string/action_support"
         app:showAsAction="never" />
 
+
+    <item
+        android:id="@+id/receive_cahoots"
+        android:title="Receive online Cahoots"
+        app:showAsAction="never" />
+
 </menu>

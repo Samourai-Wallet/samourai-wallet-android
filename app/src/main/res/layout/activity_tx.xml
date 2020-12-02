@@ -68,12 +68,16 @@
                 android:textAlignment="center" />
         </LinearLayout>
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.ProgressIndicator
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="-6dp"
+            app:indicatorColor="@color/accent"
+            app:indicatorCornerRadius="5dp"
+            app:indicatorSize="5dp"
+            app:trackColor="@android:color/transparent"
+            android:layout_marginBottom="-2dp"
             android:background="@android:color/transparent"
             android:indeterminate="true"
             android:visibility="invisible"

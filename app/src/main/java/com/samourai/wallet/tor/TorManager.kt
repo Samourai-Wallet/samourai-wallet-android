@@ -52,6 +52,10 @@ object TorManager {
         }
 
 
+    fun startTor(){
+        TorServiceController.startTor()
+    }
+
     private fun generateTorServiceNotificationBuilder(
     ): ServiceNotification.Builder {
         return ServiceNotification.Builder(

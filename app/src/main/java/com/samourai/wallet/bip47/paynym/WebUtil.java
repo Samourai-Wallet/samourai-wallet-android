@@ -53,7 +53,8 @@ public class WebUtil {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
 
-        builder.callTimeout(DefaultRequestTimeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS);
 
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
@@ -65,7 +66,7 @@ public class WebUtil {
         if (authToken != null) {
             rbuilder.addHeader("auth-token", authToken);
         }
-        if(TorManager.INSTANCE.isRequired()){
+        if (TorManager.INSTANCE.isConnected() || TorManager.INSTANCE.isRequired()) {
             builder.proxy(TorManager.INSTANCE.getProxy());
         }
 
@@ -81,7 +82,6 @@ public class WebUtil {
         }
 
     }
-
 
 
 }

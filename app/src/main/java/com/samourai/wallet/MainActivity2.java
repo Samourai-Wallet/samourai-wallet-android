@@ -152,7 +152,7 @@ public class MainActivity2 extends AppCompatActivity {
 
     private void startApp() {
 
-        if (TorManager.INSTANCE.isRequired() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.INSTANCE.isConnected()) {
+        if (TorManager.INSTANCE.isRequired() && !AppUtil.getInstance(getApplicationContext()).isOfflineMode() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.INSTANCE.isConnected()) {
             loaderTxView.setText(getText(R.string.initializing_tor));
             progressIndicator.setIndeterminate(false);
             progressIndicator.setGrowMode(ProgressIndicator.GROW_MODE_BIDIRECTIONAL);
@@ -213,7 +213,9 @@ public class MainActivity2 extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.INSTANCE.isConnected()) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)
+                && !PrefsUtil.getInstance(this).getValue(PrefsUtil.OFFLINE,false)
+                && !TorManager.INSTANCE.isConnected()) {
 
             ((SamouraiApplication) getApplication()).startService();
             TorManager.INSTANCE.getTorStateLiveData().observe(this, torState -> {

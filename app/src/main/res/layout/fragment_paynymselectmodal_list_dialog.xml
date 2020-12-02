@@ -13,22 +13,23 @@
         android:layout_height="wrap_content"
         android:background="@color/blue_semi_transparent_pressed"
         android:padding="16dp"
-        android:text="@string/paynyms"
+        android:id="@+id/dialogTitle"
         android:textColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/list"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:paddingTop="@dimen/list_item_spacing_half"
-    android:paddingBottom="@dimen/list_item_spacing_half"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.51"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:listitem="@layout/fragment_paynymselectmodal_list_item">
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/list_item_spacing_half"
+        android:paddingBottom="@dimen/list_item_spacing_half"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/fragment_paynymselectmodal_list_item"
+        tools:visibility="gone">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -38,7 +39,8 @@
         android:layout_height="200dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <TextView
             android:layout_width="match_parent"
@@ -52,13 +54,31 @@
             android:id="@+id/paynym_add_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
             android:layout_marginTop="12dp"
+            android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:text="@string/bip47_setup4_title"
-            android:textAllCaps="false"
-      />
+            android:textAllCaps="false" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/paynym_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="48dp" />
     </LinearLayout>
 
 

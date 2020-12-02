@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,12 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.samourai.wallet.R;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.psbt.PSBTUtil;
@@ -29,11 +33,13 @@ import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LinearLayoutManagerWrapper;
 import com.samourai.wallet.utxos.PreSelectUtil;
@@ -65,6 +71,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -273,7 +280,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 } catch (Exception ex) {
                     Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
                     ex.printStackTrace();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                     builder.setMessage("Tx0 is not possible with selected utxo.")
                             .setCancelable(true);
                     builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
@@ -281,7 +288,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                     return;
                 }
                 if (tx0.getTx0() == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    MaterialAlertDialogBuilder builder= new MaterialAlertDialogBuilder(this);
                     builder.setMessage("Tx0 is not possible with selected utxo.")
                             .setCancelable(true);
                     builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
@@ -418,9 +425,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss();
                 try {
                     if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("payload", code.trim());
-                        cahootIntent.putExtra("_account", WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix());
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix(), code.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         PSBTUtil.getInstance(getApplication()).doPSBT(code.trim());
@@ -442,6 +447,17 @@ public class WhirlpoolMain extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void saveState(){
+        new Thread(() -> {
+            try {
+                PayloadUtil.getInstance(getApplicationContext()).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(getApplicationContext()).getGUID() + AccessFactory.getInstance(getApplicationContext()).getPIN()));
+            } catch (Exception e) {
+                ;
+            }
+
+        }).start();
+    }
+
     private void doSCODE() {
 
         final EditText scode = new EditText(WhirlpoolMain.this);
@@ -451,36 +467,40 @@ public class WhirlpoolMain extends AppCompatActivity {
             scode.setText(strCurrentCode);
         }
 
-        new AlertDialog.Builder(WhirlpoolMain.this)
+        new MaterialAlertDialogBuilder(WhirlpoolMain.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.enter_scode)
                 .setView(scode)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String strSCODE = scode.getText().toString().trim();
-                        if (scode != null) {
-                            WhirlpoolMeta.getInstance(WhirlpoolMain.this).setSCODE(strSCODE);
-                            WhirlpoolNotificationService.stopService(getApplicationContext());
+                .setNeutralButton("Remove SCODE", (dialog, which) -> {
+                    WhirlpoolMeta.getInstance(WhirlpoolMain.this).setSCODE("");
+                    WhirlpoolNotificationService.stopService(getApplicationContext());
+                    saveState();
+                    new Handler().postDelayed(() -> {
+                        Intent _intent = new Intent(WhirlpoolMain.this, BalanceActivity.class);
+                        _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(_intent);
+                    }, 1000L);
+                })
+                .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
+                    String strSCODE = scode.getText().toString().trim();
+                    if (scode != null) {
+                        WhirlpoolMeta.getInstance(WhirlpoolMain.this).setSCODE(strSCODE);
+                        WhirlpoolNotificationService.stopService(getApplicationContext());
+                        saveState();
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Intent _intent = new Intent(WhirlpoolMain.this, BalanceActivity.class);
-                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    startActivity(_intent);
-                                }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent _intent = new Intent(WhirlpoolMain.this, BalanceActivity.class);
+                                _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(_intent);
+                            }
 
-                            }, 1000L);
+                        }, 1000L);
 
-                        }
-                        dialog.dismiss();
                     }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.dismiss();
-            }
-        }).show();
+                    dialog.dismiss();
+                }).setNegativeButton(R.string.cancel, (dialog, whichButton) -> dialog.dismiss()).show();
 
     }
 
@@ -598,12 +618,12 @@ public class WhirlpoolMain extends AppCompatActivity {
 
                 // prefix with "Mix x/y - "
                 try {
-                    int currentMix = whirlpoolUtxo.getMixsDone()+1;
+                    int currentMix = whirlpoolUtxo.getMixsDone() + 1;
                     int mixsTarget = whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
-                    String mixInfo = "Mix "+currentMix+"/"+mixsTarget+" - ";
-                    holder.mixingProgress.setText(mixInfo+holder.mixingProgress.getText());
+                    String mixInfo = "Mix " + currentMix + "/" + mixsTarget + " - ";
+                    holder.mixingProgress.setText(mixInfo + holder.mixingProgress.getText());
                 } catch (Exception ex) {
-                        ex.printStackTrace();
+                    ex.printStackTrace();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

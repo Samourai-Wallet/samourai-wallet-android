@@ -18,6 +18,10 @@
         android:title="View Payment code"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_unfollow"
+        android:title="Unfollow"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/retry_notiftx"
         android:title="Retry follow transaction"
         android:visible="false"
@@ -37,5 +41,6 @@
         android:id="@+id/paynym_indexes"
         android:title="@string/options_paynym_indexes"
         app:showAsAction="never" />
+
 
 </menu>

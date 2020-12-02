@@ -61,7 +61,7 @@
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
             android:parentActivityName=".utxos.UTXOSActivity"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".network.NetworkDashboard"
             android:label="@string/title_activity_network_dashboard"
@@ -71,19 +71,19 @@
             android:name=".utxos.UTXOSActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/unspent_outputs"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:label=""
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.addPaynym.AddPaynymActivity"
             android:label="@string/add_new"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".paynym.PayNymHome"
             android:label="@string/paynyms"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -108,7 +108,7 @@
         <activity
             android:name=".home.BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -125,7 +125,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:theme="@style/SamouraiAppTheme"
+            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
 
@@ -152,6 +152,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".OpenDimeActivity"
+            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name">
             <intent-filter>
@@ -233,16 +234,17 @@
         <activity
             android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/SamouraiAppTheme"
+            android:theme="@style/Theme.Samourai.Material"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlpoolMain"
             android:label=""
-            android:theme="@style/SamouraiAppWhirlpoolTheme" />
+            android:theme="@style/Theme.Samourai.Whirlpool.Material" />
         <activity
             android:name=".whirlpool.newPool.NewPoolActivity"
             android:label=""
-            android:theme="@style/SamouraiAppWhirlpoolTheme" />
+            android:theme="@style/Theme.Samourai.Whirlpool.Material" />
+
         <activity
             android:name=".whirlpool.CycleDetail"
             android:label=""
@@ -260,6 +262,18 @@
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"
+            android:theme="@style/SamouraiAppTheme" />
+        <activity
+            android:name=".send.cahoots.SorobanCahootsActivity"
+            android:label="Online Cahoots"
+            android:theme="@style/SamouraiAppTheme" />
+        <activity
+            android:name=".send.soroban.meeting.SorobanMeetingListenActivity"
+            android:label="Listen for online Cahoots"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
+            android:name=".send.soroban.meeting.SorobanMeetingSendActivity"
+            android:label="Send online Cahoots"
             android:theme="@style/SamouraiAppTheme" />
 
         <provider

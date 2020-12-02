@@ -23,6 +23,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
@@ -123,11 +124,14 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Switch themes based on accounts (blue theme for whirlpool account)
+        setSwitchThemes(true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utxos);
         toolbar = findViewById(R.id.toolbar_utxos);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
             getSupportActionBar().setTitle(getText(R.string.unspent_outputs_post_mix));
@@ -553,7 +557,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
             message += "\n";
         }
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(message)
                 .setCancelable(false)
@@ -711,7 +715,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
                     }
                 }
 
-                new AlertDialog.Builder(this)
+                new MaterialAlertDialogBuilder(this)
                         .setMessage("Send selected utxo's to whirlpool")
                         .setCancelable(false)
                         .setPositiveButton(R.string.ok, (dialog, whichButton) -> {

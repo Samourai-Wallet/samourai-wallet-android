@@ -4,12 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/review_button"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/button_blue"
+        app:backgroundTint="@color/blue_ui_2"
+        app:rippleColor="@color/white"
+        android:textColor="@color/white"
         android:text="@string/review_transaction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

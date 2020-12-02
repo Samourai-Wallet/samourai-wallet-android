@@ -1,9 +1,12 @@
 package com.samourai.wallet.home;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
@@ -45,10 +48,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.paynym.fragments.PayNymOnBoardBottomSheet;
+import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.settings.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -116,6 +123,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
+import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -133,7 +141,7 @@ public class BalanceActivity extends SamouraiActivity {
 
     private List<Tx> txs = null;
     private RecyclerView TxRecyclerView;
-    private ProgressBar progressBar;
+    private ProgressIndicator progressBar;
     private BalanceViewModel balanceViewModel;
 
     private RicochetQueueTask ricochetQueueTask = null;
@@ -154,7 +162,7 @@ public class BalanceActivity extends SamouraiActivity {
 
             if (ACTION_INTENT.equals(intent.getAction())) {
                 if (progressBar != null) {
-                    progressBar.setVisibility(View.VISIBLE);
+                    showProgress();
                 }
                 final boolean notifTx = intent.getBooleanExtra("notifTx", false);
                 final boolean fetch = intent.getBooleanExtra("fetch", false);
@@ -179,7 +187,7 @@ public class BalanceActivity extends SamouraiActivity {
                     if (BalanceActivity.this != null) {
 
                         if (rbfHash != null) {
-                            new AlertDialog.Builder(BalanceActivity.this)
+                            new MaterialAlertDialogBuilder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
                                     .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
                                     .setCancelable(true)
@@ -262,7 +270,7 @@ public class BalanceActivity extends SamouraiActivity {
                                     message += " ";
                                     message += hash + "-" + idx;
 
-                                    AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                    MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                                             .setTitle(R.string.dusting_tx)
                                             .setMessage(message)
                                             .setCancelable(false)
@@ -275,7 +283,7 @@ public class BalanceActivity extends SamouraiActivity {
                                                     else    {
                                                         BlockedUTXO.getInstance().add(hash, idx, amount);
                                                     }
-
+                                                    saveState();
                                                 }
                                             }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -309,11 +317,14 @@ public class BalanceActivity extends SamouraiActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Switch themes based on accounts (blue theme for whirlpool account)
+        setSwitchThemes(true);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_balance);
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
         balanceViewModel.setAccount(account);
+
 
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -372,16 +383,11 @@ public class BalanceActivity extends SamouraiActivity {
         receiveFab.setOnClickListener(view -> {
             menuFab.toggle(true);
 
-            try {
-                HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
+            HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
 
-                if (hdw != null) {
-                    Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                    startActivity(intent);
-                }
-
-
-            } catch (IOException | MnemonicException.MnemonicLengthException e) {
+            if (hdw != null) {
+                Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                startActivity(intent);
             }
         });
         paynymFab.setOnClickListener(view -> {
@@ -392,7 +398,7 @@ public class BalanceActivity extends SamouraiActivity {
         txSwipeLayout.setOnRefreshListener(() -> {
             refreshTx(false, true, false);
             txSwipeLayout.setRefreshing(false);
-            progressBar.setVisibility(View.VISIBLE);
+            showProgress();
         });
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
@@ -406,14 +412,14 @@ public class BalanceActivity extends SamouraiActivity {
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
-
-        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false) {
+         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
-        } else if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
-                PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false) {
-            doClaimPayNym();
-        } else {
+        } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
+                 !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false)) {
+             PayNymOnBoardBottomSheet payNymOnBoardBottomSheet = new PayNymOnBoardBottomSheet();
+             payNymOnBoardBottomSheet.show(getSupportFragmentManager(),payNymOnBoardBottomSheet.getTag());
         }
+        Log.i(TAG, "onCreate:PAYNYM_REFUSED ".concat(String.valueOf(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false))));
 
         if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
             if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
@@ -432,7 +438,7 @@ public class BalanceActivity extends SamouraiActivity {
         }
         setUpTor();
         initViewModel();
-        progressBar.setVisibility(View.VISIBLE);
+        showProgress();
 
         if (account == 0) {
             final Handler delayedHandler = new Handler();
@@ -488,6 +494,15 @@ public class BalanceActivity extends SamouraiActivity {
 
         updateDisplay(false);
         checkDeepLinks();
+    }
+
+    private void hideProgress() {
+        progressBar.hide();
+    }
+
+    private void showProgress() {
+       progressBar.setIndeterminate(true);
+       progressBar.show();
     }
 
     private void checkDeepLinks() {
@@ -619,7 +634,7 @@ public class BalanceActivity extends SamouraiActivity {
 
             ArrayList<String> paymentCodes = new ArrayList<>(BIP47Meta.getInstance().getSortedByLabels(false, true));
             for (String code : paymentCodes) {
-                Picasso.with(getBaseContext())
+                Picasso.get()
                         .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + code + "/avatar").fetch(new Callback() {
                     @Override
                     public void onSuccess() {
@@ -627,7 +642,7 @@ public class BalanceActivity extends SamouraiActivity {
                     }
 
                     @Override
-                    public void onError() {
+                    public void onError(Exception e) {
                         /*NO OP*/
                     }
                 });
@@ -683,6 +698,9 @@ public class BalanceActivity extends SamouraiActivity {
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         }
+        else {
+            menu.findItem(R.id.action_soroban_collab).setVisible(false);
+        }
         this.menu = menu;
 
         return super.onCreateOptionsMenu(menu);
@@ -709,11 +727,16 @@ public class BalanceActivity extends SamouraiActivity {
                 ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
 
                 if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
-                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                    cahootIntent.putExtra("_account",account);
-                    startActivity(cahootIntent);
-                }else {
+                    try {
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, clipItem.getText().toString().trim());
+                        startActivity(cahootIntent);
+                    }
+                    catch (Exception e) {
+                        Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+                else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
                 }
             }
@@ -723,55 +746,66 @@ public class BalanceActivity extends SamouraiActivity {
         }
         if (id == R.id.action_settings) {
             doSettings();
-        } else if (id == R.id.action_support) {
+        }
+        else if (id == R.id.action_support) {
             doSupport();
-        } else if (id == R.id.action_sweep) {
+        }
+        else if (id == R.id.action_sweep) {
             if (!AppUtil.getInstance(BalanceActivity.this).isOfflineMode()) {
                 doSweep();
-            } else {
+            }
+            else {
                 Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
-        } else if (id == R.id.action_utxo) {
+        }
+        else if (id == R.id.action_utxo) {
             doUTXO();
-        } else if (id == R.id.action_backup) {
+        }
+        else if (id == R.id.action_backup) {
 
             if (SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
-                try {
-                    if (HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
-                        doBackup();
-                    } else {
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
-                        AlertDialog alert = builder.create();
-
-                        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        if (!isFinishing()) {
-                            alert.show();
-                        }
-
-                    }
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                } catch (IOException ioe) {
+                if (HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
+                    doBackup();
                 }
-            } else {
+                else {
+
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+                    builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
+                    AlertDialog alert = builder.create();
+
+                    alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    if (!isFinishing()) {
+                        alert.show();
+                    }
+
+                }
+            }
+            else {
                 Toast.makeText(BalanceActivity.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
             }
 
-        } else if (id == R.id.action_scan_qr) {
+        }
+        else if (id == R.id.action_scan_qr) {
             doScan();
-        } else if (id == R.id.action_postmix) {
+        }
+        else if (id == R.id.action_postmix) {
 
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
             startActivity(intent);
 
-        } else {
+        }
+        else if(id == R.id.action_soroban_collab) {
+            Intent intent = new Intent(this, SorobanMeetingListenActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
+            startActivity(intent);
+        }
+        else {
             ;
         }
         return super.onOptionsItemSelected(item);
@@ -806,6 +840,7 @@ public class BalanceActivity extends SamouraiActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == SCAN_COLD_STORAGE) {
 
             if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
@@ -827,9 +862,7 @@ public class BalanceActivity extends SamouraiActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("_account", account);
-                        cahootIntent.putExtra("payload", strResult.trim());
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         PSBTUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
@@ -849,9 +882,10 @@ public class BalanceActivity extends SamouraiActivity {
                 }
 
             }
-        }if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
-            refreshTx(false,false,false);
-            progressBar.setVisibility(View.VISIBLE);
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
+            refreshTx(false, false, false);
+            showProgress();
         } else {
             ;
         }
@@ -865,7 +899,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         if (account == 0) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setMessage(R.string.ask_you_sure_exit);
             AlertDialog alert = builder.create();
 
@@ -883,12 +917,9 @@ public class BalanceActivity extends SamouraiActivity {
                 if (WhirlpoolNotificationService.isRunning(getApplicationContext()))
                     WhirlpoolNotificationService.stopService(getApplicationContext());
 
-//                if (TorManager.INSTANCE.isRequired()) {
-//                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-//                    startIntent.setAction(TorService.STOP_SERVICE);
-//                    startIntent.putExtra("KILL_TOR", true);
-//                    startService(startIntent);
-//                }
+                if (TorManager.INSTANCE.isConnected()) {
+                    TorServiceController.stopTor();
+                }
                 TimeOutUtil.getInstance().reset();
                 finishAffinity();
                 finish();
@@ -927,7 +958,7 @@ public class BalanceActivity extends SamouraiActivity {
                     }
 
                     if (progressBar.getVisibility() == View.VISIBLE && fromRefreshService) {
-                        progressBar.setVisibility(View.INVISIBLE);
+                        hideProgress();
                     }
                 });
 
@@ -976,10 +1007,6 @@ public class BalanceActivity extends SamouraiActivity {
         });
     }
 
-    private void doClaimPayNym() {
-        Intent intent = new Intent(BalanceActivity.this, ClaimPayNymActivity.class);
-        startActivity(intent);
-    }
 
     private void doSettings() {
         TimeOutUtil.getInstance().updatePin();
@@ -1010,9 +1037,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if (privKeyReader.getFormat() != null) {
                     doPrivKey(code.trim());
                 } else if (Cahoots.isCahoots(code.trim())) {
-                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload", code.trim());
-                    cahootIntent.putExtra("_account", account);
+                    Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
                     startActivity(cahootIntent);
 
                 } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
@@ -1043,9 +1068,7 @@ public class BalanceActivity extends SamouraiActivity {
                 if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("payload",code.trim());
-                        cahootIntent.putExtra("_account",account);
+                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
@@ -1064,7 +1087,7 @@ public class BalanceActivity extends SamouraiActivity {
 
     private void doSweep() {
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.action_sweep)
                 .setCancelable(true)
@@ -1074,7 +1097,7 @@ public class BalanceActivity extends SamouraiActivity {
                         final EditText privkey = new EditText(BalanceActivity.this);
                         privkey.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                                 .setTitle(R.string.app_name)
                                 .setMessage(R.string.enter_privkey)
                                 .setView(privkey)
@@ -1138,7 +1161,7 @@ public class BalanceActivity extends SamouraiActivity {
                 password38.setSingleLine(true);
                 password38.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.bip38_pw)
                         .setView(password38)
@@ -1211,70 +1234,61 @@ public class BalanceActivity extends SamouraiActivity {
 
     private void doBackup() {
 
-        try {
-            final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
+        final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
 
-            final String[] export_methods = new String[2];
-            export_methods[0] = getString(R.string.export_to_clipboard);
-            export_methods[1] = getString(R.string.export_to_email);
+        final String[] export_methods = new String[2];
+        export_methods[0] = getString(R.string.export_to_clipboard);
+        export_methods[1] = getString(R.string.export_to_email);
 
-            new AlertDialog.Builder(BalanceActivity.this)
-                    .setTitle(R.string.options_export)
-                    .setSingleChoiceItems(export_methods, 0, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+        new MaterialAlertDialogBuilder(BalanceActivity.this)
+                .setTitle(R.string.options_export)
+                .setSingleChoiceItems(export_methods, 0, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                    try {
-                                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                                    } catch (IOException ioe) {
-                                        ;
-                                    } catch (JSONException je) {
-                                        ;
-                                    } catch (DecryptionException de) {
-                                        ;
-                                    } catch (MnemonicException.MnemonicLengthException mle) {
-                                        ;
-                                    }
-
-                                    String encrypted = null;
-                                    try {
-                                        encrypted = AESUtil.encrypt(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
-                                    } catch (Exception e) {
-                                        Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    } finally {
-                                        if (encrypted == null) {
-                                            Toast.makeText(BalanceActivity.this, R.string.encryption_error, Toast.LENGTH_SHORT).show();
-                                            return;
-                                        }
-                                    }
-
-                                    JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted, true);
-
-                                    if (which == 0) {
-                                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                                        android.content.ClipData clip = null;
-                                        clip = android.content.ClipData.newPlainText("Wallet backup", obj.toString());
-                                        clipboard.setPrimaryClip(clip);
-                                        Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Intent email = new Intent(Intent.ACTION_SEND);
-                                        email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
-                                        email.putExtra(Intent.EXTRA_TEXT, obj.toString());
-                                        email.setType("message/rfc822");
-                                        startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
-                                    }
-
-                                    dialog.dismiss();
+                                try {
+                                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                                } catch (IOException ioe) {
+                                    ;
+                                } catch (JSONException je) {
+                                    ;
+                                } catch (DecryptionException de) {
+                                    ;
+                                } catch (MnemonicException.MnemonicLengthException mle) {
+                                    ;
                                 }
-                            }
-                    ).show();
 
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-            Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
+                                String encrypted = null;
+                                try {
+                                    encrypted = AESUtil.encrypt(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
+                                } catch (Exception e) {
+                                    Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    if (encrypted == null) {
+                                        Toast.makeText(BalanceActivity.this, R.string.encryption_error, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                }
+
+                                JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted, true);
+
+                                if (which == 0) {
+                                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                    android.content.ClipData clip = null;
+                                    clip = android.content.ClipData.newPlainText("Wallet backup", obj.toString());
+                                    clipboard.setPrimaryClip(clip);
+                                    Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent email = new Intent(Intent.ACTION_SEND);
+                                    email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
+                                    email.putExtra(Intent.EXTRA_TEXT, obj.toString());
+                                    email.setType("message/rfc822");
+                                    startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
+                                }
+
+                                dialog.dismiss();
+                            }
+                        }
+                ).show();
 
     }
 
@@ -1299,7 +1313,7 @@ public class BalanceActivity extends SamouraiActivity {
                                 )
                         ) {
 
-                            new AlertDialog.Builder(BalanceActivity.this)
+                            new MaterialAlertDialogBuilder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
                                     .setMessage(R.string.privkey_clipboard)
                                     .setCancelable(false)

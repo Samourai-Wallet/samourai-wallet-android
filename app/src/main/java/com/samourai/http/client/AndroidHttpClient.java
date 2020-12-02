@@ -1,5 +1,7 @@
 package com.samourai.http.client;
 
+import android.content.Context;
+
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
 
@@ -17,8 +19,21 @@ import java8.util.Optional;
  * HTTP client used by Whirlpool.
  */
 public class AndroidHttpClient extends JacksonHttpClient {
+    private static AndroidHttpClient instance;
+
+    public static AndroidHttpClient getInstance(Context ctx) {
+        if (instance == null) {
+            instance = new AndroidHttpClient(ctx);
+        }
+        return instance;
+    }
+
     private WebUtil webUtil;
     private TorManager torManager;
+
+    private AndroidHttpClient(Context ctx) {
+        this(WebUtil.getInstance(ctx), TorManager.INSTANCE);
+    }
 
     public AndroidHttpClient(WebUtil webUtil, TorManager torManager) {
         this.webUtil = webUtil;

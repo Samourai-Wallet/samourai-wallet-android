@@ -13,13 +13,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.transition.AutoTransition;
-import androidx.transition.TransitionManager;
-import androidx.core.content.FileProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -45,6 +38,7 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
@@ -68,6 +62,14 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 import java.util.Objects;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 public class ReceiveActivity extends AppCompatActivity {
 
@@ -607,6 +609,13 @@ public class ReceiveActivity extends AppCompatActivity {
             }
             case R.id.action_support: {
                 doSupport();
+                break;
+            }
+
+            case R.id.receive_cahoots: {
+                // open receive activity
+                Intent intent = new Intent(this, SorobanMeetingListenActivity.class);
+                startActivity(intent);
                 break;
             }
 
