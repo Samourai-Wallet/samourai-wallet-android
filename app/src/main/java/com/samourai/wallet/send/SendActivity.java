@@ -2023,6 +2023,10 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
 
+        if(data.startsWith("BITCOIN:")) {
+            data = "bitcoin:" + data.substring(8);
+        }
+
         if (FormatsUtil.getInstance().isBitcoinUri(data)) {
             String address = FormatsUtil.getInstance().getBitcoinAddress(data);
             String amount = FormatsUtil.getInstance().getBitcoinAmount(data);
