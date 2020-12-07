@@ -562,6 +562,13 @@ public class BalanceActivity extends SamouraiActivity {
         });
         mCollapsingToolbar.setOnClickListener(view -> balanceViewModel.toggleSat());
 
+        mCollapsingToolbar.setOnLongClickListener(view -> {
+            Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
+            intent.putExtra("_account", account);
+            startActivityForResult(intent,UTXO_REQUESTCODE);
+
+            return false;
+        });
     }
 
     private void setBalance(Long balance, boolean isSat) {
