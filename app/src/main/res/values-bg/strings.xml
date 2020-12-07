@@ -547,12 +547,6 @@
 
     <string name="prune_backup">Премахване на файловете с резервното копие?</string>
 
-    <string-array name="address_types">
-        <item>SegWit compatibility (P2SH)</item>
-        <item>SegWit native (bech32)</item>
-        <item>Legacy (P2PKH)</item>
-    </string-array>
-    
     <string name="in_offline_mode">Самурай портфейл сега е в офлайн режим.</string>
     <string name="tx_standby">Транзакцията е в готовност</string>
     <string name="show_hex">Показване на hex кода</string>
@@ -772,16 +766,6 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
-    <string-array name="account_types">
-        <item>BIP49 Segwit</item>
-        <item>BIP84 Segwit</item>
-        <item>BIP44 P2PKH</item>
-        <item>Ricochet Segwit</item>
-        <item>Whirlpool Segwit pre-mix</item>
-        <item>Whirlpool Segwit post-mix</item>
-        <item>Whirlpool Segwit bad bank</item>
-    </string-array>
-
     <string name="mixing"><em>%1$s</em> : %2$s</string>
 
     <string name="doxxic_change_warning">Doxxic Change</string>
@@ -794,9 +778,5 @@
     <string name="this_utxo_is_marked_as_spendable">Това UTXO е маркирано като Харчимо.</string>
     <string name="this_utxo_is_marked_as_blocked">Това UTXO е маркирано като Блокирано.</string>
     <string name="postmix_full_spend">Тази транзакция ще изхарчи всичко от пост-микс портфейла Ви, което ще премахне анонимността, постигната чрез Whirlpool миксиране. Сигурни ли сте, че искате да го направите?</string>
-
-    
-    
-
 
 </resources>
