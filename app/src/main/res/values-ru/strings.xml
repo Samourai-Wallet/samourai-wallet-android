@@ -14,6 +14,7 @@
     <string name="action_bip47">PayNym\'ы</string>
     <string name="action_unarchive">Разархивировать все платёжные коды</string>
     <string name="action_sync_all">Синхронизировать все платёжные коды</string>
+    <string name="action_whirlpool">Whirlpool</string>
 
     <string name="about_us">О кошельке Samourai</string>
 
@@ -28,21 +29,25 @@
     <string name="options_cat_other">О приложении</string>
 
     <string name="options_mnemonic">Показать мнемонику</string>
-    <string name="options_mnemonic2">Показать мнемонику из 12 слов для этого кошелька.</string>
+    <string name="options_mnemonic2">Показать сид-фразу из 12 слов для этого кошелька.</string>
     <string name="options_xpub">Показать BIP44 XPUB</string>
     <string name="options_xpub2">Показать расширенный публичный ключ BIP44-аккаунта.</string>
     <string name="options_xpub49">Показать segwit YPUB</string>
     <string name="options_xpub49_2">Показать расширенный публичный ключ BIP49-segwit-аккаунта (в P2SH-виде).</string>
     <string name="options_xpub84">Показать segwit ZPUB</string>
     <string name="options_xpub84_2">Показать расширенный публичный ключ BIP84-segwit-аккаунта (bech32).</string>
+    <string name="options_xpub84_premix">Показать ZPUB Whirlpool до смешивания</string>
+    <string name="options_xpub84_premix2">Показать расширенный публичный ключ BIP84-segwit аккаунта (Bech32) в Whirlpool до смешивания.</string>
+    <string name="options_xpub84_postmix">Показать ZPUB Whirlpool после смешивания</string>
+    <string name="options_xpub84_postmix2">Показать расширенный публичный ключ BIP84-segwit аккаунта (Bech32) в Whirlpool после смешивания.</string>
+    <string name="options_xpub84_badbank">Показать ZPUB неблагоприятного хранилища</string>
+    <string name="options_xpub84_badbank2">Показать расширенный публичный ключ BIP84-segwit аккаунта (Bech32) для неблагоприятного хранилища в Whirlpool.</string>
     <string name="options_wipe">Безопасное удаление кошелька</string>
     <string name="options_wipe2">Удалить этот кошелёк с телефона надёжным способом.</string>
     <string name="options_stealth_display">Скрыть иконку приложения</string>
     <string name="options_stealth_display2">Удалить иконку Samourai с домашнего экрана и из лаунчера. Для запуска Samourai нужно будет набрать **ВАШ_PIN# в приложении телефона.</string>
-    <string name="options_remote_commands">Включить удалённое управление (УУ)</string>
+    <string name="options_remote_commands">Включить удалённое управление</string>
     <string name="options_remote_commands2">Разрешить принимать удалённые команды через SMS.</string>
-    <string name="options_currency">Местный курс</string>
-    <string name="options_currency2">Выберите биржу и местную фиатную валюту для отображения сумм в ней.</string>
     <string name="options_blockexplorer">Проводник блоков</string>
     <string name="options_blockexplorer2">Проводник, который будет использоваться для просмотра подробностей о транзакциях.</string>
     <string name="options_sim_switch">Защита от замены SIM</string>
@@ -84,6 +89,8 @@
     <string name="options_fee_provider2">Укажите источник, из которого будут браться данные о комиссиях за транзакцию.</string>
     <string name="options_broadcast_on">Отправлять транзакции</string>
     <string name="options_broadcast_on2">Снимите галку для отключения автоотправки. Подписанная транзакция в текстовом виде будет копироваться в буфер обмена.</string>
+    <string name="options_strictoutputs">Строгий режим</string>
+    <string name="options_strictoutputs2">Строгий контроль выходных транзакций и повторного использования адресов.</string>
     <string name="options_segwit">Получать средства на segwit-адреса</string>
     <string name="options_segwit_2">Генерировать segwit-адреса для получения входящих транзакций.</string>
     <string name="options_broadcast_hex">Отправлять транзакции в hex</string>
@@ -98,7 +105,16 @@
     <string name="options_address_calc2">Вычисляет адреса, выведенные из мнемоники вашего кошелька.</string>
     <string name="options_paynym_calc">Калькулятор PayNym\'ов</string>
     <string name="options_paynym_calc2">Вычисляет адреса, связанные с другими PayNym\'ами.</string>
-
+    <string name="options_indexes">Метки кошелька</string>
+    <string name="options_indexes2">Текущая метка значений для данного кошелька.</string>
+    <string name="options_whirlpool_state">Инфо о Whirlpool</string>
+    <string name="options_whirlpool_state2">Показать специальные данные по смешиванию.</string>
+    <string name="options_whirlpool_gui">Связать с Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Связать с Whirlpool GUI для постоянного смешивания.</string>
+    <string name="options_postmix">Потратить из смешанного в Whirlpool"</string>
+    <string name="options_ricochet_sync">Синхронизировать Ricochet</string>
+    <string name="options_ricochet_sync2">Синхронизировать метку Ricochet.</string>
+    
     <string name="prompt_send_backup_to_support">Отправить резервную копию кошелька в техподдержку? Отправленная информация не будет включать приватный ключ, мнемонику или парольную фразу.</string>
 
     <string name="timeline_today">Сегодня</string>
@@ -166,11 +182,13 @@
     <string name="destination">Адрес или платёжный канал</string>
 
     <string name="insufficient_funds">Недостаточно средств</string>
-    <string name="tx_length_error">Samourai не работает с транзакциями объёмом больше 100 кб. Попробуйте разделить транзакцию на части.</string>
+    <string name="tx_length_error">Samourai не работает с транзакциями объёмом больше 100 Кбайт. Попробуйте разделить транзакцию на части.</string>
     <string name="invalid_amount">Некорректная сумма</string>
+    <string name="invalid_address">Некорректный адрес</string>
     <string name="amount">Сумма</string>
 
     <string name="receive_address_to_clipboard">Скопировать адрес получения в буфер обмена? В таком случае его смогут увидеть другие приложения.</string>
+    <string name="txid_to_clipboard">Скопировать id транзакции в буфер обмена? В таком случае его смогут увидеть другие приложения.</string>
     <string name="receive_address_to_share">Поделиться адресом получения? В таком случае его смогут увидеть другие приложения.</string>
     <string name="sure_to_erase">Вы точно хотите удалить этот кошелёк?</string>
     <string name="wallet_erased">Кошелёк удалён с устройства.</string>
@@ -267,6 +285,8 @@
 
     <string name="cannot_reach_api">Не получается связаться с Samourai API. Проверьте соединение и попробуйте ещё раз или отложите попытку.</string>
     <string name="api_error">Samourai API возвращают ошибку. Попробуйте ещё раз или отложите попытку.</string>
+    <string name="api_key_error">Недействительный API ключ.</string>
+    <string name="api_token_error">Недействительный API токен.</string>
 
     <string name="cannot_recognize_privkey">Не удаётся распознать приватный ключ</string>
     <string name="cannot_sweep_privkey">Ошибка втягивания приватного ключа</string>
@@ -331,6 +351,8 @@
     <string name="bump_fee">Вы хотите увеличить комиссию майнерам в этой транзакции ради более быстрого подтверждения?\n\nДополнительная комиссия майнерам:</string>
 
     <string name="options_sign">Подписать сообщение</string>
+    <string name="options_soroban_collab">Получить средства/сотрудничать используя Soroban</string>
+    <string name="options_paste_cahoots">Вставить платежную нагрузку cahoots</string>
 
     <string name="trusted_node_pow_failed">Данные о доказательстве работы, сообщённые вашей доверенной нодой, не проходят проверку. Пожалуйста, проверьте конфигурацию.</string>
 
@@ -523,8 +545,6 @@
 
     <string name="use_bech32">Использовать bech32-адрес</string>
 
-    
-    
     <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущими выходами транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с другим набором непотраченных выходов.</string>
     <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL-выходов транзакций.</string>
     <string name="title_activity_main3">Main3Activity</string>
@@ -533,6 +553,7 @@
     <string name="broadcast_with_txtenna">Отправить с помощью TxTenna</string>
     <string name="show_qr_code">Показать QR-код</string>
     <string name="tx_connectivity_failure_msg">Не удаётся отправить транзакцию в отсутствие подключения к интернету. Что следует сделать?</string>
+
     <string name="insufficient_fee">Недостаточная комиссия</string>
     <string name="action_utxo_amounts">Показать средства по типу адреса</string>
 
@@ -540,7 +561,6 @@
     <string name="total_p2sh_p2wpkh">Всего segwit (p2sh):</string>
     <string name="total_p2wpkh">Всего segwit (bech32):</string>
     <string name="total_blocked">Всего заблокированных:</string>
-
 
 
     <string name="tx_creating_ok">Создаём транзакцию...</string>
@@ -554,38 +574,26 @@
 
     <string name="prune_backup">Урезать полезные данные и файлы бэкапа?</string>
 
-    <string-array name="address_types">
-        <item>Segwit-совместимый (P2SH)</item>
-        <item>Чистый Segwit (bech32)</item>
-        <item>Legacy-адрес (P2PKH)</item>
-    </string-array>
-
     <string name="in_offline_mode">Samourai работает в офлайн-режиме.</string>
+
     <string name="broadcast_off">Вещание с вашего кошелька Samourai отключено.</string>
     <string name="tx_standby">Транзакция ожидает отправки</string>
     <string name="show_hex">Показать hex-код</string>
     <string name="tx_tenna_coming_soon">txTenna для Android &#8211; скоро</string>
     <string name="enter_paynym">PayNym</string>
     <string name="enter_index">Индекс</string>
-
     <string name="receive_addresses">Адреса получения</string>
+
     <string name="send_addresses">Адреса отправки</string>
     <string name="display_receive_redeem">Получить отмыкающий скрипт</string>
     <string name="display_receive_privkey">Получить приватный ключ</string>
     <string name="invalid_index">Неправильный индекс</string>
     <string name="type_address">Тип адреса</string>
 
-    <string-array name="account_types">
-        <item>BIP49 Segwit</item>
-        <item>BIP84 Segwit</item>
-        <item>BIP44 P2PKH</item>
-        <item>Ricochet Segwit</item>
-        <item>Whirlpool Segwit пре-миксовый</item>
-        <item>Whirlpool Segwit пост-миксовый</item>
-    </string-array>
-
     <string name="chain_id">Цепь адресов:</string>
+
     <string name="receive_chain">Адрес получения</string>
+
     <string name="change_chain">Адрес для сдачи</string>
     <string name="whirlpool_postmix">Whirlpool Segwit пост-миксовый</string>
     <string name="encrypted_backup_detected">Обнаружен зашифрованный бэкап</string>
@@ -593,9 +601,9 @@
     <string name="request_amount">Запрашиваемая сумма</string>
     <string name="address_type">Тип адреса</string>
     <string name="path">Путь</string>
-
-<string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
     <string name="ricochet_hops_msg">Дополнительные шаги между вашим кошельком и конечной точкой для улучшения взаимозаменяемости монет</string>
+
     <string name="review_transaction">ПРОСМОТР ТРАНЗАКЦИИ</string>
     <string name="stonewall_increases_deniability">STONEWALL позволяет правдоподобнее отрицать причастность и уменьшает количество возможных связей этой транзакции.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
@@ -632,6 +640,206 @@
     <string name="hide_log">СКРЫТЬ ЖУРНАЛ</string>
     <string name="copy">Копировать</string>
     <string name="show_log">Показать журнал</string>
+    <string name="unconfirmed">Неподтверждено</string>
+    <string name="confirmation">подтверждение</string>
+    <string name="total_available_amount">Общие доступные средства</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">У Вас пока нет PayNym контактов</string>
+    <string name="experimental">Экспериментальные</string>
+    <string name="cahoots">#Cahoots</string>
 
+    <string name="options_cahoots2">Сделайте CoinJoin из каждой транзакции.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Частично подписанная транзакция в сети Bitcoin (PSBT).</string>
+    <string name="import_cahoots">Отсканируйте или вставте #Cahoots.</string>
+    <string name="import_psbt">Отсканируйте или вставте PSBT.</string>
+    <string name="enter_cahoots">Введите текст #Cahoots</string>
+    <string name="enter_psbt">Введите hex-текст PSBT</string>
+    <string name="create_cahoots">Создайте расходную транзакцию #Cahoots</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Приоритетная</string>
+    <string name="normal">Обычная</string>
+    <string name="low">Медленная</string>
+    <string name="ricochet_nlocktime_ok">Ваша транзакция Ricochet была отправлена для трансляции в сеть. Пожалуйста, дождитесь пока высота блока позволит транслировать все транзакции в цепочке.</string>
+    <string name="ricochet_nlocktime_ko">Ваша транзакция Ricochet была отправлена для трансляции. Пожалуйста, попробуйте ещё раз.</string>
+
+    <string name="tag_utxo">Пометить UTXO</string>
+    <string name="boost_transaction_fee">Ускорить транзакцию</string>
+    <string name="refund">Возврат средств</string>
+    <string name="not_cahoots">Недействительные #Cahoots</string>
+    <string name="not_valid_json">Ошибка чтения JSON</string>
+
+    <string name="unrecognized_cahoots">Неопознанные #Cahoots</string>
+    <string name="cannot_compose_cahoots">Не получается составить #Cahoots</string>
+    <string name="start_stowaway">Инициировать Stowaway как плательщик</string>
+    <string name="start_stonewall">Инициировать STONEWALL как плательщик</string>
+    <string name="amount_sats">Ввести значение в сатоши</string>
+    <string name="zero_bits">0 бит</string>
+    <string name="not_available">N/A</string>
+    <string name="show_tx">Отобразить транзакцию</string>
+    <string name="unrecognized_step">Неопознаный шаг #Cahoots</string>
+    <string name="cannot_process_stowaway">Не получается произвести Stowaway транзакцию</string>
+    <string name="cannot_process_stonewall">Не получается произвести STONEWALL транзакцию</string>
+    <string name="cannot_process_cahoots">Не получается произвести #Cahoots транзакцию</string>
+    <string name="title_activity_network_dashboard">
+        Подключение к сети
+    </string>
+    <string name="powering_samourai_wallet_">Усиление кошелька Samourai Wallet с помощью Вашей персональной ноды предоставляет наилучший уровень анонимности и независимости при взаимодействии с сетью Bitcoin. Dojo поможет легко и быстро запустить полную ноду.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Полная нода Bitcoin в режиме Plug and Play\n\n -Автоматическая настройка скрытого сервиса Tor\n\n -Независимость от серверов Samourai</string>
+    <string name="dojo_connect_instruction">Если у Вас уже есть полная нода Dojo или Вы \nиспользуете бесплатное ПО Dojo с открытым кодом\nна Вашем железе, отскунируйте QR код\nрасположенный на панели Dojo Maintenance control</string>
+    <string name="dojo_headline">Усильте Samourai Вашей персональной полной нодой DOJO</string>
+    <string name="connect_to_existing_dojo">Подключите имеющийся Dojo</string>
+    <string name="create_to_existing_dojo">Создайте кошелек и свяжите его с Dojo</string>
+    <string name="preorder">предзаказ</string>
+    <string name="add_new">Добавить Новый</string>
+    <string name="paynym_follow_message_2">в подписки мгновенно. Подпишитесь на PayNym чтобы участвовать в Cahoots CoinJoin\nтранзакциях с ними.</string>
+    <string name="paynym_connect_message">генерировать уникальные приватные адреса для отправки биткоинов\nэтому контакту</string>
+    <string name="follow">Подписаться</string>
+    <string name="wallet_locked">Кошелек Заблокирован</string>
+    <string name="address">Адрес</string>
+    <string name="is_offline">Samourai оффлайн</string>
+    <string name="history_will_be_updated">Баланс и история транзакций не будут обновлены пока не будет установлено работающее соединение</string>
+
+    <string name="you_received_s">Вы получили</string>
+    <string name="paynym_follow_message">Данная комиссия покрывает стоимость создания специальной транзакции на блокчейне.  Это поддерживает децентрализованность PayNym</string>
+    <string name="paynym_follow_fee_message">Одноразовая комиссия, составляющая   будет списана чтобы подписаться на данный контакт</string>
+    <string name="initializing_tor">запуск Tor...</string>
+    <string name="cannot_pair_whirlpool_gui">Не получается подготовить сопряжение с Whirlpool GUI.</string>
+    <string name="message_copied">сообщений скопировано</string>
+
+    <string name="scan_code">Отсканировать Код</string>
+    <string name="follows_you">Подписаны на Вас</string>
+    <string name="edit_paynym">Редактировать paynym</string>
+    <string name="sycing_pcodes">Синхронизация платежных кодов</string>
+    <string name="sync_complete">Синхронизация платежных кодов завершена</string>
+    <string name="options_paynym_indexes">Показать PayNym метки</string>
+    <string name="begin_cycle">НАЧАТЬ ЦИКЛ</string>
+    <string name="pool_fee">КОМИССИЯ ПУЛА</string>
+    <string name="total_fees">ОБЩАЯ КОМИССИЯ</string>
+    <string name="miner_fee">КОМИССИЯ СЕТИ</string>
+    <string name="total_whirlpool_balance">Обший баланс Whirlpool</string>
+    <string name="review_cycle_details">ОБЗОР ДЕТАЛЕЙ ЦИКЛА</string>
+    <string name="cycled_transactions">Транзакции прошедшие цикл</string>
+    <string name="initial_transaction">Начальная Транзакция</string>
+    <string name="progress">Прогресс</string>
+    <string name="waiting_for_blockchain_confirmation">Ожидание подтверждения сети</string>
+    <string name="create_password">Создайте пароль</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+
+    <string name="pairing_password">Задайте связующий параль: (6-255 знаков)</string>
+    <string name="password_error">Ошибка при создании пароля</string>
+    <string name="password_invalid">Некорректный пароль</string>
+    <string name="review_whirlpool">Обзор Whirlpool</string>
+    <string name="total_selected">Всего выбрано</string>
+
+    <string name="cycle">Цикл</string>
+    <string name="postmix_without_boltzmann">Обратите внимание, что расходование средств с Вашего пост-миксового аккаунта без использования STONEWALL приведет к потере анонимности полученной от использования Whirlpool.</string>
+    <string name="estimated_entropy">Оцененная Энтропия</string>
+    <string name="share_this_qr_code_with_your_participant">Поделитесь данным QR кодом с другим участником</string>
+    <string name="review_tx_before_braodcast">Просмотр транзакции перед транслированием</string>
+    <string name="select_participant">Выберите участника</string>
+    <string name="select_cahoots_type">Выберите тип cahoots</string>
+    <string name="cannot_disable_tor_dojo">Нельзя прервать работу Tor так как кошелек подключен к ноде Samourai Dojo.</string>
+    <string name="temporary_dojo_disable">Удалите Samourai Wallet чтобы рассоединить его с нодой Dojo. \'НЕДОСТУПНО\' будет активировано в более позднем обновлении.</string>
+
+    <string name="renew">ОБНОВИТЬ</string>
+    <string name="continue_exchanging_qr_codes">Продолжайте обмен QR кодами\n пока транзакция не будет транслирована!</string>
+    <string name="confirm_that_you_wish_to_broadcast_this_transaction">Подтвердите, что Вы хотите транслировать данную транзакцию.</string>
+    <string name="begin_stowaway">Запуск Stowaway</string>
+    <string name="begin_stonewallx2">Запуск STONEWALLx2</string>
+    <string name="total_miner_fee">Общая комиссия сети :</string>
+    <string name="launch_qr_scanner">ЗАПУСТИТЕ QR Сканер</string>
+    <string name="next_step">Далее...</string>
+    <string name="scan_the_qr_code_that_your_collaborator_provides_you">Отсканируйте QR КОД предоставленный другим участником.</string>
+    <string name="you_will_contribute">Вы внесете</string>
+    <string name="create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection">Создайте по необходимости транзакцию CoinJoin для усиленной анонимности и защиты от  enhanced privacy and наблюдения</string>
+    <string name="refresh">Обновить</string>
+    <string name="unspent_outputs">Непотраченные Выходы</string>
+    <string name="unspent_outputs_post_mix">Непотраченные Выходы - Пост-микс</string>
+    <string name="paste_cahoots_payload">Вставьте полезные данные cahoots</string>
+    <string name="clipboard_empty">Буффер обмена пуст</string>
+    <string name="premix_balance">Пре-микс баланс</string>
+    <string name="post_mix_balance">Пост-микс баланс</string>
+    <string name="spendable">Можно потратить</string>
+    <string name="reveal_the_redeem_script_for_this_address">Отобразить исполняющий скрипт для данного адреса</string>
+    <string name="coming_soon">Скоро появится</string>
+    <string name="active">Активный</string>
+    <string name="change_from_postmix">Остаток от пост-микс расходной операции</string>
+    <string name="selection_contains_blocked_utxo">Ваш выбор содержит заблокированные UTXO. Пожалуйста, избавтесь от них и попробуйте снова.</string>
+    <string name="only_single_utxo_may_selected">Только один UTXO может быть выбран для прямой отправки из пост-микс средств.</string>
+    <string name="only_a_single_change_utxo_may">Только единственный остаток UTXO может быть выбран из пост-микса для прямой отправки в Whirlpool.</string>
+    <string name="only_change_utxos_allowed">Разрешен только остаток UTXO</string>
+    <string name="utxo_is_marked_as_blocked">UTXO отмечен как заблокированный</string>
+    <string-array name="address_types">
+        <item>Segwit-совместимый (P2SH)</item>
+        <item>Чистый Segwit (bech32)</item>
+        <item>Legacy-адрес (P2PKH)</item>
+    </string-array>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit пре-миксовый</item>
+        <item>Whirlpool Segwit пост-миксовый</item>
+        <item>Whirlpool Segwit неблагоприятное хранилище</item>
+    </string-array>
+
+    <string name="mixing"><em>%1$s</em> : %2$s</string>
+
+    <string name="doxxic_change_warning">Doxxic Остаток</string>
+    <string name="block_tx0_change">Остаток выхода данной tx0 транзакции будет помечен. Заблокировать его чтобы предотвратить дальнейшее использование? В таком случае данная сумма не будет отображаться в общем балансе но будет доступна в кошельке в списке непотраченных.</string>
+    <string name="total_pre_mix_balance">Общий пре-миксовый баланс</string>
+    <string name="total_post_mix_balance">Общий пост-миксовый баланс</string>
+    <string name="post_mix_transactions">Пре-миксовые транзакции</string>
+    <string name="scode">Whirlpool SCODE</string>
+    <string name="enter_scode">Введите Ваш Whirlpool SCODE. при подтверждении нажатием \'OK\' Whirlpool будет закрыт. Запустите Whirlpool снова чтобы активировать SCODE.</string>
+    <string name="this_utxo_is_marked_as_spendable">Данный UTXO отмечен как Расходуемый</string>
+    <string name="this_utxo_is_marked_as_blocked">Данный UTXO отмечен как Заблокированный</string>
+    <string name="full_spend_warning">Данная транзакция потратит все средства из Вашего кошелька. Вы уверены, что хотите продолжить?</string>
+    <string name="postmix_full_spend">Данная транзакция потратит все средства Вашего пост-миксового баланса, что отменит всю приобритенную анонимность от смешивания в Whirlpool. Вы уверены, что хотите продолжить?</string>
+
+    <string name="psbt_sign_tx">Подписать транзакцию</string>
+    <string name="display_psbt">Отобразить PSBT</string>
+    <string name="psbt_error">Ошибка чтения PSBT</string>
+    <string name="psbt_sign_error">Ошибка при подписании транзакции посредством PSBT</string>
+
+    <string name="strict_mode_address">Строгий режим обнаружил возможное повторное использование адреса в данной транзакции. Переформулировать транзакцию или транслировать без изменений?</string>
+    <string name="strict_reformulate">Переформулировать транзакцию</string>
+
+    <string name="sweep_no_amount">Для данного приватного ключа UTXO не найдены.</string>
+    <string name="note_privacy_addons_are_not_available_for_selected_utxo_s">ВАЖНО: Аддоны приватности не доступны для выбранных UTXO</string>
+    <string name="note_you_are_making_a_post_mix_spend_if_cahoots_nis_not_selected_samourai_will">ВАЖНО: Вы совершаете расходную операцию используя пост-микс баланс.\nЕсли #Cahoots не выбран, Samourai попытается использовать STONEWALL.</string>
+    <string name="off">Выключено</string>
+    <string name="privacy_addons">Аддоны Приватности</string>
+    <string name="ricochet_">Ricochet</string>
+    <string name="staggered_delivery">Смещенная доставка</string>
+    <string name="for_extra_privacy_message">Для дополнительной анонимности и устойчивости к анализу блоков, каждый скачок появится в мемпуле через 1 блок. Окончательная доставка может занят от 30 мин до 2 часов.</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Сообщения</string>
+    <string name="sync_header">Синхронизация</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Ваша Подпись</string>
+    <string name="reply_title">Ответ по умолчанию</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Периодическая синхронизация email</string>
+    <string name="attachment_title">Скачать прилагаемые файлы</string>
+    <string name="attachment_summary_on">Автоматически скачивать файлы из входящих писем
+    </string>
+    <string name="attachment_summary_off">Скачивать вложения только вручную</string>
+    <string name="no_cahoots_detected">Cahoots не обнаружены. Обновите для повторного поиска</string>
+    <string name="waiting_for_cahoots_request">Ожидание запроса Cahoots...</string>
+    <string name="follow_paynym_fee_free">Комиссия : Бесплатно</string>
+    <string name="connect_paynym_fee">Комиссия : 0.00015 BTC</string>
+    <string name="connect">Подключение</string>
+    <string name="blockchain_connect_with">BlockChain Подключение через</string>
+    <string name="following">Ваши подписки</string>
+    <string name="based_on_cryptography_and">Основано на математике и криптографии, а не на Ваших персональных данных</string>
+    <string name="find_and_follow_your_friends">Подписывайтесь на ваших друзей и знакомых без вреда для собственной анонимности</string>
+    <string name="unlocks_advanced">Разблокирует продвинутые опции анонимности в вашем кошельке</string>
+    <string name="share_and_reuse">Делитесь и используйте повторно не раскрывая Ваши транзакции и баланс</string>
 
 </resources>
