@@ -125,7 +125,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         if (payNymToken == null) {
             getToken()
         }
-        val paynymCode = BIP47Util.getInstance(context).paymentCode
+        val paynymCode =  BIP47Util.getInstance(context).paymentCode.toString()
         val paynymCodeFeat = BIP47Util.getInstance(context).featurePaymentCode
         val payload = JSONObject().apply {
             put("nym", paynymCode)
@@ -134,7 +134,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         }
         val builder = Request.Builder();
         val body: RequestBody = RequestBody.create(JSON, payload.toString())
-        builder.url("$URL/create")
+        builder.url("$URL/nym/add")
         return this.executeRequest(builder.post(body).build())
     }
 

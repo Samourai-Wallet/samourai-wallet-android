@@ -208,6 +208,9 @@ class PayNymHome : SamouraiActivity() {
             }
             R.id.sign -> {
                 doSign()
+            } R.id.action_claim_paynym -> {
+                val payNymOnBoardBottomSheet = PayNymOnBoardBottomSheet();
+                payNymOnBoardBottomSheet.show(supportFragmentManager,payNymOnBoardBottomSheet.tag);
             }
             R.id.action_paynym_share_qr -> {
                 val bundle = Bundle()
