@@ -1,10 +1,13 @@
 package com.samourai.wallet.tor
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Process
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.samourai.wallet.BuildConfig
@@ -52,25 +55,29 @@ object TorManager {
         }
 
 
-    fun startTor(){
+    fun startTor() {
         TorServiceController.startTor()
     }
 
     private fun generateTorServiceNotificationBuilder(
     ): ServiceNotification.Builder {
+        var contentIntent: PendingIntent? = null
+
+        appContext?.packageManager?.getLaunchIntentForPackage(appContext!!.packageName)?.let { intent ->
+            contentIntent = PendingIntent.getActivity(
+                    appContext,
+                    0,
+                    intent,
+                    0
+            )
+        }
+
         return ServiceNotification.Builder(
                 channelName = "Tor service",
                 channelDescription = "Tor foreground service notification",
                 channelID = SamouraiApplication.TOR_CHANNEL_ID,
                 notificationID = 12
         )
-                .setActivityToBeOpenedOnTap(
-                        clazz = MainActivity2::class.java,
-                        intentExtrasKey = null,
-                        intentExtras = null,
-                        intentRequestCode = null
-                )
-
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setImageTorNetworkingEnabled(R.drawable.ic_samourai_tor_enabled)
                 .setImageTorDataTransfer(R.drawable.ic_samourai_tor_data_transfer)
@@ -79,6 +86,11 @@ object TorManager {
                 .enableTorRestartButton(true)
                 .enableTorStopButton(false)
                 .showNotification(true)
+                .also { builder ->
+                    contentIntent?.let {
+                        builder.setContentIntent(it)
+                    }
+                }
     }
 
     /**
@@ -106,11 +118,11 @@ object TorManager {
                 torServiceNotificationBuilder = serviceNotificationBuilder,
                 backgroundManagerPolicy = generateBackgroundManagerPolicy(),
                 buildConfigVersionCode = BuildConfig.VERSION_CODE,
-                torSettings = TorSettings(),
+                defaultTorSettings = TorSettings(),
                 geoipAssetPath = "common/geoip",
                 geoip6AssetPath = "common/geoip6",
 
-        )
+                )
                 .useCustomTorConfigFiles(builder.build())
                 .setBuildConfigDebug(BuildConfig.DEBUG)
                 .setEventBroadcaster(eventBroadcaster = TorEventBroadcaster())
@@ -138,9 +150,10 @@ object TorManager {
 
     fun setUp(context: SamouraiApplication) {
         appContext = context
-        val builder = setupTorServices(context,
+        val builder = setupTorServices(
+                context,
                 generateTorServiceNotificationBuilder(),
-              )
+        )
 
         try {
             builder.build()
