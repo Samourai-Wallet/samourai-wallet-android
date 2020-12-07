@@ -753,6 +753,47 @@
     <string name="unspent_outputs">Неизхарчени Средства</string>
     <string name="unspent_outputs_post_mix">Неизхарчени Средства - Пост-микс</string>
     <string name="paste_cahoots_payload">Постави cahoots payload</string>
+     <string name="clipboard_empty">клипбордът е празен</string>
+    <string name="premix_balance">Пре-микс баланс</string>
+    <string name="post_mix_balance">Пост-миск баланс</string>
+    <string name="spendable">харчимо</string>
+    <string name="reveal_the_redeem_script_for_this_address">Покажи redeem script-а за този адрес</string>
+    <string name="coming_soon">Очаквайте скоро</string>
+    <string name="active">Активно</string>
+    <string name="change_from_postmix">Ресто от пост-микс харч</string>
+    <string name="selection_contains_blocked_utxo">Селекцията Ви съдържа блокирани utxo-та. Моля премахнете ги и опитайте отново.</string>
+    <string name="only_single_utxo_may_selected">Само едно utxo може да бъде избрано за директно харчене от пост-микс.</string>
+    <string name="only_a_single_change_utxo_may">Само едно utxo-ресто може да бъде избрано за директно миксиране от пост-микс.</string>
+    <string name="only_change_utxos_allowed">Само ресто utxo-та са разрешени</string>
+    <string name="utxo_is_marked_as_blocked">utxo-то е маркирано като блокирано</string>
+    <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit bad bank</item>
+    </string-array>
+
+    <string name="mixing"><em>%1$s</em> : %2$s</string>
+
+    <string name="doxxic_change_warning">Doxxic Change</string>
+    <string name="block_tx0_change">Ресто UTXO-то от тази tx0 ще бъде маркиранно. Блокирайте го, за да го направите неизхарчимо? Ако го направите, кол-вото няма да се отчита в общия Ви баланс, но може да бъде намерено в листа с неизхарчени.</string>
+    <string name="total_pre_mix_balance">Общо Пре-микс Баланс</string>
+    <string name="total_post_mix_balance">Общо Пост-микс Баланс</string>
+    <string name="post_mix_transactions">Пост-микс транзакции</string>
+    <string name="scode">Whirlpool SCODE</string>
+    <string name="enter_scode">Въведете Вашия Whirlpool SCODE. Ако потвърдите с \'OK\' Whirlpool услугата ще се затвори. Влезте отново в Whirlpool, за да активирате SCODE-а.</string>
+    <string name="this_utxo_is_marked_as_spendable">Това UTXO е маркирано като Харчимо.</string>
+    <string name="this_utxo_is_marked_as_blocked">Това UTXO е маркирано като Блокирано.</string>
+    <string name="postmix_full_spend">Тази транзакция ще изхарчи всичко от пост-микс портфейла Ви, което ще премахне анонимността, постигната чрез Whirlpool миксиране. Сигурни ли сте, че искате да го направите?</string>
 
     
     
