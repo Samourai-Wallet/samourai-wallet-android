@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
@@ -66,7 +67,15 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
@@ -119,7 +128,7 @@ public class PayloadUtil	{
         JSONObject obj = new JSONObject();
 
         try {
-            obj.put("version", 1);
+            obj.put("version", 2);
             obj.put("payload", data);
             obj.put("external", external);
         }
@@ -141,19 +150,19 @@ public class PayloadUtil	{
         return false;
     }
 
-    public void serializeMultiAddr(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+    public void serializeMultiAddr(JSONObject obj) throws Exception {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrFilename);
         }
     }
 
-    public void serializeMultiAddrMix(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+    public void serializeMultiAddrMix(JSONObject obj) throws Exception {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrMixFilename);
         }
     }
 
-    public void serializePayNyms(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+    public void serializePayNyms(JSONObject obj) throws Exception {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strPayNymFilename);
         }
@@ -402,7 +411,7 @@ public class PayloadUtil	{
             final String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             String encrypted = null;
             try {
-                encrypted = AESUtil.encrypt(getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
+                encrypted = AESUtil.encryptSHA256(getPayload().toString(), new CharSequenceX(passphrase));
                 serialize(encrypted);
 
             }
@@ -757,7 +766,11 @@ public class PayloadUtil	{
         String data = null;
         String jsonstr = jsonobj.toString(4);
         if(password != null) {
-            data = AESUtil.encrypt(jsonstr, password, AESUtil.DefaultPBKDF2Iterations);
+            try {
+                data = AESUtil.encryptSHA256(jsonstr, password);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         else {
             data = jsonstr;
@@ -799,18 +812,24 @@ public class PayloadUtil	{
         try {
             jsonObj = new JSONObject(sb.toString());
         }
+
         catch(JSONException je)   {
             ;
         }
         String payload = null;
+        int version = 1;
         if(jsonObj != null && jsonObj.has("payload"))    {
             payload = jsonObj.getString("payload");
+        }
+         if(jsonObj != null && jsonObj.has("version"))    {
+             version = jsonObj.getInt("version");
         }
 
         // not a json stream, assume v0
         if(payload == null)    {
             payload = sb.toString();
         }
+
 
         JSONObject node = null;
         if(password == null) {
@@ -819,7 +838,11 @@ public class PayloadUtil	{
         else {
             String decrypted = null;
             try {
-                decrypted = AESUtil.decrypt(payload, password, AESUtil.DefaultPBKDF2Iterations);
+                if(version==1){
+                    decrypted = AESUtil.decrypt(payload, password, AESUtil.DefaultPBKDF2Iterations);
+                }else if(version == 2){
+                    decrypted = AESUtil.decryptSHA256(payload, password);
+                }
             }
             catch(Exception e) {
                 return null;
@@ -833,7 +856,7 @@ public class PayloadUtil	{
         return node;
     }
 
-    private synchronized void serializeAux(JSONObject jsonobj, CharSequenceX password, String filename) throws IOException, JSONException, DecryptionException, UnsupportedEncodingException {
+    private synchronized void serializeAux(JSONObject jsonobj, CharSequenceX password, String filename) throws Exception {
 
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File newfile = new File(dir, filename);
@@ -844,7 +867,11 @@ public class PayloadUtil	{
         String data = null;
         String jsonstr = jsonobj.toString(4);
         if(password != null) {
-            data = AESUtil.encrypt(jsonstr, password, AESUtil.DefaultPBKDF2Iterations);
+            try {
+                data = AESUtil.encryptSHA256(jsonstr, password);
+            } catch (Exception e) {
+                throw new Exception(e);
+            }
         }
         else {
             data = jsonstr;
@@ -884,8 +911,12 @@ public class PayloadUtil	{
             ;
         }
         String payload = null;
+        int version = 1;
         if(jsonObj != null && jsonObj.has("payload"))    {
             payload = jsonObj.getString("payload");
+        }
+        if(jsonObj != null && jsonObj.has("version"))    {
+            version = jsonObj.getInt("version");
         }
 
         // not a json stream, assume v0
@@ -900,7 +931,11 @@ public class PayloadUtil	{
         else {
             String decrypted = null;
             try {
-                decrypted = AESUtil.decrypt(payload, password, AESUtil.DefaultPBKDF2Iterations);
+                if(version == 1) {
+                    decrypted = AESUtil.decrypt(payload, password, AESUtil.DefaultPBKDF2Iterations);
+                }else if(version==2){
+                    decrypted = AESUtil.decryptSHA256(payload, password);
+                }
             }
             catch(Exception e) {
                 return null;
@@ -998,11 +1033,15 @@ public class PayloadUtil	{
     public String getDecryptedBackupPayload(String data, CharSequenceX password)  {
 
         String encrypted = null;
+        int version = 1;
 
         try {
             JSONObject jsonObj = new JSONObject(data);
             if(jsonObj != null && jsonObj.has("payload"))    {
                 encrypted = jsonObj.getString("payload");
+            }
+            if(jsonObj != null && jsonObj.has("version"))    {
+                version = jsonObj.getInt("version");
             }
             else    {
                 encrypted = data;
@@ -1014,7 +1053,11 @@ public class PayloadUtil	{
 
         String decrypted = null;
         try {
-            decrypted = AESUtil.decrypt(encrypted, password, AESUtil.DefaultPBKDF2Iterations);
+            if(version==1){
+                decrypted = AESUtil.decrypt(encrypted, password, AESUtil.DefaultPBKDF2Iterations);
+            }else if(version==2){
+                decrypted = AESUtil.decryptSHA256(encrypted, password);
+            }
         }
         catch (Exception e) {
             Toast.makeText(context, R.string.decryption_error, Toast.LENGTH_SHORT).show();

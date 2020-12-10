@@ -853,7 +853,7 @@ public class APIFactory {
                 try {
                     PayloadUtil.getInstance(context).serializeMultiAddr(jsonObject);
                 }
-                catch(IOException | DecryptionException e) {
+                catch(Exception e) {
                     ;
                 }
             }
@@ -2501,7 +2501,7 @@ public class APIFactory {
                 try {
                     PayloadUtil.getInstance(context).serializeMultiAddrMix(jsonObject);
                 }
-                catch(IOException | DecryptionException e) {
+                catch(Exception e) {
                     ;
                 }
             }

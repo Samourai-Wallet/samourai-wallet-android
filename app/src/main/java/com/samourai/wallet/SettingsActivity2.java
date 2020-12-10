@@ -1517,14 +1517,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
             String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
             if(SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this))    {
-                String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                String encrypted = AESUtil.encryptSHA256(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()));
                 jsonObj.put("mnemonic", encrypted);
                 jsonObj.put("passphrase", true);
 
                 pairingObj.put("pairing", jsonObj);
                 if(dojoObj.has("url") && dojoObj.has("apikey"))    {
                     String apiKey = dojoObj.getString("apikey");
-                    String encryptedApiKey = AESUtil.encrypt(apiKey, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                    String encryptedApiKey = AESUtil.encryptSHA256(apiKey, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()));
                     dojoObj.put("apikey", encryptedApiKey);
                     pairingObj.put("dojo", dojoObj);
                 }
@@ -1563,14 +1563,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                     if (pw2 != null && pw2.equals(pw)) {
 
                                                         try {
-                                                            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations);
+                                                            String encrypted = AESUtil.encryptSHA256(mnemonic, new CharSequenceX(pw2));
                                                             jsonObj.put("mnemonic", encrypted);
                                                             jsonObj.put("passphrase", false);
 
                                                             pairingObj.put("pairing", jsonObj);
                                                             if(dojoObj.has("url") && dojoObj.has("apikey"))    {
                                                                 String apiKey = dojoObj.getString("apikey");
-                                                                String encryptedApiKey = AESUtil.encrypt(apiKey, new CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations);
+                                                                String encryptedApiKey = AESUtil.encryptSHA256(apiKey, new CharSequenceX(pw2));
                                                                 dojoObj.put("apikey", encryptedApiKey);
                                                                 pairingObj.put("dojo", dojoObj);
                                                             }
