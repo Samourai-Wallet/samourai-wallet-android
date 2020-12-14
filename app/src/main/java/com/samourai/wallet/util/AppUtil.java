@@ -21,6 +21,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
+import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;
 
 import java.io.File;
@@ -150,6 +151,7 @@ public class AppUtil {
         SendAddressUtil.getInstance().reset();
         SentToFromBIP47Util.getInstance().reset();
         BatchSendUtil.getInstance().clear();
+        UTXOUtil.getInstance().reset();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
 
         try {
