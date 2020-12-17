@@ -73,7 +73,6 @@ import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
-import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.paynym.PayNymHome;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
