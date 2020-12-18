@@ -43,28 +43,25 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView41" />
 
-            <com.samourai.wallet.widgets.CircleImageView
-                android:id="@+id/claimPayNymAvatarPreview"
+            <FrameLayout
                 android:layout_width="100dp"
-                android:layout_height="100dp"
                 android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:id="@+id/avatarFramePaynym"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView41"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:layout_height="100dp">
+                <com.samourai.wallet.widgets.CircleImageView
+                    android:id="@+id/claimPayNymAvatarPreview"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView41"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </FrameLayout>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/textView52"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:checkable="false"
-                android:text="PREVIEW"
-                android:textColor="@color/blue"
-                app:chipBackgroundColor="@color/white"
-                app:layout_constraintEnd_toEndOf="@+id/claimPayNymAvatarPreview"
-                app:layout_constraintStart_toStartOf="@+id/claimPayNymAvatarPreview"
-                app:layout_constraintTop_toBottomOf="@+id/claimPayNymAvatarPreview" />
 
 
             <ScrollView
@@ -76,7 +73,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/claimButtonPaynym"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView52"
+                app:layout_constraintTop_toBottomOf="@+id/avatarFramePaynym"
                 app:layout_constraintVertical_bias="0.0">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
