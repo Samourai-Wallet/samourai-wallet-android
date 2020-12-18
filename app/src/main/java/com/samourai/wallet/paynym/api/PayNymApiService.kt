@@ -125,7 +125,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         if (payNymToken == null) {
             getToken()
         }
-        val paynymCode =  BIP47Util.getInstance(context).paymentCode.toString()
+        val paynymCode = BIP47Util.getInstance(context).paymentCode.toString()
         val paynymCodeFeat = BIP47Util.getInstance(context).featurePaymentCode
         val payload = JSONObject().apply {
             put("nym", paynymCode)
@@ -289,6 +289,10 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         fun getInstance(code: String, context: Context): PayNymApiService {
             if (payNymApiService == null) {
                 payNymApiService = PayNymApiService(code, context)
+            } else {
+                if (code != payNymApiService!!.paynymCode) {
+                    payNymApiService = PayNymApiService(code, context)
+                }
             }
             return payNymApiService!!
         }
