@@ -105,8 +105,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="@string/declaimer_recovery_words"
+                        android:text="@string/disclaimer_recovery_words"
                         android:textSize="12sp"
+                        android:id="@+id/declaimer_recovery_words_text"
                         android:textStyle="normal" />
 
 

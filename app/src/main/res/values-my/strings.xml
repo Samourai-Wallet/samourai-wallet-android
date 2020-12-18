@@ -500,7 +500,7 @@
   <string name="invalid_mnemonic_word">Kata mnmonic BIP39 tidak valid</string>
   <string name="invalid_mnemonic">Mnmonic BIP39 tidak valid</string>
     <string name="enter_your_code_here">Masukkan kode anda disini</string>
-    <string name="declaimer_recovery_words">Saya mengkonfirmasi bahwa saya telah menuliskan kata-kata diatas dan menyimpan di lokasi yang aman dan terlindungi. Saya memahami bahwa siapapun yang memiliki akses kedua frase kata sandi dan cadangan kata-kata saya tersebut akan dapat mengakses wallet dan seluruh dana saya.</string>
+    <string name="disclaimer_recovery_words">Saya mengkonfirmasi bahwa saya telah menuliskan kata-kata diatas dan menyimpan di lokasi yang aman dan terlindungi. Saya memahami bahwa siapapun yang memiliki akses kedua frase kata sandi dan cadangan kata-kata saya tersebut akan dapat mengakses wallet dan seluruh dana saya.</string>
   <string name="return_to_wallet">Kembali ke wallet</string>
   <string name="caution_message_recovery_words">Tidaklah aman untuk menyimpan kata-kata ini di komputer ataupun cloud. Tuliskan kata-kata ini di selembar kertas, lalu jaga dan amankan kerahasiaannya.</string>
     <string name="these_words_are">Kata-kata ini adalah cadangan semua kunci rahasia yang di wallet anda.</string>

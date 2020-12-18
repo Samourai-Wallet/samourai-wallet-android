@@ -516,7 +516,7 @@
     <string name="invalid_mnemonic">Nesprávný BIP39 mnemonic</string>
     <string name="enter_your_code_here">Zadejte svůj kód</string>
 
-    <string name="declaimer_recovery_words">Potvrzuji, že jsem výše uvedená slova napsal a uložil je na bezpečném místě. Chápu, že kdokoli, kdo má přístup jak k mému passphrase, tak k mým slovům pro obnovení, bude mít přístup ke mé peněžence a ke všem mým prostředkům.</string>
+    <string name="disclaimer_recovery_words">Potvrzuji, že jsem výše uvedená slova napsal a uložil je na bezpečném místě. Chápu, že kdokoli, kdo má přístup jak k mému passphrase, tak k mým slovům pro obnovení, bude mít přístup ke mé peněžence a ke všem mým prostředkům.</string>
     <string name="return_to_wallet">Vrátit se do peněženky</string>
     <string name="caution_message_recovery_words">Není bezpečné uchovat si tato slova zálohovaná na vašem počítači nebo v cloudě. Napište si tato slova na kus papíru a držte ho v tajnosti a bezpečí.</string>
     <string name="these_words_are">Tato slová jsou zálohou všech tajných klíčů v peněžence.</string>
