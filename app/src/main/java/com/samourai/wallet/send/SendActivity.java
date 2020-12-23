@@ -1970,7 +1970,8 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void processScan(String data) {
-
+        strPCode  = null;
+        toAddressEditText.setEnabled(true);
         if (data.contains("https://bitpay.com")) {
 
             AlertDialog.Builder dlg = new AlertDialog.Builder(this)
