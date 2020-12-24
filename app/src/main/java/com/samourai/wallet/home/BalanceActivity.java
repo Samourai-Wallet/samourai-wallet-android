@@ -34,6 +34,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
@@ -244,63 +245,57 @@ public class BalanceActivity extends SamouraiActivity {
                         final String hash = out.getHash().toString();
                         final int idx = out.getTxOutputN();
                         final long amount = out.getValue().longValue();
+                        boolean contains = ((BlockedUTXO.getInstance().contains(hash, idx) || BlockedUTXO.getInstance().containsNotDusted(hash, idx)));
 
-                        if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
-                                ((!BlockedUTXO.getInstance().contains(hash, idx) &&
-                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx))
-                                ||
-                                (!BlockedUTXO.getInstance().containsPostMix(hash, idx) &&
-                                !BlockedUTXO.getInstance().containsNotDustedPostMix(hash, idx)))
-                                ){
+                        boolean containsInPostMix = (BlockedUTXO.getInstance().containsPostMix(hash, idx) || BlockedUTXO.getInstance().containsNotDustedPostMix(hash, idx));
+
+
+                        if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && (!contains && !containsInPostMix)) {
 
 //                            BalanceActivity.this.runOnUiThread(new Runnable() {
 //                            @Override
                             Handler handler = new Handler();
-                            handler.post(new Runnable() {
-                                public void run() {
+                            handler.post(() -> {
 
-                                    String message = BalanceActivity.this.getString(R.string.dusting_attempt);
-                                    message += "\n\n";
-                                    message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
-                                    message += " ";
-                                    message += Coin.valueOf(amount).toPlainString();
-                                    message += " BTC\n";
-                                    message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
-                                    message += " ";
-                                    message += hash + "-" + idx;
+                                String message = BalanceActivity.this.getString(R.string.dusting_attempt);
+                                message += "\n\n";
+                                message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
+                                message += " ";
+                                message += Coin.valueOf(amount).toPlainString();
+                                message += " BTC\n";
+                                message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
+                                message += " ";
+                                message += hash + "-" + idx;
 
-                                    MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
-                                            .setTitle(R.string.dusting_tx)
-                                            .setMessage(message)
-                                            .setCancelable(false)
-                                            .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
+                                        .setTitle(R.string.dusting_tx)
+                                        .setMessage(message)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
-                                                        BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
-                                                    }
-                                                    else    {
-                                                        BlockedUTXO.getInstance().add(hash, idx, amount);
-                                                    }
-                                                    saveState();
+                                                if (account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix()) {
+                                                    BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
+                                                } else {
+                                                    BlockedUTXO.getInstance().add(hash, idx, amount);
                                                 }
-                                            }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                saveState();
+                                            }
+                                        }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
-                                                        BlockedUTXO.getInstance().addNotDustedPostMix(hash, idx);
-                                                    }
-                                                    else    {
-                                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
-                                                    }
-
+                                                if (account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix()) {
+                                                    BlockedUTXO.getInstance().addNotDustedPostMix(hash, idx);
+                                                } else {
+                                                    BlockedUTXO.getInstance().addNotDusted(hash, idx);
                                                 }
-                                            });
-                                    if (!isFinishing()) {
-                                        dlg.show();
-                                    }
-
+                                                saveState();
+                                            }
+                                        });
+                                if (!isFinishing()) {
+                                    dlg.show();
                                 }
+
                             });
 
                         }
@@ -411,7 +406,7 @@ public class BalanceActivity extends SamouraiActivity {
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
-         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
+        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
         } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
                  !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false)) {
@@ -500,8 +495,8 @@ public class BalanceActivity extends SamouraiActivity {
     }
 
     private void showProgress() {
-       progressBar.setIndeterminate(true);
-       progressBar.show();
+        progressBar.setIndeterminate(true);
+        progressBar.show();
     }
 
     private void checkDeepLinks() {
@@ -976,7 +971,7 @@ public class BalanceActivity extends SamouraiActivity {
                         throwable.printStackTrace();
 
                     if (balanceViewModel.getBalance().getValue() != null) {
-                            balanceViewModel.setBalance(balance);
+                        balanceViewModel.setBalance(balance);
                     } else {
                         balanceViewModel.setBalance(balance);
                     }
@@ -1072,12 +1067,12 @@ public class BalanceActivity extends SamouraiActivity {
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
                 if (privKeyReader.getFormat() != null) {
-                        doPrivKey(code.trim());
-                    } else if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
-                        startActivity(cahootIntent);
-                    } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                        PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                    doPrivKey(code.trim());
+                } else if (Cahoots.isCahoots(code.trim())) {
+                    Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
+                    startActivity(cahootIntent);
+                } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
+                    PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
                     Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
                 } else {
