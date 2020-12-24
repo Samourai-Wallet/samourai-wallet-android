@@ -454,7 +454,7 @@ public class BalanceActivity extends SamouraiActivity {
                 updateDisplay(false);
             }, 100L);
 
-            getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
+            getSupportActionBar().setIcon(R.drawable.ic_samourai_logo);
 
         }
         else {

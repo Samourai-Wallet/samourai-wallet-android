@@ -7,15 +7,10 @@
     <!-- The background color, preferably the same as your normal theme -->
     <item android:drawable="@color/window" />
 
-    <!-- Your product logo - 144dp color version of your app icon -->
-    <item >
-
-        <bitmap
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:src="@drawable/ic_samourai_logo_splash" />
-
-    </item>
-
+    <item
+        android:width="74dp"
+        android:height="74dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_samourai_logo_splash_vect"
+        />
 </layer-list>
