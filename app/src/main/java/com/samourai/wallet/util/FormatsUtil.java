@@ -43,6 +43,13 @@ public class FormatsUtil extends FormatsUtilGeneric {
         return dpAsPixels;
     }
 
+    public static String getPoolBTCDecimalFormat(Long sats) {
+        DecimalFormat format =  new DecimalFormat("0.###");
+        format.setMinimumIntegerDigits(1);
+        format.setMaximumFractionDigits(3);
+        format.setMinimumFractionDigits(1);
+        return format.format(sats / 1e8);
+    }
     public static String getBTCDecimalFormat(Long sats) {
         DecimalFormat format =  new DecimalFormat("0.########");
         format.setMinimumIntegerDigits(1);
