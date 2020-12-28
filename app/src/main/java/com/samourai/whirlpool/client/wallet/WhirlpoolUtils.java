@@ -70,7 +70,8 @@ public class WhirlpoolUtils {
         WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(ctx).getWhirlpoolWalletOrNull();
         if (whirlpoolWallet != null) {
             WhirlpoolUtxo whirlpoolUtxo = whirlpoolWallet.getUtxoSupplier().findUtxo(item.hash, item.idx);
-            if (whirlpoolUtxo != null) {
+
+            if (whirlpoolUtxo != null && whirlpoolUtxo.getUtxo() !=null && !whirlpoolUtxo.getUtxo().getPath().contains("M/1/")) {
                 // tag only premix & postmix utxos
                 if (WhirlpoolAccount.PREMIX.equals(whirlpoolUtxo.getAccount()) || WhirlpoolAccount.POSTMIX.equals(whirlpoolUtxo.getAccount())) {
                     // show whirlpool tag
