@@ -43,20 +43,17 @@
         android:required="false"
         tools:node="replace" />
 
-    <!-- usesCleartextTraffic attr is used for tor networking.
-       this is because onion urls are not using https/ssl by default.
-        -->
     <application
         android:name=".SamouraiApplication"
         android:allowBackup="false"
-        tools:replace="android:allowBackup"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/ic_launcher_round"
         android:theme="@style/SamouraiAppTheme"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
-        >
+        tools:replace="android:allowBackup">
+        <activity android:name=".send.batch.BatchSpendActivity"></activity>
         <activity
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
@@ -99,7 +96,6 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="bitcoin" />
@@ -125,10 +121,9 @@
             android:label="@string/app_name" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
-
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/app_name"
@@ -152,9 +147,9 @@
             android:label="@string/app_name" />
         <activity
             android:name=".OpenDimeActivity"
-            android:theme="@style/Theme.Samourai.Material"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Samourai.Material">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
 
@@ -165,7 +160,6 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-
         <activity
             android:name=".ExodusActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -173,19 +167,16 @@
             android:name=".PayNymCalcActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="PayNym Calculator" />
-
         <activity
             android:name=".AddressCalcActivity"
-            android:theme="@style/SamouraiAppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Address Calculator" />
-
+            android:label="Address Calculator"
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
         <activity android:name=".CreateWalletActivity" />
-
         <activity android:name=".RestoreSeedWalletActivity" />
         <activity
             android:name=".LandingActivity"
@@ -241,17 +232,14 @@
             android:name=".whirlpool.newPool.NewPoolActivity"
             android:label=""
             android:theme="@style/Theme.Samourai.Whirlpool.Material" />
-
         <activity
             android:name=".whirlpool.CycleDetail"
             android:label=""
             android:theme="@style/SamouraiAppWhirlpoolTheme" />
-
         <activity
             android:name=".tx.TxDetailsActivity"
             android:label=" "
             android:theme="@style/SamouraiAppTheme" />
-
         <activity
             android:name=".tx.TxPrivacyDetailsActivity"
             android:label=""
@@ -282,8 +270,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-        <receiver android:name=".whirlpool.service.WhirlpoolBroadCastReceiver" />
 
+        <receiver android:name=".whirlpool.service.WhirlpoolBroadCastReceiver" />
         <receiver
             android:name=".util.ConnectionChangeReceiver"
             android:label="NetworkChangeReceiver">
@@ -296,16 +284,13 @@
         <service
             android:name=".service.WebSocketService"
             android:enabled="true" />
-
         <service
             android:name=".service.JobRefreshService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <service
             android:name=".whirlpool.service.WhirlpoolNotificationService"
             android:enabled="true"
-            android:stopWithTask="true"
-          />
+            android:stopWithTask="true" />
     </application>
 
 </manifest>
