@@ -2472,7 +2472,7 @@ public class APIFactory {
                                 }
                                 if(hasPostMix && (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()) ||
                                         addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()))))  {
-                                    amount = tx0value;
+                                    amount = -tx0value;
                                     isPostMixTx0 = true;
                                 }
                             }
