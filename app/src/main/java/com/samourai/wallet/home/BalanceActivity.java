@@ -340,6 +340,8 @@ public class BalanceActivity extends SamouraiActivity {
         receiveFab =  findViewById(R.id.receive_fab);
         paynymFab =  findViewById(R.id.paynym_fab);
 
+        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, true);
+
         findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, WhirlpoolMain.class);
             startActivity(intent);
@@ -364,14 +366,14 @@ public class BalanceActivity extends SamouraiActivity {
         }
         if(account == 0 && payload != null && payload.has("prev_balance"))    {
             try    {
-                setBalance(payload.getLong("prev_balance"), false);
+                setBalance(payload.getLong("prev_balance"), is_sat_prefs);
             }
             catch(Exception e)    {
-                setBalance(0L, false);
+                setBalance(0L, is_sat_prefs);
             }
         }
         else    {
-            setBalance(0L, false);
+            setBalance(0L, is_sat_prefs);
         }
 
         receiveFab.setOnClickListener(view -> {
@@ -528,18 +530,20 @@ public class BalanceActivity extends SamouraiActivity {
 
         TxRecyclerView.setAdapter(adapter);
 
+        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, true);
+
         balanceViewModel.getBalance().observe(this, balance -> {
             if (balance < 0) {
                 return;
             }
             if (balanceViewModel.getSatState().getValue() != null) {
-                setBalance(balance, balanceViewModel.getSatState().getValue());
+                setBalance(balance, is_sat_prefs);
             } else {
-                setBalance(balance, false);
+                setBalance(balance, is_sat_prefs);
             }
         });
         adapter.setTxes(balanceViewModel.getTxs().getValue());
-        setBalance(balanceViewModel.getBalance().getValue(), false);
+        setBalance(balanceViewModel.getBalance().getValue(), is_sat_prefs);
 
         balanceViewModel.getSatState().observe(this, state -> {
             if (state == null) {
@@ -554,7 +558,10 @@ public class BalanceActivity extends SamouraiActivity {
                 adapter.setTxes(list);
             }
         });
-        mCollapsingToolbar.setOnClickListener(view -> balanceViewModel.toggleSat());
+        mCollapsingToolbar.setOnClickListener(v -> {
+            boolean is_sat = balanceViewModel.toggleSat();
+            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.IS_SAT, is_sat);
+        });
 
         mCollapsingToolbar.setOnLongClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
