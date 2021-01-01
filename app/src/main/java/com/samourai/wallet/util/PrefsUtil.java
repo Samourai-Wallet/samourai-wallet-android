@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 public class PrefsUtil {
 
+	public static final String IS_SAT = "is_sat";
 	public static final String GUID = "guid";
 	public static final String GUID_V = "guid_version";
 	public static final String ACCESS_HASH = "accessHash";

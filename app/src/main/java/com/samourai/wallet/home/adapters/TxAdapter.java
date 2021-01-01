@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
@@ -103,6 +106,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     @Override
     public void onBindViewHolder(TxViewHolder holder, int position) {
+        boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, true);
 
         Tx tx = txes.get(position);
         if (tx.section == null) {
@@ -133,13 +137,13 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.out_going_tx_whtie_arrow));
 
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-                holder.tvAmount.setText("-".concat(displaySatUnit ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC")));
+                holder.tvAmount.setText("-".concat(is_sat_prefs ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC")));
 
             } else {
                 TransitionManager.beginDelayedTransition((ViewGroup) holder.tvAmount.getRootView(), new ChangeBounds());
 
                 holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.incoming_tx_green));
-                String amount = displaySatUnit ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC");
+                String amount = is_sat_prefs ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC");
                 if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
                     amount = amount.concat(" (Remix)");
                 }
