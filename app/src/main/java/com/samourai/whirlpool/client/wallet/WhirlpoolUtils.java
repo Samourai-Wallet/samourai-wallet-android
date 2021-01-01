@@ -3,6 +3,7 @@ package com.samourai.whirlpool.client.wallet;
 import android.content.Context;
 
 import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.whirlpool.client.exception.NotifiableException;
 import com.samourai.whirlpool.client.utils.ClientUtils;
@@ -65,13 +66,22 @@ public class WhirlpoolUtils {
         return f;
     }
 
-    public Collection<String> getWhirlpoolTags(UTXOCoin item, Context ctx) {
+    public Collection<String> getWhirlpoolTags(UTXOCoin item, Context ctx ) {
         List<String> tags = new LinkedList<>();
         WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(ctx).getWhirlpoolWalletOrNull();
         if (whirlpoolWallet != null) {
             WhirlpoolUtxo whirlpoolUtxo = whirlpoolWallet.getUtxoSupplier().findUtxo(item.hash, item.idx);
 
-            if (whirlpoolUtxo != null && whirlpoolUtxo.getUtxo() !=null && !whirlpoolUtxo.getUtxo().getPath().contains("M/1/")) {
+            if (whirlpoolUtxo != null && whirlpoolUtxo.getUtxo() != null ) {
+
+                try {
+                    if(WhirlpoolAccount.POSTMIX.equals(whirlpoolUtxo.getAccount()) && whirlpoolUtxo.getUtxo().getPath() != null && whirlpoolUtxo.getUtxo().getPath().contains("M/1/")){
+                        return tags;
+                    }
+                } catch (Exception e) {
+                    LogUtil.error("getWhirlpoolTags",e);
+                    return tags;
+                }
                 // tag only premix & postmix utxos
                 if (WhirlpoolAccount.PREMIX.equals(whirlpoolUtxo.getAccount()) || WhirlpoolAccount.POSTMIX.equals(whirlpoolUtxo.getAccount())) {
                     // show whirlpool tag
@@ -83,7 +93,8 @@ public class WhirlpoolUtils {
                         case UNCONFIRMED:
                             tags.add("UNCONFIRMED");
                             break;
-                        case NO_POOL: case MIXABLE:
+                        case NO_POOL:
+                        case MIXABLE:
                             // ignore
                             break;
                     }
