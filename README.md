@@ -82,7 +82,7 @@ Plug in your OpenDime using the appropriate OTG (On-The-Go) USB cable and Samour
 
 ### License:
 
-[Unlicense](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/master/LICENSE)
+[GNU General Public License 3](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/master/LICENSE)
 
 ### Contributing:
 
