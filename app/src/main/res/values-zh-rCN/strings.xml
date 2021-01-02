@@ -507,7 +507,7 @@
     <string name="invalid_mnemonic">BIP39提示词无效</string>
     <string name="enter_your_code_here">在此输入你的code</string>
         
-    <string name="declaimer_recovery_words">我确认我已经把上述单词记下并保存到安全的地方。我理解只要有单词与密码短语任何人可以登录我的钱包并使用钱包里的所有资金</string>
+    <string name="disclaimer_recovery_words">我确认我已经把上述单词记下并保存到安全的地方。我理解只要有单词与密码短语任何人可以登录我的钱包并使用钱包里的所有资金</string>
     <string name="return_to_wallet">返回钱包</string>
     <string name="caution_message_recovery_words">把单词记在电脑或云上并不安全。把单词记到纸上并保存到安全的地方</string>
     <string name="these_words_are">这些单词是你钱包所有私钥的备份</string>

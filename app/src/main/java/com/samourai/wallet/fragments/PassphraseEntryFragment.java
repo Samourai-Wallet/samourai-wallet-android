@@ -23,6 +23,7 @@ public class PassphraseEntryFragment extends Fragment {
     private onPassPhraseListener mListener = null;
     private EditText passPhrase, confirmPassphrase;
     private CheckBox acceptDisclaimer;
+    private TextView acceptDisclaimerText;
 
     public PassphraseEntryFragment() {
     }
@@ -56,6 +57,7 @@ public class PassphraseEntryFragment extends Fragment {
         passPhrase = (EditText) view.findViewById(R.id.password_entry);
         confirmPassphrase = (EditText) view.findViewById(R.id.password_entry_confirm);
         acceptDisclaimer = (CheckBox) view.findViewById(R.id.disclaimer_checkbox);
+        acceptDisclaimerText = (TextView) view.findViewById(R.id.disclaimer_textview);
         confirmPassphrase.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -70,11 +72,10 @@ public class PassphraseEntryFragment extends Fragment {
         confirmPassphrase.addTextChangedListener(watcher);
         passPhrase.addTextChangedListener(watcher);
 
-        acceptDisclaimer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                stateChange();
-            }
+        acceptDisclaimer.setOnCheckedChangeListener((compoundButton, b) -> stateChange());
+        acceptDisclaimerText.setOnClickListener(v -> {
+            acceptDisclaimer.setChecked(!acceptDisclaimer.isChecked());
+            stateChange();
         });
 
     }

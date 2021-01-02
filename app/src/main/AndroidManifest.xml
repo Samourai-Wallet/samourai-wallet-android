@@ -165,10 +165,7 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity
-            android:name=".paynym.ClaimPayNymActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+
         <activity
             android:name=".ExodusActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />

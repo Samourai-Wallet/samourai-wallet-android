@@ -1970,7 +1970,10 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void processScan(String data) {
-
+        strPCode  = null;
+        toAddressEditText.setEnabled(true);
+        address = null;
+        strDestinationBTCAddress = null;
         if (data.contains("https://bitpay.com")) {
 
             AlertDialog.Builder dlg = new AlertDialog.Builder(this)
@@ -2021,6 +2024,10 @@ public class SendActivity extends SamouraiActivity {
         if (FormatsUtil.getInstance().isValidPaymentCode(data)) {
             processPCode(data, null);
             return;
+        }
+
+        if(data.startsWith("BITCOIN:")) {
+            data = "bitcoin:" + data.substring(8);
         }
 
         if (FormatsUtil.getInstance().isBitcoinUri(data)) {

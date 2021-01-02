@@ -1,12 +1,10 @@
 package com.samourai.wallet.tor
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.matthewnelson.topl_service.service.components.onionproxy.model.TorPortInfo
-import io.matthewnelson.topl_service.service.components.onionproxy.model.TorServiceEventBroadcaster
-import io.matthewnelson.topl_service.util.ServiceConsts
-import io.matthewnelson.topl_service.util.ServiceUtilities
+import io.matthewnelson.topl_service_base.ServiceUtilities
+import io.matthewnelson.topl_service_base.TorPortInfo
+import io.matthewnelson.topl_service_base.TorServiceEventBroadcaster
 
 class TorEventBroadcaster : TorServiceEventBroadcaster() {
 

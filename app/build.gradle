@@ -11,8 +11,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 175
-        versionName "0.99.96a"
+        versionCode 176
+        versionName "0.99.96b"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -57,19 +57,19 @@ android {
             applicationId 'com.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 29
-            versionCode 175
-            versionName "0.99.96a"
+            versionCode 176
+            versionName "0.99.96b"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.99.96a"
+            resValue "string", "version_name", "0.99.96b"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 29
-            versionCode 175
-            versionName "0.99.96a"
+            versionCode 176
+            versionName "0.99.96b"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.96a"
+            resValue "string", "version_name", "0.99.96b"
         }
     }
     testOptions {
@@ -87,7 +87,7 @@ def getApiKey(key){
 dependencies {
 
     def lifecycle_version = "2.2.0"
-    def topl_android_version = "1.0.0-beta02"
+    def topl_android_version = "2.0.2"
     def coroutines_version = '1.3.9'
 
     api fileTree(include: ['*.jar'], dir: 'libs')

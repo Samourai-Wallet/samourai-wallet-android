@@ -505,7 +505,7 @@
     <string name="invalid_mnemonic">Ongeldige BIP39-mnemonic</string>
     <string name="enter_your_code_here">Voer je code hier in</string>
 
-    <string name="declaimer_recovery_words">Ik bevestig dat ik bovenstaande woorden heb opgeschreven en deze op een veilige locatie bewaar. Ik begrijp dat iedereen die toegang heeft tot zowel mijn wachtwoordzin als mijn herstelwoorden ook toegang heeft tot mijn portemonnee en mijn volledige saldo.</string>
+    <string name="disclaimer_recovery_words">Ik bevestig dat ik bovenstaande woorden heb opgeschreven en deze op een veilige locatie bewaar. Ik begrijp dat iedereen die toegang heeft tot zowel mijn wachtwoordzin als mijn herstelwoorden ook toegang heeft tot mijn portemonnee en mijn volledige saldo.</string>
   <string name="return_to_wallet">Terug naar portemonnee</string>
   <string name="caution_message_recovery_words">Het is niet veilig om deze woorden op je computer of online op te slaan. Schrijf de woorden op een stuk papier en bewaar dit op een geheime en veilige plaats.</string>
     <string name="these_words_are">Deze woorden zijn een back-up van alle geheime sleutels in je portemonnee.</string>
