@@ -1,6 +1,5 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -22,9 +21,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
-import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.rpc.PaymentAddress;
-import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -88,6 +84,7 @@ public class AddressCalcActivity extends SamouraiActivity {
 
         });
         populateSpinner();
+        spType.setSelection(1);
 
         tvChain = (TextView)findViewById(R.id.chain_label);
         rChain = (RadioGroup)findViewById(R.id.chain);
