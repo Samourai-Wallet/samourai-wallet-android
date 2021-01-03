@@ -675,9 +675,7 @@
     <string name="show_tx">Mostrar transação</string>
     <string name="cannot_process_stonewall">Não é possível processar STONEWALL</string>
     <string name="cannot_process_cahoots">Não é possível processar #Cahoots</string>
-    <string name="title_activity_network_dashboard">
-        Networking
-    </string>
+    <string name="title_activity_network_dashboard">Networking</string>
     <string name="powering_samourai_wallet_">A ativação da Samourai Wallet com seu próprio node pessoal oferece o melhor nível de privacidade e independência ao interagir com a rede bitcoin. O Dojo torna a execução de um node completo fácil e simples.</string>
     <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play node de bitcoin completo\n\n -Serviço oculto Tor automaticamente configurado\n\n -Independência dos servidores padrões da Samourai</string>
     <string name="dojo_connect_instruction">Se você já tem um Dojo Full Node ou está \nexecutando o Dojo Software de código aberto e gratuito\não sendo seu próprio hardware, digitalize o QR code\nlocalizado no painel de controle do Dojo Maintenance</string>
@@ -820,8 +818,7 @@
     <!-- Sync Preferences -->
     <string name="sync_title">Sincronize o e-mail periodicamente</string>
     <string name="attachment_title">Faça o Download dos anexos recebidos</string>
-    <string name="attachment_summary_on">Automaticamente faça o download de anexo dos e-mails recebidos
-    </string>
+    <string name="attachment_summary_on">Automaticamente faça o download de anexo dos e-mails recebidos</string>
     <string name="attachment_summary_off">Apenas faça o download de anexos quando manualmente pedidos</string>
     <string name="no_cahoots_detected">Nenhum Cahoots detectado. Atualize para buscar novamente</string>
     <string name="waiting_for_cahoots_request">Esperando por pedido Cahoots...</string>
@@ -833,7 +830,6 @@
     <string name="based_on_cryptography_and">Baseado em criptografia e matemática, nem em suas informações pessoais</string>
     <string name="find_and_follow_your_friends">Ache e siga seus amigos e contatos sem prejudicar sua privacidade</string>
     <string name="unlocks_advanced">Desbloque opções avançadas de privacidade na sua carteira</string>
-    <string name="share_and_reuse">Compartilhe e reuse sem compartilhar suas 
-        transações e balanços</string>
+    <string name="share_and_reuse">Compartilhe e reuse sem compartilhar suas transações e balanços</string>
 
 </resources>
