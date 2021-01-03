@@ -46,7 +46,7 @@
     <string name="options_wipe2">Apagar com segurança a carteira deste aparelho.</string>
     <string name="options_stealth_display">Stealth launcher</string>
     <string name="options_stealth_display2">Remove a Samourai do launcher e da tela inicial. Você deve discar **SEU_CÓDIGO_PIN# do discador do telefone para iniciar a Samourai.</string>
-    <string name="options_remote_commands">Abilitar comando remotos</string>
+    <string name="options_remote_commands">Habilitar comando remotos</string>
     <string name="options_remote_commands2">Permite comandos remotos por SMS.</string>
     <string name="options_blockexplorer">Explorador de blocos</string>
     <string name="options_blockexplorer2">O explorador de blocos utilizado para ver detalhes da transação.</string>
