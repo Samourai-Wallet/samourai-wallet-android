@@ -206,21 +206,21 @@
     <string name="create_pin">Criar código PIN</string>
     <string name="confirm_pin">Confirmar código PIN</string>
 
-    <string name="auto_fee">NORMAL FEE</string>
-    <string name="priority_fee">PRIORITY FEE</string>
-    <string name="low_fee">LOW FEE</string>
-    <string name="custom_fee">Custom</string>
+    <string name="auto_fee">TAXA NORMAL</string>
+    <string name="priority_fee">TAXA COM PRIORIDADE ALTA</string>
+    <string name="low_fee">TAXA BARATA</string>
+    <string name="custom_fee">Customizar</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Wallet</string>
+    <string name="account_Samourai">Carteira</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Max. available:</string>
 
-    <string name="select_account">Select account</string>
-    <string name="received_bitcoin">Received Bitcoin</string>
-    <string name="received">Received</string>
-    <string name="sent">Transaction sent</string>
+    <string name="select_account">Selecione quantia</string>
+    <string name="received_bitcoin">Bitcoin Recebidon</string>
+    <string name="received">Recebido</string>
+    <string name="sent">Transação enviada</string>
     <string name="total">Total</string>
     <string name="encrypted_backup">Dados encriptados da carteira</string>
     <string name="decryption_error">Houve um erro durante a desencriptação do backup da sua carteira. Por favor tente novamente.</string>
@@ -377,7 +377,7 @@
     <string name="utxo_sign_text2">Assinada usando endereço utxo.</string>
     <string name="utxo_sign_text3">Assinada usando endereço utxo.</string>
   
-    <string name="recovery_checkup">Recovery Checkup</string>
+    <string name="recovery_checkup">Verificar a recuperação</string>
     <string name="recovery_checkup_message">As palavras de recuperação e sua senha serão exibidas. Não permita ninguém olhar sua tela. Isto NÃO será exibido novamente.</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="recovery_checkup_finish">EU GUARDEI MINHA INFORMAÇÃO DE RECUPERAÇÃO</string>
