@@ -41,8 +41,6 @@ import com.samourai.wallet.segwit.BIP49Util
 import com.samourai.wallet.segwit.BIP84Util
 import com.samourai.wallet.send.PushTx
 import com.samourai.wallet.send.RBFUtil
-import com.samourai.wallet.service.JobRefreshService
-import com.samourai.wallet.service.WebSocketService
 import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.util.*
 import com.samourai.wallet.whirlpool.WhirlpoolMeta
