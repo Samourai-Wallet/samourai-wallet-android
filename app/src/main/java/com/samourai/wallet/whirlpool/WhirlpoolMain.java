@@ -3,13 +3,11 @@ package com.samourai.wallet.whirlpool;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,7 +60,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.Group;
@@ -274,7 +270,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                 List<UTXOCoin> coins = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
                 long mediumFee = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
-                WhirlpoolTx0 tx0 = new WhirlpoolTx0(1000000L, mediumFee, 1, coins);
+                WhirlpoolTx0 tx0 = new WhirlpoolTx0(WhirlpoolMeta.WHIRLPOOL_SMALLEST_POOL, mediumFee, 1, coins);
                 try {
                     tx0.make();
                 } catch (Exception ex) {

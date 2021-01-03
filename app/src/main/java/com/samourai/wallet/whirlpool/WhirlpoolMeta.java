@@ -10,6 +10,7 @@ import org.json.JSONObject;
 public class WhirlpoolMeta {
 
     public final static double WHIRLPOOL_FEE_RATE_POOL_DENOMINATION = 0.05;
+    public final static long WHIRLPOOL_SMALLEST_POOL = 100000L;
 
     private static String strSCODE = null;
 
