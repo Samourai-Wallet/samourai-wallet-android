@@ -510,7 +510,7 @@
     <string name="invalid_mnemonic">Mnemonico BIP39 non valido</string>
     <string name="enter_your_code_here">Inserisci il tuo codice qui</string>
 
-    <string name="declaimer_recovery_words">Confermo di aver scritto e memorizzato le parole riportate qui sopra in un posto sicuro. Sono cosciente che chiunque abbia accesso alla mia passphrase ed alle parole del mio seed mnemonico avrà completo controllo del mio wallet e dei miei fondi depositati in esso.</string>
+    <string name="disclaimer_recovery_words">Confermo di aver scritto e memorizzato le parole riportate qui sopra in un posto sicuro. Sono cosciente che chiunque abbia accesso alla mia passphrase ed alle parole del mio seed mnemonico avrà completo controllo del mio wallet e dei miei fondi depositati in esso.</string>
     <string name="return_to_wallet">Ritorna al wallet</string>
     <string name="caution_message_recovery_words">Non è sicuro conservare queste parole su un computer o sul cloud. Scrivi queste parole su un foglio di carta e tienile al sicuro, in un posto segreto.</string>
     <string name="these_words_are">Queste parole sono un backup di tutte le chiavi segrete nel tuo wallet.</string>

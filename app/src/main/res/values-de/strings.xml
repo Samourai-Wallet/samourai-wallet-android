@@ -506,7 +506,7 @@
     <string name="invalid_mnemonic">Ungültiger BIP39 Geheimsatz</string>
     <string name="enter_your_code_here">Gib hier deinen Code ein</string>
 
-    <string name="declaimer_recovery_words">Ich bestätige, dass ich die oben genannten Worte aufgeschrieben habe und sie an einem sicheren Ort aufbewahre. Ich verstehen, dass jeder, der sowohl Zugriff auf meinen Geheimsatz als auch meine Passphrase hat, vollen Zugriff auf meine Wallet und mein gesamtes Guthaben hat.</string>
+    <string name="disclaimer_recovery_words">Ich bestätige, dass ich die oben genannten Worte aufgeschrieben habe und sie an einem sicheren Ort aufbewahre. Ich verstehen, dass jeder, der sowohl Zugriff auf meinen Geheimsatz als auch meine Passphrase hat, vollen Zugriff auf meine Wallet und mein gesamtes Guthaben hat.</string>
 	<string name="return_to_wallet">Zurück zur Wallet</string>
     <string name="caution_message_recovery_words">Es ist nicht sicher, diese Wörter auf dem Computer oder in der Cloud zu speichern. Notiere sie auf ein Stück Papier und bewahre es an einem sicheren und geheimen Ort auf.</string>
     <string name="these_words_are">Diese Worte sind ein Backup aller geheimen Schlüssel (Private Keys) deiner Wallet.</string>

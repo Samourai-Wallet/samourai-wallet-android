@@ -505,7 +505,7 @@
     <string name="invalid_mnemonic">Érvénytelen BIP39 szavak</string>
     <string name="enter_your_code_here">Írd ide a szavakat</string>
 
-    <string name="declaimer_recovery_words">Megerősítem, hogy leírtam a fenti szavakat, és egy biztonságos helyen tárolom őket. Megértettem, hogy bárki, aki hozzáfér ezekhez a szavakhoz, valamint a jelszavamhoz, az hozzáfér a pénztárcámhoz, és ezzel együtt az összes benne tárolt pénzhez is.</string>
+    <string name="disclaimer_recovery_words">Megerősítem, hogy leírtam a fenti szavakat, és egy biztonságos helyen tárolom őket. Megértettem, hogy bárki, aki hozzáfér ezekhez a szavakhoz, valamint a jelszavamhoz, az hozzáfér a pénztárcámhoz, és ezzel együtt az összes benne tárolt pénzhez is.</string>
     <string name="return_to_wallet">Vissza a pénztárcához</string>
     <string name="caution_message_recovery_words">Fontos a szavak sorrendje is.\n\nVeszélyes ezeket a szavakat számítógépen, vagy bármilyen online tárhelyen tárolni. Írd le a szavakat egy papírra, és tartsd őket egy biztos és rejtett helyen.</string>
     <string name="these_words_are">Ezekkel a szavakkal állíthatóak vissza a pénztárcád privát kulcsai.</string>

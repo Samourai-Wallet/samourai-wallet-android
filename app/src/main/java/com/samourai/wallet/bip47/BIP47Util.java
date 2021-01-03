@@ -1,6 +1,7 @@
 package com.samourai.wallet.bip47;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.SamouraiWallet;
@@ -62,6 +63,7 @@ public class BIP47Util extends BIP47UtilGeneric {
     }
 
     public void reset()  {
+        instance = new BIP47Util();
         wallet = null;
     }
 

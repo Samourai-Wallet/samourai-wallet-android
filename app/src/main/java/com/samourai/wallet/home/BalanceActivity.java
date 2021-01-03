@@ -34,6 +34,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
@@ -73,7 +74,6 @@ import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
-import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.paynym.PayNymHome;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -245,63 +245,57 @@ public class BalanceActivity extends SamouraiActivity {
                         final String hash = out.getHash().toString();
                         final int idx = out.getTxOutputN();
                         final long amount = out.getValue().longValue();
+                        boolean contains = ((BlockedUTXO.getInstance().contains(hash, idx) || BlockedUTXO.getInstance().containsNotDusted(hash, idx)));
 
-                        if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
-                                ((!BlockedUTXO.getInstance().contains(hash, idx) &&
-                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx))
-                                ||
-                                (!BlockedUTXO.getInstance().containsPostMix(hash, idx) &&
-                                !BlockedUTXO.getInstance().containsNotDustedPostMix(hash, idx)))
-                                ){
+                        boolean containsInPostMix = (BlockedUTXO.getInstance().containsPostMix(hash, idx) || BlockedUTXO.getInstance().containsNotDustedPostMix(hash, idx));
+
+
+                        if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && (!contains && !containsInPostMix)) {
 
 //                            BalanceActivity.this.runOnUiThread(new Runnable() {
 //                            @Override
                             Handler handler = new Handler();
-                            handler.post(new Runnable() {
-                                public void run() {
+                            handler.post(() -> {
 
-                                    String message = BalanceActivity.this.getString(R.string.dusting_attempt);
-                                    message += "\n\n";
-                                    message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
-                                    message += " ";
-                                    message += Coin.valueOf(amount).toPlainString();
-                                    message += " BTC\n";
-                                    message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
-                                    message += " ";
-                                    message += hash + "-" + idx;
+                                String message = BalanceActivity.this.getString(R.string.dusting_attempt);
+                                message += "\n\n";
+                                message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
+                                message += " ";
+                                message += Coin.valueOf(amount).toPlainString();
+                                message += " BTC\n";
+                                message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
+                                message += " ";
+                                message += hash + "-" + idx;
 
-                                    MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
-                                            .setTitle(R.string.dusting_tx)
-                                            .setMessage(message)
-                                            .setCancelable(false)
-                                            .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(BalanceActivity.this)
+                                        .setTitle(R.string.dusting_tx)
+                                        .setMessage(message)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
-                                                        BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
-                                                    }
-                                                    else    {
-                                                        BlockedUTXO.getInstance().add(hash, idx, amount);
-                                                    }
-                                                    saveState();
+                                                if (account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix()) {
+                                                    BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
+                                                } else {
+                                                    BlockedUTXO.getInstance().add(hash, idx, amount);
                                                 }
-                                            }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                saveState();
+                                            }
+                                        }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    if(account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix())    {
-                                                        BlockedUTXO.getInstance().addNotDustedPostMix(hash, idx);
-                                                    }
-                                                    else    {
-                                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
-                                                    }
-
+                                                if (account == WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix()) {
+                                                    BlockedUTXO.getInstance().addNotDustedPostMix(hash, idx);
+                                                } else {
+                                                    BlockedUTXO.getInstance().addNotDusted(hash, idx);
                                                 }
-                                            });
-                                    if (!isFinishing()) {
-                                        dlg.show();
-                                    }
-
+                                                saveState();
+                                            }
+                                        });
+                                if (!isFinishing()) {
+                                    dlg.show();
                                 }
+
                             });
 
                         }
@@ -346,6 +340,8 @@ public class BalanceActivity extends SamouraiActivity {
         receiveFab =  findViewById(R.id.receive_fab);
         paynymFab =  findViewById(R.id.paynym_fab);
 
+        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, true);
+
         findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, WhirlpoolMain.class);
             startActivity(intent);
@@ -370,14 +366,14 @@ public class BalanceActivity extends SamouraiActivity {
         }
         if(account == 0 && payload != null && payload.has("prev_balance"))    {
             try    {
-                setBalance(payload.getLong("prev_balance"), false);
+                setBalance(payload.getLong("prev_balance"), is_sat_prefs);
             }
             catch(Exception e)    {
-                setBalance(0L, false);
+                setBalance(0L, is_sat_prefs);
             }
         }
         else    {
-            setBalance(0L, false);
+            setBalance(0L, is_sat_prefs);
         }
 
         receiveFab.setOnClickListener(view -> {
@@ -412,7 +408,7 @@ public class BalanceActivity extends SamouraiActivity {
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
-         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
+        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
         } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
                  !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false)) {
@@ -455,7 +451,7 @@ public class BalanceActivity extends SamouraiActivity {
                 updateDisplay(false);
             }, 100L);
 
-            getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
+            getSupportActionBar().setIcon(R.drawable.ic_samourai_logo);
 
         }
         else {
@@ -501,8 +497,8 @@ public class BalanceActivity extends SamouraiActivity {
     }
 
     private void showProgress() {
-       progressBar.setIndeterminate(true);
-       progressBar.show();
+        progressBar.setIndeterminate(true);
+        progressBar.show();
     }
 
     private void checkDeepLinks() {
@@ -534,18 +530,20 @@ public class BalanceActivity extends SamouraiActivity {
 
         TxRecyclerView.setAdapter(adapter);
 
+        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, true);
+
         balanceViewModel.getBalance().observe(this, balance -> {
             if (balance < 0) {
                 return;
             }
             if (balanceViewModel.getSatState().getValue() != null) {
-                setBalance(balance, balanceViewModel.getSatState().getValue());
+                setBalance(balance, is_sat_prefs);
             } else {
-                setBalance(balance, false);
+                setBalance(balance, is_sat_prefs);
             }
         });
         adapter.setTxes(balanceViewModel.getTxs().getValue());
-        setBalance(balanceViewModel.getBalance().getValue(), false);
+        setBalance(balanceViewModel.getBalance().getValue(), is_sat_prefs);
 
         balanceViewModel.getSatState().observe(this, state -> {
             if (state == null) {
@@ -560,7 +558,10 @@ public class BalanceActivity extends SamouraiActivity {
                 adapter.setTxes(list);
             }
         });
-        mCollapsingToolbar.setOnClickListener(view -> balanceViewModel.toggleSat());
+        mCollapsingToolbar.setOnClickListener(v -> {
+            boolean is_sat = balanceViewModel.toggleSat();
+            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.IS_SAT, is_sat);
+        });
 
         mCollapsingToolbar.setOnLongClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
@@ -977,7 +978,7 @@ public class BalanceActivity extends SamouraiActivity {
                         throwable.printStackTrace();
 
                     if (balanceViewModel.getBalance().getValue() != null) {
-                            balanceViewModel.setBalance(balance);
+                        balanceViewModel.setBalance(balance);
                     } else {
                         balanceViewModel.setBalance(balance);
                     }
@@ -1073,12 +1074,12 @@ public class BalanceActivity extends SamouraiActivity {
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
                 if (privKeyReader.getFormat() != null) {
-                        doPrivKey(code.trim());
-                    } else if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
-                        startActivity(cahootIntent);
-                    } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                        PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                    doPrivKey(code.trim());
+                } else if (Cahoots.isCahoots(code.trim())) {
+                    Intent cahootIntent = ManualCahootsActivity.createIntentResume(this, account, code.trim());
+                    startActivity(cahootIntent);
+                } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
+                    PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
                     Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
                 } else {

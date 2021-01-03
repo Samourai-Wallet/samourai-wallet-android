@@ -519,7 +519,7 @@
     <string name="invalid_mnemonic">Nesprávne BIP39 mnemonic</string>
     <string name="enter_your_code_here">Zadajte kód tu</string>
 
-    <string name="declaimer_recovery_words">Potvrdzujem, že som si napísal vyššie uvedené slová a uložil ich na bezpečnom mieste. Chápem, že každý, kto má prístup k mojim prístupovým frázam a mojim slovám na obnovu, bude mať prístup k mojej peňaženke a všetkým mojim prostriedkom.</string>
+    <string name="disclaimer_recovery_words">Potvrdzujem, že som si napísal vyššie uvedené slová a uložil ich na bezpečnom mieste. Chápem, že každý, kto má prístup k mojim prístupovým frázam a mojim slovám na obnovu, bude mať prístup k mojej peňaženke a všetkým mojim prostriedkom.</string>
     <string name="return_to_wallet">Vrátiť sa do peňaženky</string>
     <string name="caution_message_recovery_words">Nie je bezpečné uchovať si tieto slová zálohované na vašom počítači alebo v cloude. Napíšte si tieto slová na kus papiera a držte ho v tajnosti a bezpečí.</string>
     <string name="these_words_are">Tieto slová sú zálohou všetkých tajných kľúčov v peňaženke.</string>

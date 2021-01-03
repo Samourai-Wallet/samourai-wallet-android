@@ -91,7 +91,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
                 public void onShare(int step) {
                     try {
                         shareCahootsPayload();
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
@@ -126,7 +126,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private void startSender() throws Exception {
         // send cahoots
         long sendAmount = getIntent().getLongExtra("sendAmount", 0);
-        if (sendAmount <=0) {
+        if (sendAmount <= 0) {
             throw new Exception("Invalid sendAmount");
         }
         String sendAddress = getIntent().getStringExtra("sendAddress");
@@ -169,8 +169,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
                 e.printStackTrace();
                 Toast.makeText(this, "Invalid data", Toast.LENGTH_SHORT).show();
             }
-        }
-        else if (menuItem.getItemId() == R.id.action_menu_display_psbt) {
+        } else if (menuItem.getItemId() == R.id.action_menu_display_psbt) {
             doDisplayPSBT();
         }
         return true;
@@ -183,14 +182,13 @@ public class ManualCahootsActivity extends SamouraiActivity {
             ManualCahootsMessage cahootsMessage = manualCahootsService.parse(qrData);
             SorobanReply reply = manualCahootsService.reply(account, cahootsMessage);
             if (reply instanceof ManualCahootsMessage) {
-                cahootsUi.setCahootsMessage((ManualCahootsMessage)reply);
-            }
-            else if (reply instanceof TxBroadcastInteraction) {
-                cahootsUi.setInteraction((TxBroadcastInteraction)reply);
+                cahootsUi.setCahootsMessage((ManualCahootsMessage) reply);
+            } else if (reply instanceof TxBroadcastInteraction) {
+                cahootsUi.setInteraction((TxBroadcastInteraction) reply);
             } else {
-                throw new Exception("Unknown SorobanReply: "+reply.getClass());
+                throw new Exception("Unknown SorobanReply: " + reply.getClass());
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             finish();
@@ -209,7 +207,10 @@ public class ManualCahootsActivity extends SamouraiActivity {
         Button share = dialog.findViewById(R.id.cahoots_share);
         TextView qrErrorMessage = dialog.findViewById(R.id.qr_error_stowaway);
 
-        if (strCahoots.length() <= QR_ALPHANUM_CHAR_LIMIT) {
+        if(strCahoots==null){
+            return;
+        }
+        if (strCahoots != null && strCahoots.length() <= QR_ALPHANUM_CHAR_LIMIT) {
             Display display = this.getWindowManager().getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
@@ -231,53 +232,58 @@ public class ManualCahootsActivity extends SamouraiActivity {
             Toast.makeText(getApplicationContext(), R.string.tx_too_large_qr, Toast.LENGTH_SHORT).show();
         }
         share.setOnClickListener(v -> {
-            if (!(strCahoots.length() <= QR_ALPHANUM_CHAR_LIMIT)) {
-                Intent txtIntent = new Intent(android.content.Intent.ACTION_SEND);
-                txtIntent.setType("text/plain");
-                txtIntent.putExtra(android.content.Intent.EXTRA_TEXT, strCahoots);
-                startActivity(Intent.createChooser(txtIntent, "Share"));
-                return;
-            }
-            String strFileName = AppUtil.getInstance(getApplicationContext()).getReceiveQRFilename();
-            File file = new File(strFileName);
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-            file.setReadable(true, false);
 
-            FileOutputStream fos = null;
             try {
+                if (!(strCahoots.length() <= QR_ALPHANUM_CHAR_LIMIT)) {
+                    Intent txtIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    txtIntent.setType("text/plain");
+                    txtIntent.putExtra(android.content.Intent.EXTRA_TEXT, strCahoots);
+                    startActivity(Intent.createChooser(txtIntent, "Share"));
+                    return;
+                }
+                String strFileName = AppUtil.getInstance(getApplicationContext()).getReceiveQRFilename();
+                File file = new File(strFileName);
+                if (!file.exists()) {
+                    try {
+                        file.createNewFile();
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                file.setReadable(true, false);
+
+                FileOutputStream fos = null;
+
                 fos = new FileOutputStream(file);
-            } catch (FileNotFoundException fnfe) {
-            }
 
-            if (file != null && fos != null) {
-                Bitmap bitmap1 = ((BitmapDrawable) qrCode.getDrawable()).getBitmap();
-                bitmap1.compress(Bitmap.CompressFormat.PNG, 0, fos);
 
-                try {
-                    fos.close();
-                } catch (IOException ioe) {
-                    ;
+                if (file != null && fos != null) {
+                    Bitmap bitmap1 = ((BitmapDrawable) qrCode.getDrawable()).getBitmap();
+                    bitmap1.compress(Bitmap.CompressFormat.PNG, 0, fos);
+
+                    try {
+                        fos.close();
+                    } catch (IOException ioe) {
+                        ;
+                    }
+
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("image/png");
+                    if (android.os.Build.VERSION.SDK_INT >= 24) {
+                        //From API 24 sending FIle on intent ,require custom file provider
+                        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                getApplicationContext(),
+                                getApplicationContext().getApplicationContext()
+                                        .getPackageName() + ".provider", file));
+                    } else {
+                        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                    }
+                    ManualCahootsActivity.this.startActivity(Intent.createChooser(intent, getApplicationContext().getText(R.string.send_tx)));
                 }
 
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.setType("image/png");
-                if (android.os.Build.VERSION.SDK_INT >= 24) {
-                    //From API 24 sending FIle on intent ,require custom file provider
-                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                            getApplicationContext(),
-                            getApplicationContext().getApplicationContext()
-                                    .getPackageName() + ".provider", file));
-                } else {
-                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                }
-                ManualCahootsActivity.this.startActivity(Intent.createChooser(intent, getApplicationContext().getText(R.string.send_tx)));
+            } catch (Exception ignored) {
+                    Toast.makeText(this,getString(R.string.cannot_compose_cahoots),Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -296,11 +302,11 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
     }
 
-    private void doDisplayPSBT()    {
+    private void doDisplayPSBT() {
 
         try {
             PSBT psbt = cahootsUi.getCahootsMessage().getCahoots().getPSBT();
-            if(psbt == null)    {
+            if (psbt == null) {
                 Toast.makeText(ManualCahootsActivity.this, R.string.psbt_error, Toast.LENGTH_SHORT).show();
             }
 

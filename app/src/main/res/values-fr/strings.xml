@@ -498,7 +498,7 @@
     <string name="invalid_mnemonic_word">Mot de récupération BIP39 invalide</string>
     <string name="invalid_mnemonic">Phrase de récupération BIP39 invalide</string>
     <string name="enter_your_code_here">Saisir votre code ici</string>
-    <string name="declaimer_recovery_words">Je confirme avoir noté les mots ci-dessus et les avoir mis dans un endroit sûr et sécurisé. Je suis conscient que quiconque ayant accès à la fois à ma passphrase et à ma phrase de récupération peut s\'emparer de mon portefeuille et de tous mes fonds.</string>
+    <string name="disclaimer_recovery_words">Je confirme avoir noté les mots ci-dessus et les avoir mis dans un endroit sûr et sécurisé. Je suis conscient que quiconque ayant accès à la fois à ma passphrase et à ma phrase de récupération peut s\'emparer de mon portefeuille et de tous mes fonds.</string>
     <string name="return_to_wallet">Retour au portefeuille</string>
     <string name="caution_message_recovery_words">Il ne serait pas sûr de conserver une copie de ces mots sur votre ordinateur ou dans le Cloud. Notez les sur une feuille de papier et conservez celle-ci dans un endroit secret et sécurisé.</string>
     <string name="these_words_are">Ces mots sont une sauvegarde de toutes les clés secrètes que renferme votre portefeuille.</string>
@@ -824,5 +824,29 @@
     
     <string name="postmix_full_spend">Avec cette transaction la totalité de votre portefeuille post-mix sera dépensée, ce qui aura pour effet d\'annuler l\'anonymat obtenu via le mixing Whirlpool. Êtes-vous sûr de vouloir poursuivre ?</string>
     
+
+
+<string name="psbt_sign_tx">Signer la transaction</string>
+<string name="display_psbt">Afficher les PSBT (transactions Bitcoin partiellement signées)</string>
+<string name="psbt_error">Erreur d\'analyse PSBT</string>
+<string name="psbt_sign_error">Erreur de signature de transaction via PSBT</string>
+
+
+<string name="options_whirlpool_state">Info Whirlpool</string>
+    <string name="options_whirlpool_state2">Montrer les données techniques du mixing.</string>
+
+<string name="strict_mode_address">Le mode strict a détecté pour cette transaction une possible réutilisation d\'adresse. Reformuler la transaction ou l\'émettre en l\'état ?</string>
+    <string name="strict_reformulate">Reformuler la transaction</string>
+
+<string name="options_strictoutputs">Mode strict</string>
+    <string name="options_strictoutputs2">Contrôle strict de sorties de transaction et de réutilisation d\'adresse.</string>
+
+<string name="options_ricochet_sync">Synchroniser Ricochet</string>
+    <string name="options_ricochet_sync2">Synchroniser le compteur Ricochet.</string>
+
+<string name="sweep_no_amount">Aucune utxo pour cette clé privée.</string>
+
+
+
 
 </resources>

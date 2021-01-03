@@ -21,10 +21,14 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
+import org.w3c.dom.Text;
+
 public class RecoveryWordsActivity extends Activity {
     private GridView recoveryWordsGrid;
     private Button returnToWallet;
-    private CheckBox desclaimerCheckbox;
+    private CheckBox disclaimerCheckbox;
+    private TextView disclaimerText;
+    private Boolean accepted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +40,21 @@ public class RecoveryWordsActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         recoveryWordsGrid = findViewById(R.id.grid_recovery_words);
         returnToWallet = findViewById(R.id.return_to_wallet);
-        desclaimerCheckbox = findViewById(R.id.disclaimer_checkbox);
+        disclaimerCheckbox = findViewById(R.id.disclaimer_checkbox);
+        disclaimerText = findViewById(R.id.declaimer_recovery_words_text);
         String recoveryWords = getIntent().getExtras().getString("BIP39_WORD_LIST");
         assert recoveryWords != null;
         String words[] = recoveryWords.trim().split(" ");
         RecoveryWordGridAdapter adapter = new RecoveryWordGridAdapter(this, words);
         recoveryWordsGrid.setAdapter(adapter);
-        desclaimerCheckbox.setOnCheckedChangeListener((compoundButton, b) -> {
-            returnToWallet.setTextColor(b ? getResources().getColor(R.color.accent) : Color.GRAY);
-            returnToWallet.setAlpha(b ? 1 : 0.6f);
-            returnToWallet.setClickable(b);
-            returnToWallet.setFocusable(b);
+        disclaimerCheckbox.setOnCheckedChangeListener((compoundButton, b) -> {
+            accepted = b;
+            setDisclaimerChange();
+        });
+        disclaimerText.setOnClickListener(v -> {
+            accepted = !accepted;
+            disclaimerCheckbox.setChecked(accepted);
+            setDisclaimerChange();
         });
 
         returnToWallet.setOnClickListener(view -> {
@@ -61,10 +69,17 @@ public class RecoveryWordsActivity extends Activity {
 
         //set grid no of Columns based on display density
         int densityDpi = getResources().getDisplayMetrics().densityDpi;
-        if(densityDpi<= DisplayMetrics.DENSITY_MEDIUM){
-                    recoveryWordsGrid.setNumColumns(2);
+        if (densityDpi <= DisplayMetrics.DENSITY_MEDIUM) {
+            recoveryWordsGrid.setNumColumns(2);
         }
 
+    }
+
+    private void setDisclaimerChange() {
+        returnToWallet.setTextColor(accepted ? getResources().getColor(R.color.accent) : Color.GRAY);
+        returnToWallet.setAlpha(accepted ? 1 : 0.6f);
+        returnToWallet.setClickable(accepted);
+        returnToWallet.setFocusable(accepted);
     }
 
     private class RecoveryWordGridAdapter extends BaseAdapter {
