@@ -342,17 +342,11 @@
     <string name="fee_bump_not_necessary">Esteja avisado que aumentar o valor da taxa pode não ser necessário para essa transação.</string>
     <string name="bump_fee">Você gostaria de aumentar a taxa de mineradores desta transação para obter confirmação mais rápida?\n\nTaxa Adicional de Mineração:</string>
 
-    <string name="cpfp_cannot_retrieve_tx">Não é possível obter informação da transação. Por favor tente novamente.</string>
-    <string name="fee_bump_not_necessary">Esteja avisado que aumentar o valor da taxa pode não ser necessário para essa transação.</string>
-    <string name="bump_fee">Você gostaria de aumentar a taxa de mineradores desta transação para obter confirmação mais rápida?\n\nTaxa Adicional de Mineração:</string>
-
     <string name="options_sign">Assinar mensagem</string>
     <string name="options_soroban_collab">Soroban receber/colaborar</string>
     <string name="options_paste_cahoots">Colar cahoots payload</string>
 
     <string name="trusted_node_pow_failed">A prova de trabalho sendo reportada pelo seu node confiável não está sendo verificada. Por favor cheque sua instalação.</string>
-
-
 
     <string name="options_fees">Exibe as taxas de mineração atuais</string>
     <string name="current_fee_selection">Sua seleção de taxa está configurada para:</string>
