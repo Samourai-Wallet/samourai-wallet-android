@@ -270,7 +270,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                 List<UTXOCoin> coins = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
                 long mediumFee = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
-                WhirlpoolTx0 tx0 = new WhirlpoolTx0(WhirlpoolMeta.WHIRLPOOL_SMALLEST_POOL, mediumFee, 1, coins);
+                WhirlpoolTx0 tx0 = new WhirlpoolTx0(WhirlpoolMeta.getInstance(WhirlpoolMain.this).getMinimumPoolDenomination(), mediumFee, 1, coins);
                 try {
                     tx0.make();
                 } catch (Exception ex) {
