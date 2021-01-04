@@ -340,7 +340,7 @@ public class BalanceActivity extends SamouraiActivity {
         receiveFab =  findViewById(R.id.receive_fab);
         paynymFab =  findViewById(R.id.paynym_fab);
 
-        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, true);
+        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, false);
 
         findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, WhirlpoolMain.class);
@@ -530,7 +530,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         TxRecyclerView.setAdapter(adapter);
 
-        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, true);
+        boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, false);
 
         balanceViewModel.getBalance().observe(this, balance -> {
             if (balance < 0) {

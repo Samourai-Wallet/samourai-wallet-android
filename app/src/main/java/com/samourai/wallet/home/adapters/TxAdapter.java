@@ -106,7 +106,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     @Override
     public void onBindViewHolder(TxViewHolder holder, int position) {
-        boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, true);
+        boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, false);
 
         Tx tx = txes.get(position);
         if (tx.section == null) {
