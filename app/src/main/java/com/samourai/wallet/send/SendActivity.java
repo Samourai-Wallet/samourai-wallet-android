@@ -440,7 +440,7 @@ public class SendActivity extends SamouraiActivity {
         AppUtil.getInstance(SendActivity.this).checkTimeOut();
 
         try {
-            new Handler().postDelayed(this::setBalance, 1000);
+            new Handler().postDelayed(this::setBalance, 300);
         } catch (Exception ex) {
 
         }
@@ -448,7 +448,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
-        if(compoundButton.isPressed()){
+        if (compoundButton.isPressed()) {
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
             compoundButton.setChecked(checked);
             new Handler().postDelayed(this::prepareSpend, 100);
@@ -734,7 +734,7 @@ public class SendActivity extends SamouraiActivity {
                     SendNotifTxFactory.getInstance().setAddress(address);
                     return true;
                 });
-                return Completable.concatArray(completable,pcode);
+                return Completable.concatArray(completable, pcode);
             } else {
                 return completable;
             }
@@ -761,9 +761,12 @@ public class SendActivity extends SamouraiActivity {
                 balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
                 selectableBalance = balance;
             } else {
-                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts()
+                        .get(HD_WalletFactory.getInstance(SendActivity.this).get()
+                                .getAccount(0).xpubstr());
+                ;
                 if (tempBalance != null && tempBalance != 0L) {
-                    balance = tempBalance;
+                    balance = Math.abs( tempBalance - BlockedUTXO.getInstance().getTotalValueBlocked0());
                     selectableBalance = balance;
                 }
             }
@@ -771,16 +774,34 @@ public class SendActivity extends SamouraiActivity {
             npe.printStackTrace();
         }
 
-        if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
-            long amount = 0;
-            for (UTXOCoin utxo : preselectedUTXOs) {
-                amount += utxo.amount;
+        if (getIntent().getExtras().containsKey("preselected")) {
+            //Reloads preselected utxo's if it changed on last call
+            preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
+
+            if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
+
+                //Checks utxo's state, if the item is blocked it will be removed from preselectedUTXOs
+                for (int i = 0; i < preselectedUTXOs.size(); i++) {
+                    UTXOCoin coin = preselectedUTXOs.get(i);
+                    if (BlockedUTXO.getInstance().containsAny(coin.hash, coin.idx)) {
+                        try {
+                            preselectedUTXOs.remove(i);
+                        } catch (Exception ex) {
+
+                        }
+                    }
+                }
+                long amount = 0;
+                for (UTXOCoin utxo : preselectedUTXOs) {
+                    amount += utxo.amount;
+                }
+                balance = amount;
+            } else {
+                ;
             }
-            balance = amount;
+
         }
-        else {
-            ;
-        }
+
 
         final String strAmount;
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
@@ -1104,6 +1125,7 @@ public class SendActivity extends SamouraiActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        PreSelectUtil.getInstance().clear();
         if (compositeDisposables != null && !compositeDisposables.isDisposed())
             compositeDisposables.dispose();
     }
