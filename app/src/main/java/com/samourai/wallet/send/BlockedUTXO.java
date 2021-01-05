@@ -367,4 +367,7 @@ public class BlockedUTXO {
 
     }
 
+    public boolean containsAny(String hash, int idx) {
+        return  this.contains(hash,idx) || this.containsPostMix(hash,idx) || this.containsBadBank(hash,idx);
+    }
 }
