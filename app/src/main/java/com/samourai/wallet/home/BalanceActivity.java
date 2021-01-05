@@ -1267,7 +1267,7 @@ public class BalanceActivity extends SamouraiActivity {
 
                                 String encrypted = null;
                                 try {
-                                    encrypted = AESUtil.encrypt(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
+                                    encrypted = AESUtil.encryptSHA256(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase));
                                 } catch (Exception e) {
                                     Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 } finally {
