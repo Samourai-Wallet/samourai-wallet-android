@@ -934,7 +934,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
             val dialog = QRBottomSheetDialog(
                     qrData = pairingObj.toString(),
-                    "Whirlpool Paring", clipboardLabel = "GUI Label"
+                    "Whirlpool Paring", clipboardLabel = "GUI Paring"
             );
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
 
