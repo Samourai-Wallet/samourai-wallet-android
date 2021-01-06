@@ -13,6 +13,7 @@ import android.os.Looper
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -44,6 +45,7 @@ import com.samourai.wallet.send.RBFUtil
 import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.util.*
 import com.samourai.wallet.whirlpool.WhirlpoolMeta
+import com.samourai.wallet.util.QRBottomSheetDialog
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount
@@ -159,7 +161,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
                         WhirlpoolMeta.getInstance(requireContext().applicationContext).scode = null
                         WhirlpoolNotificationService.stopService(requireContext().applicationContext)
-                        if(TorManager.isConnected()){
+                        if (TorManager.isConnected()) {
                             TorServiceController.startTor()
                         }
                         scope.launch {
@@ -226,14 +228,14 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
         val changePinPref = findPreference("change_pin") as Preference?
         changePinPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.confirm_change_pin)
                     .setCancelable(false)
                     .setPositiveButton(R.string.yes) { dialog, whichButton ->
                         val pin = EditText(requireContext())
                         pin.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                        AlertDialog.Builder(requireContext())
+                        MaterialAlertDialogBuilder(requireContext())
                                 .setTitle(R.string.app_name)
                                 .setMessage(R.string.pin_enter)
                                 .setView(pin)
@@ -255,7 +257,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                                                         if (_pin != null && _pin.length >= AccessFactory.MIN_PIN_LENGTH && _pin.length <= AccessFactory.MAX_PIN_LENGTH) {
                                                             val pin2 = EditText(requireContext())
                                                             pin2.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                                                            AlertDialog.Builder(requireContext())
+                                                            MaterialAlertDialogBuilder(requireContext())
                                                                     .setTitle(R.string.app_name)
                                                                     .setMessage(R.string.pin_5_8_confirm)
                                                                     .setView(pin2)
@@ -397,7 +399,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
         val sendBackupPref = findPreference("send_backup_support") as Preference?
         sendBackupPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AlertDialog.Builder(activity)
+            MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.prompt_send_backup_to_support)
                     .setCancelable(false)
@@ -479,7 +481,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         showText.setPadding(40, 10, 40, 10)
         showText.textSize = 18.0f
         activity?.getWindow()?.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setView(showText)
                 .setCancelable(false)
@@ -501,38 +503,31 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
             }
         }
-        val showQR = ImageView(requireContext())
-        var bitmap: Bitmap? = null
-        val qrCodeEncoder = QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500)
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap()
-        } catch (e: WriterException) {
-            e.printStackTrace()
+
+        var dialogTitle = when (purpose) {
+            44 -> "BIP44"
+            84 -> "Segwit ZPUB"
+            49 -> "Segwit YPUB"
+            else -> "XPUB"
         }
-        showQR.setImageBitmap(bitmap)
-        val showText = TextView(requireContext())
-        showText.text = xpub
-        showText.setTextIsSelectable(true)
-        showText.setPadding(40, 10, 40, 10)
-        showText.textSize = 18.0f
-        val xpubLayout = LinearLayout(requireContext())
-        xpubLayout.orientation = LinearLayout.VERTICAL
-        xpubLayout.addView(showQR)
-        xpubLayout.addView(showText)
-        val _xpub = xpub
-        AlertDialog.Builder(requireContext())
-                .setTitle(R.string.app_name)
-                .setView(xpubLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard) { dialog, whichButton ->
-                    val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    var clip: ClipData? = null
-                    clip = ClipData.newPlainText("XPUB", _xpub)
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton(R.string.close) { dialog, whichButton -> }
-                .show()
+
+        when (account) {
+            WhirlpoolAccount.POSTMIX.accountIndex -> {
+                dialogTitle = "Whirlpool Post-mix ZPUB"
+            }
+            WhirlpoolAccount.PREMIX.accountIndex -> {
+                dialogTitle = "Whirlpool Pre-mix ZPUB"
+            }
+            WhirlpoolAccount.BADBANK.accountIndex -> {
+                dialogTitle = "Whirlpool Bad bank ZPUB"
+            }
+            else -> dialogTitle
+        }
+        val dialog = QRBottomSheetDialog(
+                qrData = xpub,
+                dialogTitle, clipboardLabel = dialogTitle
+        );
+        dialog.show(requireActivity().supportFragmentManager, dialog.tag)
     }
 
     private fun doTroubleshoot() {
@@ -541,7 +536,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             val passphrase = EditText(requireContext())
             passphrase.isSingleLine = true
             passphrase.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-            val dlg = AlertDialog.Builder(requireContext())
+            val dlg = MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.wallet_passphrase)
                     .setView(passphrase)
@@ -552,7 +547,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                             Toast.makeText(requireContext(), R.string.bip39_match, Toast.LENGTH_SHORT).show()
                             val file = PayloadUtil.getInstance(requireContext()).backupFile
                             if (file != null && file.exists()) {
-                                AlertDialog.Builder(requireContext())
+                                MaterialAlertDialogBuilder(requireContext())
                                         .setTitle(R.string.app_name)
                                         .setMessage(R.string.bip39_decrypt_test)
                                         .setCancelable(false)
@@ -600,7 +595,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     }
 
     private fun doPrune() {
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.prune_backup)
                 .setCancelable(false)
@@ -703,7 +698,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         //        builder.append("Premix change :" + idxPremixInternal + "\n");
         builder.append("Postmix receive :$idxPostmixExternal\n")
         builder.append("Postmix change :$idxPostmixInternal\n")
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(builder.toString())
                 .setCancelable(false)
@@ -792,7 +787,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     """.trimIndent())
             }
         }
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(builder.toString())
                 .setCancelable(false)
@@ -801,7 +796,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     }
 
     private fun doBroadcastHex() {
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.tx_hex)
                 .setCancelable(true)
@@ -845,7 +840,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     private fun doBroadcastHex(strHexTx: String) {
         val tx = Transaction(SamouraiWallet.getInstance().currentNetworkParams, Hex.decode(strHexTx))
         val msg: String = requireContext().getString(R.string.broadcast).toString() + ":" + tx.hashAsString + " ?"
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(msg)
                 .setCancelable(false)
@@ -890,7 +885,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             }
         }
         edPSBT.addTextChangedListener(textWatcher)
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setView(edPSBT)
                 .setMessage(R.string.enter_psbt)
@@ -917,7 +912,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 val params = DojoUtil.getInstance(requireContext()).dojoParams
                 val url = DojoUtil.getInstance(requireContext()).getUrl(params)
                 val apiKey = DojoUtil.getInstance(requireContext()).getApiKey(params)
-                if (url != null && apiKey != null && url.length > 0 && apiKey.length > 0) {
+                if (url != null && apiKey != null && url.isNotEmpty() && apiKey.isNotEmpty()) {
                     dojoObj.put("apikey", apiKey)
                     dojoObj.put("url", url)
                 }
@@ -926,6 +921,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             jsonObj.put("version", "3.0.0")
             jsonObj.put("network", if (SamouraiWallet.getInstance().isTestNet) "testnet" else "mainnet")
             val mnemonic = HD_WalletFactory.getInstance(requireContext()).get().mnemonic
+<<<<<<< HEAD
             if (SamouraiWallet.getInstance().hasPassphrase(requireContext())) {
                 val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase))
                 jsonObj.put("mnemonic", encrypted)
@@ -983,50 +979,29 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                             }
                         }
                         .setNegativeButton(R.string.cancel) { dialog, whichButton -> }.show()
+=======
+            val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+            jsonObj.put("mnemonic", encrypted)
+            jsonObj.put("passphrase", true)
+            pairingObj.put("pairing", jsonObj)
+            if (dojoObj.has("url") && dojoObj.has("apikey")) {
+                val apiKey = dojoObj.getString("apikey")
+                val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+                dojoObj.put("apikey", encryptedApiKey)
+                pairingObj.put("dojo", dojoObj)
+>>>>>>> 91ec3842bc2d751b1e45d31c300b5576a044b9cf
             }
+
+            val dialog = QRBottomSheetDialog(
+                    qrData = pairingObj.toString(),
+                    "Whirlpool Paring", clipboardLabel = "GUI Paring"
+            );
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+
         } catch (e: Exception) {
             Toast.makeText(requireContext(), R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show()
             return
         }
-    }
-
-    private fun displayWhirlpoolGUIPairing(pairingObj: JSONObject?) {
-        if (pairingObj == null || !pairingObj.has("pairing")) {
-            Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val showQR = ImageView(requireContext())
-        var bitmap: Bitmap? = null
-        val qrCodeEncoder = QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500)
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap()
-        } catch (e: WriterException) {
-            e.printStackTrace()
-        }
-        showQR.setImageBitmap(bitmap)
-        val showText = TextView(requireContext())
-        showText.text = pairingObj.toString()
-        showText.setTextIsSelectable(true)
-        showText.setPadding(40, 10, 40, 10)
-        showText.textSize = 18.0f
-        val pairingLayout = LinearLayout(requireContext())
-        pairingLayout.orientation = LinearLayout.VERTICAL
-        pairingLayout.addView(showQR)
-        pairingLayout.addView(showText)
-        val _pairing = pairingObj.toString()
-        AlertDialog.Builder(requireContext())
-                .setTitle(R.string.app_name)
-                .setView(pairingLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard) { dialog, whichButton ->
-                    val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    var clip: ClipData? = null
-                    clip = ClipData.newPlainText("GUI pairing", _pairing)
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton(R.string.close) { dialog, whichButton -> }
-                .show()
     }
 
     override fun onDestroy() {
