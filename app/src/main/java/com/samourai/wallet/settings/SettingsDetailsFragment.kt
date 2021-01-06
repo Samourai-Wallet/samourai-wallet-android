@@ -903,6 +903,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         }
     }
 
+
     private fun doWhirlpoolGUIPairing() {
         val pairingObj = JSONObject()
         val jsonObj = JSONObject()
@@ -921,88 +922,27 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             jsonObj.put("version", "3.0.0")
             jsonObj.put("network", if (SamouraiWallet.getInstance().isTestNet) "testnet" else "mainnet")
             val mnemonic = HD_WalletFactory.getInstance(requireContext()).get().mnemonic
-<<<<<<< HEAD
-            if (SamouraiWallet.getInstance().hasPassphrase(requireContext())) {
-                val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase))
-                jsonObj.put("mnemonic", encrypted)
-                jsonObj.put("passphrase", true)
-                pairingObj.put("pairing", jsonObj)
-                if (dojoObj.has("url") && dojoObj.has("apikey")) {
-                    val apiKey = dojoObj.getString("apikey")
-                    val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase))
-                    dojoObj.put("apikey", encryptedApiKey)
-                    pairingObj.put("dojo", dojoObj)
-                }
-                displayWhirlpoolGUIPairing(pairingObj)
-            } else {
-                val password = EditText(requireContext())
-                password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                password.setHint(R.string.create_password)
-                AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.pairing_password)
-                        .setView(password)
-                        .setPositiveButton(R.string.ok) { dialog, whichButton ->
-                            val pw = password.text.toString()
-                            if (pw != null && pw.length >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length <= AppUtil.MAX_BACKUP_PW_LENGTH) {
-                                val password2 = EditText(requireContext())
-                                password2.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                                password2.setHint(R.string.confirm_password)
-                                AlertDialog.Builder(requireContext())
-                                        .setTitle(R.string.app_name)
-                                        .setMessage(R.string.pairing_password)
-                                        .setView(password2)
-                                        .setPositiveButton(R.string.ok) { dialog, whichButton ->
-                                            val pw2 = password2.text.toString()
-                                            if (pw2 != null && pw2 == pw) {
-                                                try {
-                                                    val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(pw2))
-                                                    jsonObj.put("mnemonic", encrypted)
-                                                    jsonObj.put("passphrase", false)
-                                                    pairingObj.put("pairing", jsonObj)
-                                                    if (dojoObj.has("url") && dojoObj.has("apikey")) {
-                                                        val apiKey = dojoObj.getString("apikey")
-                                                        val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(pw2) )
-                                                        dojoObj.put("apikey", encryptedApiKey)
-                                                        pairingObj.put("dojo", dojoObj)
-                                                    }
-                                                    displayWhirlpoolGUIPairing(pairingObj)
-                                                } catch (e: Exception) {
-                                                }
-                                            } else {
-                                                Toast.makeText(requireContext(), R.string.password_error, Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                        .setNegativeButton(R.string.cancel) { dialog, whichButton -> }.show()
-                            } else {
-                                Toast.makeText(requireContext(), R.string.password_invalid, Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        .setNegativeButton(R.string.cancel) { dialog, whichButton -> }.show()
-=======
             val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
             jsonObj.put("mnemonic", encrypted)
             jsonObj.put("passphrase", true)
             pairingObj.put("pairing", jsonObj)
             if (dojoObj.has("url") && dojoObj.has("apikey")) {
                 val apiKey = dojoObj.getString("apikey")
-                val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+                val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase))
                 dojoObj.put("apikey", encryptedApiKey)
                 pairingObj.put("dojo", dojoObj)
->>>>>>> 91ec3842bc2d751b1e45d31c300b5576a044b9cf
             }
-
             val dialog = QRBottomSheetDialog(
                     qrData = pairingObj.toString(),
-                    "Whirlpool Paring", clipboardLabel = "GUI Paring"
+                    "Whirlpool Paring", clipboardLabel = "Whirlpool Paring"
             );
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
 
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show()
-            return
+        }catch (Er:Exception){
+
         }
     }
+
 
     override fun onDestroy() {
         if (scope.isActive) {
