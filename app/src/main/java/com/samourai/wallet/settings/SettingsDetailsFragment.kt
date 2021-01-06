@@ -13,6 +13,7 @@ import android.os.Looper
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -227,14 +228,14 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
         val changePinPref = findPreference("change_pin") as Preference?
         changePinPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.confirm_change_pin)
                     .setCancelable(false)
                     .setPositiveButton(R.string.yes) { dialog, whichButton ->
                         val pin = EditText(requireContext())
                         pin.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                        AlertDialog.Builder(requireContext())
+                        MaterialAlertDialogBuilder(requireContext())
                                 .setTitle(R.string.app_name)
                                 .setMessage(R.string.pin_enter)
                                 .setView(pin)
@@ -256,7 +257,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                                                         if (_pin != null && _pin.length >= AccessFactory.MIN_PIN_LENGTH && _pin.length <= AccessFactory.MAX_PIN_LENGTH) {
                                                             val pin2 = EditText(requireContext())
                                                             pin2.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                                                            AlertDialog.Builder(requireContext())
+                                                            MaterialAlertDialogBuilder(requireContext())
                                                                     .setTitle(R.string.app_name)
                                                                     .setMessage(R.string.pin_5_8_confirm)
                                                                     .setView(pin2)
@@ -398,7 +399,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
         val sendBackupPref = findPreference("send_backup_support") as Preference?
         sendBackupPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AlertDialog.Builder(activity)
+            MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.prompt_send_backup_to_support)
                     .setCancelable(false)
@@ -480,7 +481,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         showText.setPadding(40, 10, 40, 10)
         showText.textSize = 18.0f
         activity?.getWindow()?.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setView(showText)
                 .setCancelable(false)
@@ -503,9 +504,28 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             }
         }
 
+        var dialogTitle = when (purpose) {
+            44 -> "BIP44"
+            84 -> "Segwit ZPUB"
+            49 -> "Segwit YPUB"
+            else -> "XPUB"
+        }
+
+        when (account) {
+            WhirlpoolAccount.POSTMIX.accountIndex -> {
+                dialogTitle = "Whirlpool Post-mix ZPUB"
+            }
+            WhirlpoolAccount.PREMIX.accountIndex -> {
+                dialogTitle = "Whirlpool Pre-mix ZPUB"
+            }
+            WhirlpoolAccount.BADBANK.accountIndex -> {
+                dialogTitle = "Whirlpool Bad bank ZPUB"
+            }
+            else -> dialogTitle
+        }
         val dialog = QRBottomSheetDialog(
                 qrData = xpub,
-                 "XPUB", clipboardLabel = "XPUB"
+                dialogTitle, clipboardLabel = dialogTitle
         );
         dialog.show(requireActivity().supportFragmentManager, dialog.tag)
     }
@@ -516,7 +536,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             val passphrase = EditText(requireContext())
             passphrase.isSingleLine = true
             passphrase.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-            val dlg = AlertDialog.Builder(requireContext())
+            val dlg = MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.wallet_passphrase)
                     .setView(passphrase)
@@ -527,7 +547,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                             Toast.makeText(requireContext(), R.string.bip39_match, Toast.LENGTH_SHORT).show()
                             val file = PayloadUtil.getInstance(requireContext()).backupFile
                             if (file != null && file.exists()) {
-                                AlertDialog.Builder(requireContext())
+                                MaterialAlertDialogBuilder(requireContext())
                                         .setTitle(R.string.app_name)
                                         .setMessage(R.string.bip39_decrypt_test)
                                         .setCancelable(false)
@@ -575,7 +595,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     }
 
     private fun doPrune() {
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.prune_backup)
                 .setCancelable(false)
@@ -678,7 +698,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         //        builder.append("Premix change :" + idxPremixInternal + "\n");
         builder.append("Postmix receive :$idxPostmixExternal\n")
         builder.append("Postmix change :$idxPostmixInternal\n")
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(builder.toString())
                 .setCancelable(false)
@@ -767,7 +787,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     """.trimIndent())
             }
         }
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(builder.toString())
                 .setCancelable(false)
@@ -776,7 +796,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     }
 
     private fun doBroadcastHex() {
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.tx_hex)
                 .setCancelable(true)
@@ -820,7 +840,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     private fun doBroadcastHex(strHexTx: String) {
         val tx = Transaction(SamouraiWallet.getInstance().currentNetworkParams, Hex.decode(strHexTx))
         val msg: String = requireContext().getString(R.string.broadcast).toString() + ":" + tx.hashAsString + " ?"
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setMessage(msg)
                 .setCancelable(false)
@@ -865,7 +885,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             }
         }
         edPSBT.addTextChangedListener(textWatcher)
-        val dlg = AlertDialog.Builder(requireContext())
+        val dlg = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.app_name)
                 .setView(edPSBT)
                 .setMessage(R.string.enter_psbt)
