@@ -44,6 +44,7 @@ import com.samourai.wallet.send.RBFUtil
 import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.util.*
 import com.samourai.wallet.whirlpool.WhirlpoolMeta
+import com.samourai.wallet.util.QRBottomSheetDialog
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount
@@ -159,7 +160,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
                         WhirlpoolMeta.getInstance(requireContext().applicationContext).scode = null
                         WhirlpoolNotificationService.stopService(requireContext().applicationContext)
-                        if(TorManager.isConnected()){
+                        if (TorManager.isConnected()) {
                             TorServiceController.startTor()
                         }
                         scope.launch {
@@ -501,38 +502,12 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
             }
         }
-        val showQR = ImageView(requireContext())
-        var bitmap: Bitmap? = null
-        val qrCodeEncoder = QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500)
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap()
-        } catch (e: WriterException) {
-            e.printStackTrace()
-        }
-        showQR.setImageBitmap(bitmap)
-        val showText = TextView(requireContext())
-        showText.text = xpub
-        showText.setTextIsSelectable(true)
-        showText.setPadding(40, 10, 40, 10)
-        showText.textSize = 18.0f
-        val xpubLayout = LinearLayout(requireContext())
-        xpubLayout.orientation = LinearLayout.VERTICAL
-        xpubLayout.addView(showQR)
-        xpubLayout.addView(showText)
-        val _xpub = xpub
-        AlertDialog.Builder(requireContext())
-                .setTitle(R.string.app_name)
-                .setView(xpubLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard) { dialog, whichButton ->
-                    val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    var clip: ClipData? = null
-                    clip = ClipData.newPlainText("XPUB", _xpub)
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton(R.string.close) { dialog, whichButton -> }
-                .show()
+
+        val dialog = QRBottomSheetDialog(
+                qrData = xpub,
+                 "XPUB", clipboardLabel = "XPUB"
+        );
+        dialog.show(requireActivity().supportFragmentManager, dialog.tag)
     }
 
     private fun doTroubleshoot() {
@@ -917,7 +892,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 val params = DojoUtil.getInstance(requireContext()).dojoParams
                 val url = DojoUtil.getInstance(requireContext()).getUrl(params)
                 val apiKey = DojoUtil.getInstance(requireContext()).getApiKey(params)
-                if (url != null && apiKey != null && url.length > 0 && apiKey.length > 0) {
+                if (url != null && apiKey != null && url.isNotEmpty() && apiKey.isNotEmpty()) {
                     dojoObj.put("apikey", apiKey)
                     dojoObj.put("url", url)
                 }
@@ -926,107 +901,27 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             jsonObj.put("version", "3.0.0")
             jsonObj.put("network", if (SamouraiWallet.getInstance().isTestNet) "testnet" else "mainnet")
             val mnemonic = HD_WalletFactory.getInstance(requireContext()).get().mnemonic
-            if (SamouraiWallet.getInstance().hasPassphrase(requireContext())) {
-                val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
-                jsonObj.put("mnemonic", encrypted)
-                jsonObj.put("passphrase", true)
-                pairingObj.put("pairing", jsonObj)
-                if (dojoObj.has("url") && dojoObj.has("apikey")) {
-                    val apiKey = dojoObj.getString("apikey")
-                    val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
-                    dojoObj.put("apikey", encryptedApiKey)
-                    pairingObj.put("dojo", dojoObj)
-                }
-                displayWhirlpoolGUIPairing(pairingObj)
-            } else {
-                val password = EditText(requireContext())
-                password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                password.setHint(R.string.create_password)
-                AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.pairing_password)
-                        .setView(password)
-                        .setPositiveButton(R.string.ok) { dialog, whichButton ->
-                            val pw = password.text.toString()
-                            if (pw != null && pw.length >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length <= AppUtil.MAX_BACKUP_PW_LENGTH) {
-                                val password2 = EditText(requireContext())
-                                password2.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                                password2.setHint(R.string.confirm_password)
-                                AlertDialog.Builder(requireContext())
-                                        .setTitle(R.string.app_name)
-                                        .setMessage(R.string.pairing_password)
-                                        .setView(password2)
-                                        .setPositiveButton(R.string.ok) { dialog, whichButton ->
-                                            val pw2 = password2.text.toString()
-                                            if (pw2 != null && pw2 == pw) {
-                                                try {
-                                                    val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations)
-                                                    jsonObj.put("mnemonic", encrypted)
-                                                    jsonObj.put("passphrase", false)
-                                                    pairingObj.put("pairing", jsonObj)
-                                                    if (dojoObj.has("url") && dojoObj.has("apikey")) {
-                                                        val apiKey = dojoObj.getString("apikey")
-                                                        val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations)
-                                                        dojoObj.put("apikey", encryptedApiKey)
-                                                        pairingObj.put("dojo", dojoObj)
-                                                    }
-                                                    displayWhirlpoolGUIPairing(pairingObj)
-                                                } catch (e: Exception) {
-                                                }
-                                            } else {
-                                                Toast.makeText(requireContext(), R.string.password_error, Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                        .setNegativeButton(R.string.cancel) { dialog, whichButton -> }.show()
-                            } else {
-                                Toast.makeText(requireContext(), R.string.password_invalid, Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        .setNegativeButton(R.string.cancel) { dialog, whichButton -> }.show()
+            val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+            jsonObj.put("mnemonic", encrypted)
+            jsonObj.put("passphrase", true)
+            pairingObj.put("pairing", jsonObj)
+            if (dojoObj.has("url") && dojoObj.has("apikey")) {
+                val apiKey = dojoObj.getString("apikey")
+                val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+                dojoObj.put("apikey", encryptedApiKey)
+                pairingObj.put("dojo", dojoObj)
             }
+
+            val dialog = QRBottomSheetDialog(
+                    qrData = pairingObj.toString(),
+                    "Whirlpool Paring", clipboardLabel = "GUI Label"
+            );
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+
         } catch (e: Exception) {
             Toast.makeText(requireContext(), R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show()
             return
         }
-    }
-
-    private fun displayWhirlpoolGUIPairing(pairingObj: JSONObject?) {
-        if (pairingObj == null || !pairingObj.has("pairing")) {
-            Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val showQR = ImageView(requireContext())
-        var bitmap: Bitmap? = null
-        val qrCodeEncoder = QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500)
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap()
-        } catch (e: WriterException) {
-            e.printStackTrace()
-        }
-        showQR.setImageBitmap(bitmap)
-        val showText = TextView(requireContext())
-        showText.text = pairingObj.toString()
-        showText.setTextIsSelectable(true)
-        showText.setPadding(40, 10, 40, 10)
-        showText.textSize = 18.0f
-        val pairingLayout = LinearLayout(requireContext())
-        pairingLayout.orientation = LinearLayout.VERTICAL
-        pairingLayout.addView(showQR)
-        pairingLayout.addView(showText)
-        val _pairing = pairingObj.toString()
-        AlertDialog.Builder(requireContext())
-                .setTitle(R.string.app_name)
-                .setView(pairingLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard) { dialog, whichButton ->
-                    val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    var clip: ClipData? = null
-                    clip = ClipData.newPlainText("GUI pairing", _pairing)
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton(R.string.close) { dialog, whichButton -> }
-                .show()
     }
 
     override fun onDestroy() {
