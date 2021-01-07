@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
@@ -143,7 +144,7 @@ public class SendActivity extends SamouraiActivity {
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
-    private Button btnReview, btnSend;
+    private MaterialButton btnReview, btnSend;
     private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
     private SwitchCompat cahootsSwitch;
@@ -499,9 +500,9 @@ public class SendActivity extends SamouraiActivity {
     private void enableReviewButton(boolean enable) {
         btnReview.setEnabled(enable);
         if (enable) {
-            btnReview.setBackground(getDrawable(R.drawable.button_blue));
+            btnReview.setBackgroundColor(getResources().getColor(R.color.blue_ui_2));
         } else {
-            btnReview.setBackground(getDrawable(R.drawable.disabled_grey_button));
+            btnReview.setBackgroundColor(getResources().getColor(R.color.disabled_grey));
         }
     }
 
@@ -2216,12 +2217,16 @@ public class SendActivity extends SamouraiActivity {
 
         if (amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
             isValid = true;
-        } else
-            isValid = amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress);
+        } else if (amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+            isValid = true;
+        } else {
+            isValid = false;
+        }
 
         if (insufficientFunds) {
             Toast.makeText(this, getString(R.string.insufficient_funds), Toast.LENGTH_SHORT).show();
         }
+        Log.i(TAG, "validateSpend: ".concat(String.valueOf(isValid)).concat(" ").concat(String.valueOf(insufficientFunds)));
         if (!isValid || insufficientFunds) {
             enableReviewButton(false);
             return false;

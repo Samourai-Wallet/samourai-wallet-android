@@ -7,9 +7,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/review_button"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="8dp"
-        app:backgroundTint="@color/blue_ui_2"
+        android:layout_height="74dp"
+        app:backgroundTint="@color/disabled_grey"
         app:rippleColor="@color/white"
         android:textColor="@color/white"
         android:text="@string/review_transaction"
