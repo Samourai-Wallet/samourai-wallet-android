@@ -87,6 +87,7 @@ import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.whirlpool.WhirlpoolConst;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.samourai.xmanager.client.XManagerClient;
@@ -1621,6 +1622,11 @@ public class SendActivity extends SamouraiActivity {
                 }
             }
 
+            if(account== WhirlpoolConst.WHIRLPOOL_POSTMIX_ACCOUNT){
+                if(SPEND_TYPE == SPEND_SIMPLE){
+                    strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
+                }
+            }
             message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
             if (selectedCahootsType == SelectCahootsType.type.NONE) {
