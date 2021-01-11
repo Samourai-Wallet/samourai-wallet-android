@@ -91,6 +91,7 @@ public class PayloadUtil	{
     private final static String strMultiAddrMixFilename = "samourai.multi.mix";
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
+    private final static String paynymResponseFile = "paynym.res";
 
     private static Context context = null;
 
@@ -120,6 +121,11 @@ public class PayloadUtil	{
         }
         File file = new File(dir, strOptionalFilename);
 
+        return file;
+    }
+    public File getPaynymResponseFile(){
+        File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
+        File file = new File(dir, paynymResponseFile);
         return file;
     }
 
@@ -229,6 +235,9 @@ public class PayloadUtil	{
         File datfile = new File(dir, strFilename);
         File tmpfile = new File(dir, strTmpFilename);
 
+        if(getPaynymResponseFile().exists()){
+            getPaynymResponseFile().delete();
+        }
         if(tmpfile.exists()) {
             secureDelete(tmpfile);
         }
