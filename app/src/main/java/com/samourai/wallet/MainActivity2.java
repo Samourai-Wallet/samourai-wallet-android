@@ -11,13 +11,18 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.auth0.android.jwt.JWT;
-import com.invertedx.torservice.TorProxyManager;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -39,13 +44,14 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 
+import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity2 extends Activity {
+public class MainActivity2 extends AppCompatActivity {
 
     private ProgressDialog progress = null;
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
@@ -53,6 +59,7 @@ public class MainActivity2 extends Activity {
     private boolean pinEntryActivityLaunched = false;
     private static final String TAG = "MainActivity2";
     private TextView loaderTxView;
+    private ProgressIndicator progressIndicator;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
     protected BroadcastReceiver receiver_restart = new BroadcastReceiver() {
@@ -123,6 +130,7 @@ public class MainActivity2 extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         loaderTxView = findViewById(R.id.loader_text);
+        progressIndicator = findViewById(R.id.loader);
 
 
         if (PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.TESTNET, false) == true) {
@@ -139,19 +147,28 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if (TorManager.getInstance(getApplicationContext()).isRequired() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.getInstance(getApplicationContext()).isConnected()) {
+        startApp();
+    }
+
+    private void startApp() {
+
+        if (TorManager.INSTANCE.isRequired() && !AppUtil.getInstance(getApplicationContext()).isOfflineMode() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.INSTANCE.isConnected()) {
             loaderTxView.setText(getText(R.string.initializing_tor));
-            ((SamouraiApplication) getApplication()).startService();
-            Disposable disposable = TorManager.getInstance(this)
-                    .getTorStatus()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(connection_states -> {
-                        if (connection_states == TorProxyManager.ConnectionStatus.CONNECTED) {
-                            initAppOnCreate();
-                        }
-                    });
-            compositeDisposables.add(disposable);
+            progressIndicator.setIndeterminate(false);
+            progressIndicator.setGrowMode(ProgressIndicator.GROW_MODE_BIDIRECTIONAL);
+            progressIndicator.setMax(100);
+            TorManager.INSTANCE.getTorBootstrapProgress().observe(this,integer -> {
+                progressIndicator.setProgressCompat(integer,true);
+            });
+            TorManager.INSTANCE.getTorStateLiveData().observe(this, torState -> {
+                if (torState == TorManager.TorState.ON) {
+                    initAppOnCreate();
+                    progressIndicator.setVisibility(View.GONE);
+                    progressIndicator.setIndeterminate(true);
+                    progressIndicator.setVisibility(View.VISIBLE);
+                }
+            });
+
         } else {
             initAppOnCreate();
         }
@@ -196,21 +213,16 @@ public class MainActivity2 extends Activity {
 
     @Override
     protected void onResume() {
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected()) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)
+                && !PrefsUtil.getInstance(this).getValue(PrefsUtil.OFFLINE,false)
+                && !TorManager.INSTANCE.isConnected()) {
 
             ((SamouraiApplication) getApplication()).startService();
-
-            Disposable disposable = TorManager.getInstance(getApplicationContext())
-                    .getTorStatus()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(connection_states -> {
-                        if (connection_states == TorProxyManager.ConnectionStatus.CONNECTED) {
-                            initAppOnResume();
-                            compositeDisposables.dispose();
-                        }
-                    });
-            compositeDisposables.add(disposable);
+            TorManager.INSTANCE.getTorStateLiveData().observe(this, torState -> {
+                if (torState == TorManager.TorState.ON) {
+                    initAppOnResume();
+                }
+            });
         } else {
             initAppOnResume();
         }

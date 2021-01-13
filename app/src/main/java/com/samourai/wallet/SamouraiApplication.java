@@ -5,18 +5,27 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.tor.TorService;
-import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.squareup.picasso.Cache;
+import com.squareup.picasso.Downloader;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.PrintWriter;
+
+import io.matthewnelson.topl_service.TorServiceController;
+import io.reactivex.plugins.RxJavaPlugins;
 
 public class SamouraiApplication extends Application {
 
@@ -28,12 +37,17 @@ public class SamouraiApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        setUpTorService();
         setUpChannels();
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            startService();
-        }
+        RxJavaPlugins.setErrorHandler(throwable -> {});
+
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
         // Write logcat output to a file
         if (BuildConfig.DEBUG) {
+            Picasso.get().setIndicatorsEnabled(true);
+
             try {
                 String logFile = Environment.getExternalStorageDirectory().getAbsolutePath().concat("/Samourai_debug_log.txt");
                 File file = new File(logFile);
@@ -49,16 +63,14 @@ public class SamouraiApplication extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
 
+            // enable debug logs for external libraries (extlibj, whirlpool-client...)
+            LogUtil.setLoggersDebug();
+        }
     }
 
     public void startService() {
-        if (ConnectivityStatus.hasConnectivity(getApplicationContext()) && PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            Intent startIntent = new Intent(this, TorService.class);
-            startIntent.setAction(TorService.START_SERVICE);
-            startService(startIntent);
-        }
+        TorServiceController.startTor();
     }
 
     private void setUpChannels() {
@@ -106,7 +118,6 @@ public class SamouraiApplication extends Application {
         }
     }
 
-
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
@@ -114,7 +125,15 @@ public class SamouraiApplication extends Application {
 
     @Override
     public void onTerminate() {
-        TorManager.getInstance(getApplicationContext()).dispose();
+        TorServiceController.stopTor();
         super.onTerminate();
     }
+
+    private void setUpTorService() {
+        TorManager.INSTANCE.setUp(this);
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !PrefsUtil.getInstance(this).getValue(PrefsUtil.OFFLINE, false)) {
+            startService();
+        }
+    }
+
 }

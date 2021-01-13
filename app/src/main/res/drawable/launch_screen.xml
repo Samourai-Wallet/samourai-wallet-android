@@ -8,11 +8,13 @@
     <item android:drawable="@color/window" />
 
     <!-- Your product logo - 144dp color version of your app icon -->
-    <item>
+    <item >
 
         <bitmap
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:src="@drawable/ic_samourai_logo_trans2x" />
+            android:src="@drawable/ic_samourai_logo_splash" />
 
     </item>
 

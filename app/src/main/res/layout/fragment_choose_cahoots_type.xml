@@ -137,6 +137,8 @@ Make every spend a CoinJoin."
             android:id="@+id/cahoots_type_stowaway_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
             app:layout_constraintTop_toBottomOf="@+id/divider3"
@@ -210,7 +212,7 @@ blockchain including amount spent."
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/stowaway_type_chooser_layout"
+        android:id="@+id/cahoots_mode_chooser_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -305,6 +307,8 @@ and quickest option."
             android:id="@+id/in_person_manual_stowaway"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
             tools:layout_editor_absoluteX="-16dp">
@@ -347,6 +351,64 @@ face-to-face interaction."
                 app:layout_constraintBottom_toBottomOf="@+id/textView2712"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView25143"
+                app:srcCompat="@drawable/ic_chevron_right_white_24dp" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/soroban"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            tools:layout_editor_absoluteX="-16dp">
+
+            <TextView
+                android:id="@+id/textView251432"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="Online"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView27122"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Compose this transaction online with another
+participant who is using Samourai Wallet over Tor."
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView122"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/textView251432"
+                app:layout_constraintTop_toBottomOf="@+id/textView251432"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageView
+                android:id="@+id/imageView122"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView27122"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView251432"
                 app:srcCompat="@drawable/ic_chevron_right_white_24dp" />
 
 

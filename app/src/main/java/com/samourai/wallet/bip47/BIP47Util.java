@@ -1,6 +1,7 @@
 package com.samourai.wallet.bip47;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.SamouraiWallet;
@@ -9,9 +10,6 @@ import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.bip47.rpc.SecretPoint;
-import com.samourai.wallet.bip47.rpc.secretPoint.ISecretPoint;
-import com.samourai.wallet.bip47.rpc.secretPoint.ISecretPointFactory;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 
@@ -57,7 +55,7 @@ public class BIP47Util extends BIP47UtilGeneric {
     }
 
     private BIP47Util() {
-        super(AndroidSecretPointFactory.getInstance());
+        super(AndroidSecretPointFactory.getInstance(), true);
     }
     
     private NetworkParameters getNetworkParams() {
@@ -65,6 +63,7 @@ public class BIP47Util extends BIP47UtilGeneric {
     }
 
     public void reset()  {
+        instance = new BIP47Util();
         wallet = null;
     }
 

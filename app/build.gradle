@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
@@ -9,14 +11,17 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 172
-        versionName "0.99.95t"
+        versionCode 176
+        versionName "0.99.96b"
         // Enabling multidex support.
         multiDexEnabled true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -52,19 +57,19 @@ android {
             applicationId 'com.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 29
-            versionCode 172
-            versionName "0.99.95t"
+            versionCode 176
+            versionName "0.99.96b"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.99.95t"
+            resValue "string", "version_name", "0.99.96b"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 29
-            versionCode 172
-            versionName "0.99.95t"
+            versionCode 176
+            versionName "0.99.96b"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.95t"
+            resValue "string", "version_name", "0.99.96b"
         }
     }
     testOptions {
@@ -80,23 +85,42 @@ def getApiKey(key){
 
 
 dependencies {
-    def lifecycle_version = "2.0.0"
+
+    def lifecycle_version = "2.2.0"
+    def topl_android_version = "2.0.2"
+    def coroutines_version = '1.3.9'
 
     api fileTree(include: ['*.jar'], dir: 'libs')
     implementation('com.google.zxing:core:3.3.0') {
         transitive = true
     }
+
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.core:core-ktx:1.3.2"
     implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
     implementation 'net.i2p.android.ext:floatingactionbutton:1.9.0'
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     implementation 'com.neovisionaries:nv-websocket-client:1.9'
-    implementation 'com.baoyz.swipemenulistview:library:1.2.1'
     implementation 'commons-io:commons-io:2.5'
     implementation 'commons-codec:commons-codec:1.4'
     implementation 'org.apache.commons:commons-lang3:3.3'
     implementation 'com.google.guava:guava:20.0'
-    implementation 'com.google.code.findbugs:jsr305:1.3.9'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.55'
     implementation 'com.madgag.spongycastle:prov:1.54.0.0'
     implementation 'com.lambdaworks:scrypt:1.4.0'
@@ -105,14 +129,12 @@ dependencies {
     implementation 'com.github.mjdev:libaums:0.5.5'
     implementation 'de.mindpipe.android:android-logging-log4j:1.0.3'
     implementation 'com.github.magnusja:java-fs:0.1.3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.3.0-alpha03'
     implementation 'org.hibernate:hibernate-validator:5.4.3.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation ('io.samourai.code.whirlpool:whirlpool-client:0.23.20') {
+    implementation 'com.budiyev.android:code-scanner:2.1.0'
+    implementation ('io.samourai.code.whirlpool:whirlpool-client:0.23.22-soroban3') {
         exclude group:'org.hibernate', module:'hibernate-validator'
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
@@ -121,8 +143,9 @@ dependencies {
         //
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
+        exclude group:'io.samourai.code.wallet', module:'extlibj'
     }
-    implementation ('io.samourai.code.wallet:extlibj:0.0.12') {
+    implementation ('io.samourai.code.wallet:extlibj:0.0.14-soroban4') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
@@ -131,6 +154,9 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
+    implementation ('io.samourai.code.wallet:soroban-client-java:0.0.3') {
+        exclude group:'io.samourai.code.wallet', module:'extlibj'
+    }
     implementation ('io.samourai.code.wallet:boltzmann-java:1.0.1') {
         exclude group: 'it.unimi.dsi', module: 'fastutil'
     }
@@ -138,21 +164,21 @@ dependencies {
     implementation 'it.unimi.dsi:fastutil:7.2.1'
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
     implementation 'org.java-websocket:Java-WebSocket:1.3.6'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.auth0.android:jwtdecode:1.1.1'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.6.0'
     implementation 'com.github.clans:fab:1.6.4'
-
+    implementation 'io.samourai.code.wallet:android-tor-binary:0.4.3.6a'
 
     implementation 'com.squareup.okhttp3:okhttp:3.13.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-
     testImplementation 'junit:junit:4.12'
-    implementation project(path: ':torservice')
+
+    implementation "io.matthewnelson.topl-android:topl-core-base:$topl_android_version"
+    implementation "io.matthewnelson.topl-android:topl-service:$topl_android_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

@@ -44,7 +44,6 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         />
-
     <item android:id="@+id/action_support"
         android:title="@string/action_support"
         android:orderInCategory="100"

@@ -10,8 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.samourai.wallet.R;
 
 public class EditPaynymBottomSheet extends BottomSheetDialogFragment {
@@ -24,8 +25,8 @@ public class EditPaynymBottomSheet extends BottomSheetDialogFragment {
     private String buttonText;
 
 
-    private EditText labelEdt, pcodeEdt;
-    private Button saveButton;
+    private TextInputEditText labelEdt, pcodeEdt;
+    private MaterialButton saveButton;
     private View.OnClickListener onClickListener;
 
     @Override
@@ -34,6 +35,12 @@ public class EditPaynymBottomSheet extends BottomSheetDialogFragment {
 
         pcode = getArguments().getString("pcode");
         label = getArguments().getString("label");
+        if(label.contains("(not followed)")){
+            label = label.replace("(not followed)", "");
+        }
+        if(label.contains("(not confirmed)")){
+            label =      label.replace("(not confirmed)", "");
+        }
         buttonText = getArguments().getString("buttonText");
 
         labelEdt = view.findViewById(R.id.paynym_label);

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Looper;
 import android.widget.Toast;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.util.Log;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -118,7 +120,7 @@ public class SweepUtil  {
 
                         final BigInteger fee;
                         if(type == TYPE_P2SH_P2WPKH)    {
-                            fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 1);
+                            fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 0, 1);
                         }
                         else if(type == TYPE_P2WPKH)    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(0, 0, outpoints.size(), 1);
@@ -172,6 +174,11 @@ public class SweepUtil  {
                                         if(jsonObject.has("status"))    {
                                             if(jsonObject.getString("status").equals("ok"))    {
                                                 Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(context, JobRefreshService.class);
+                                                intent.putExtra("notifTx", false);
+                                                intent.putExtra("dragged", false);
+                                                intent.putExtra("launch", false);
+                                                JobRefreshService.enqueueWork(context.getApplicationContext(), intent);
                                             }
                                         }
                                     }

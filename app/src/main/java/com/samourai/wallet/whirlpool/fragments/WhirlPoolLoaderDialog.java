@@ -18,6 +18,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
@@ -32,7 +33,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
 
     private static final String TAG = "WhirlPoolLoaderDialog";
     private TextView statusText;
-    private ProgressBar statusProgress;
+    private ProgressIndicator statusProgress;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private onInitComplete onInitComplete;
 
@@ -78,7 +79,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                         case LOADING: {
                             new Handler().postDelayed(() -> {
                                 statusText.setText("initializing whirlpool");
-                                statusProgress.setProgress(30);
+                                statusProgress.setProgressCompat(35,true);
                             }, 300);
 
                             break;
@@ -87,18 +88,18 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                         case STARTING: {
                             new Handler().postDelayed(() -> {
                                 statusText.setText("Connecting to service");
-                                statusProgress.setProgress(60);
+                                statusProgress.setProgressCompat(65,true);
                             }, 600);
                             break;
                         }
                         case CONNECTED: {
                             statusText.setText("Connected");
-                            statusProgress.setProgress(100);
+                            statusProgress.setProgressCompat(100,true);
                             new Handler().postDelayed(() -> {
                                 dismiss();
                                 if (onInitComplete != null)
                                     onInitComplete.init();
-                            }, 500);
+                            }, 1200);
                             break;
 
                         }

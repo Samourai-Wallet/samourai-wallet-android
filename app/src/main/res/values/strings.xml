@@ -351,6 +351,8 @@
     <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
 
     <string name="options_sign">Sign message</string>
+    <string name="options_soroban_collab">Soroban receive/collaborate</string>
+    <string name="options_paste_cahoots">Paste cahoots payload</string>
 
     <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
 
@@ -525,7 +527,7 @@
     <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
     <string name="enter_your_code_here">Enter your code here</string>
 
-    <string name="declaimer_recovery_words">I confirm that I have written the above words down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
+    <string name="disclaimer_recovery_words">I confirm that I have written the above words down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
     <string name="return_to_wallet">Return to wallet</string>
     <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
     <string name="these_words_are">These words are a backup of all the secret keys in your wallet.</string>
@@ -690,7 +692,8 @@
     <string name="create_to_existing_dojo">Create wallet and pair to Dojo</string>
     <string name="preorder">preorder</string>
     <string name="add_new">Add New</string>
-    <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
+    <string name="paynym_follow_message_2">to your Follow instantly.Follow PayNym to participate in Cahoots CoinJoin\ntransactions with them.</string>
+    <string name="paynym_connect_message">to generate unique private addresses for sending bitcoin\nto this contact</string>
     <string name="follow">Follow</string>
     <string name="wallet_locked">Wallet Locked</string>
     <string name="address">Address</string>
@@ -794,6 +797,7 @@
     <string name="enter_scode">Enter your Whirlpool SCODE. If confirmed by pressing \'OK\' the Whirlpool service will close. Re-enter Whirlpool to activate the SCODE.</string>
     <string name="this_utxo_is_marked_as_spendable">This UTXO is marked as Spendable</string>
     <string name="this_utxo_is_marked_as_blocked">This UTXO is marked as Blocked</string>
+    <string name="full_spend_warning">This transaction will spend the entirety of your wallet. Are you sure that you want to do this?</string>
     <string name="postmix_full_spend">This transaction will spend the entirety of your post-mix wallet which will undo the privacy attained via Whirlpool mixing. Are you sure that you want to do this?</string>
 
     <string name="psbt_sign_tx">Sign transaction</string>
@@ -805,5 +809,38 @@
     <string name="strict_reformulate">Reformulate transaction</string>
 
     <string name="sweep_no_amount">No utxos found for this private key.</string>
+    <string name="note_privacy_addons_are_not_available_for_selected_utxo_s">NOTE: Privacy addons are not available for selected utxo\'s</string>
+    <string name="note_you_are_making_a_post_mix_spend_if_cahoots_nis_not_selected_samourai_will">NOTE: You are making a post-mix spend. If #Cahoots\nis not selected Samourai will attempt to make a STONEWALL spend.</string>
+    <string name="off">Off</string>
+    <string name="privacy_addons">Privacy Addons</string>
+    <string name="ricochet_">Ricochet</string>
+    <string name="staggered_delivery">Staggered delivery</string>
+    <string name="for_extra_privacy_message">For extra privacy and analysis resistance, each hop will appear in mempool 1 block apart. Final delivery can take between 30 min and 2 hours.</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="no_cahoots_detected">No cahoots detected.Refresh to search again</string>
+    <string name="waiting_for_cahoots_request">Waiting for Cahoots request...</string>
+    <string name="follow_paynym_fee_free">Fee : Free</string>
+    <string name="connect_paynym_fee">Fee : 0.00015 BTC</string>
+    <string name="connect">Connect</string>
+    <string name="blockchain_connect_with">BlockChain Connect with</string>
+    <string name="following">Following</string>
+    <string name="based_on_cryptography_and">Based on cryptography and math, not your personal information</string>
+    <string name="find_and_follow_your_friends">Find and follow your friends and contacts without harming your privacy</string>
+    <string name="unlocks_advanced">Unlocks advanced privacy functionality in your wallet</string>
+    <string name="share_and_reuse">Share and reuse without revealing your other
+        transactions and balances</string>
 
 </resources>

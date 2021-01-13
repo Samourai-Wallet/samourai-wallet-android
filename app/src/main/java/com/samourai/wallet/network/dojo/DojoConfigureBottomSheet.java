@@ -19,13 +19,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.PrefsUtil;
 
+import io.matthewnelson.topl_service.TorServiceController;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -134,33 +133,26 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
         btnGroup.setVisibility(View.INVISIBLE);
         progressGroup.setVisibility(View.VISIBLE);
         dojoConnectProgress.setProgress(30);
-        if (TorManager.getInstance(getActivity().getApplicationContext()).isConnected()) {
+        if (TorManager.INSTANCE.isConnected()) {
             dojoConnectProgress.setProgress(60);
             progressStates.setText("Tor Connected, Connecting to Dojo Node...");
             DojoUtil.getInstance(getActivity().getApplicationContext()).clear();
             doPairing(dojoParams);
         } else {
             progressStates.setText("Waiting for Tor...");
-            Intent startIntent = new Intent(getActivity().getApplicationContext(), TorService.class);
-            startIntent.setAction(TorService.START_SERVICE);
-            getActivity().startService(startIntent);
-            Disposable disposable = TorManager.getInstance(getActivity().getApplicationContext())
-                    .getTorStatus()
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(state -> {
-                        if (state == TorProxyManager.ConnectionStatus.CONNECTING) {
-                            progressStates.setText("Waiting for Tor...");
-                        } else if (state == TorProxyManager.ConnectionStatus.CONNECTED) {
-                            PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.ENABLE_TOR, true);
-                            dojoConnectProgress.setProgress(60);
-                            progressStates.setText("Tor Connected, Connecting to Dojo Node...");
-                            DojoUtil.getInstance(getActivity().getApplicationContext()).clear();
-                            doPairing(dojoParams);
+            TorServiceController.startTor();
+            TorManager.INSTANCE.getTorStateLiveData().observe(this.getViewLifecycleOwner(),torState -> {
+                if (torState ==  TorManager.TorState.WAITING) {
+                    progressStates.setText("Waiting for Tor...");
+                } else if (torState == TorManager.TorState.ON) {
+                    PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.ENABLE_TOR, true);
+                    dojoConnectProgress.setProgress(60);
+                    progressStates.setText("Tor Connected, Connecting to Dojo Node...");
+                    DojoUtil.getInstance(getActivity().getApplicationContext()).clear();
+                    doPairing(dojoParams);
+                }
 
-                        }
-                    });
-            compositeDisposables.add(disposable);
+            });
         }
     }
 

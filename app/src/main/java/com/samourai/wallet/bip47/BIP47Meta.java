@@ -1,6 +1,7 @@
 package com.samourai.wallet.bip47;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 
@@ -33,6 +34,8 @@ public class BIP47Meta {
     public static final int STATUS_NOT_SENT = -1;
     public static final int STATUS_SENT_NO_CFM = 0;
     public static final int STATUS_SENT_CFM = 1;
+    public static  boolean  directoryTaskCompleted=  false;
+    public boolean  requiredRefresh=  false;
 
     private static ConcurrentHashMap<String,String> pcodeLabels = null;
     private static ConcurrentHashMap<String,Boolean> pcodeArchived = null;
@@ -46,6 +49,7 @@ public class BIP47Meta {
     private static ConcurrentHashMap<String,String> pcodeIncomingStatus = null;
     private static ConcurrentHashMap<String,String> pcodeLatestEvent = null;
     private static ConcurrentHashMap<String,Boolean> pcodeSegwit = null;
+    private static ArrayList<String> followingPcodes = null;
 
     private static BIP47Meta instance = null;
 
@@ -66,6 +70,7 @@ public class BIP47Meta {
             pcodeIncomingStatus = new ConcurrentHashMap<String,String>();
             pcodeLatestEvent = new ConcurrentHashMap<String,String>();
             pcodeSegwit = new ConcurrentHashMap<String,Boolean>();
+            followingPcodes = new ArrayList<String>();
 
             instance = new BIP47Meta();
         }
@@ -86,6 +91,7 @@ public class BIP47Meta {
         pcodeIncomingStatus.clear();
         pcodeLatestEvent.clear();
         pcodeSegwit.clear();
+        followingPcodes.clear();
     }
 
     public String getLabel(String pcode)   {
@@ -97,14 +103,21 @@ public class BIP47Meta {
         }
     }
 
+    public void addFollowings(ArrayList<String> pcodes){
+        followingPcodes.clear();
+        followingPcodes.addAll(pcodes);
+    }
+
+    public boolean isFollowing(String pcode){
+        return followingPcodes.contains(pcode);
+    }
+
     public String getDisplayLabel(String pcode)   {
         String label = getLabel(pcode);
         if(label.length() == 0 || pcode.equals(label))    {
-            return getAbbreviatedPcode(pcode);
+            label = getAbbreviatedPcode(pcode);
         }
-        else    {
-            return label;
-        }
+        return label;
     }
 
     public String getAbbreviatedPcode(String pcode)   {
@@ -138,6 +151,10 @@ public class BIP47Meta {
 
         Map<String, String> sortedMapAsc = valueSortByComparator(labels, true);
         return sortedMapAsc.keySet();
+    }
+
+    public boolean exists(String pcode, boolean includeArchived) {
+        return getSortedByLabels(includeArchived).contains(pcode);
     }
 
     public Set<String> getSortedByLabels(boolean includeArchived, boolean confirmed)    {
@@ -382,9 +399,10 @@ public class BIP47Meta {
 //            info("BIP47Meta", "pcode:" + pcode.toString());
 //            info("BIP47Meta", "tx:" + pcodeOutgoingStatus.get(pcode).getLeft());
 //            info("BIP47Meta", "status:" + pcodeOutgoingStatus.get(pcode).getRight());
-            if(pcodeOutgoingStatus.get(pcode).getRight() != STATUS_SENT_CFM && pcodeOutgoingStatus.get(pcode).getLeft() != null && pcodeOutgoingStatus.get(pcode).getLeft().length() > 0)    {
-                ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
-            }
+//            if(pcodeOutgoingStatus.get(pcode).getRight() != STATUS_SENT_CFM && pcodeOutgoingStatus.get(pcode).getLeft() != null && pcodeOutgoingStatus.get(pcode).getLeft().length() > 0)    {
+//                ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
+//            }
+            ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
 
         }
 
@@ -499,6 +517,14 @@ public class BIP47Meta {
 
     public void setLatestEvent(String pcode, String event)    {
         pcodeLatestEvent.put(pcode, event);
+    }
+
+    public boolean isRequiredRefresh() {
+        return requiredRefresh;
+    }
+
+    public void setRequiredRefresh(boolean requiredRefresh) {
+        this.requiredRefresh = requiredRefresh;
     }
 
     public synchronized void pruneIncoming() {

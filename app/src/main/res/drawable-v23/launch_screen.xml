@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The android:opacity=”opaque” line — this is critical in preventing a flash of black as your theme transitions. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+
+    <!-- The background color, preferably the same as your normal theme -->
+    <item android:drawable="@color/window" />
+
+    <item
+        android:width="74dp"
+        android:height="74dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_samourai_logo_splash_vect"
+        />
+</layer-list>

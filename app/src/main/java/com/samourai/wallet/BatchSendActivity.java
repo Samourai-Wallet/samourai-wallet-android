@@ -98,7 +98,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-public class BatchSendActivity extends Activity {
+public class BatchSendActivity extends SamouraiActivity {
 
     private final static int SCAN_QR = 2012;
     private final static int FEE_SELECT = 2013;
@@ -135,8 +135,10 @@ public class BatchSendActivity extends Activity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        BatchSendActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//        BatchSendActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
+        setSupportActionBar(findViewById(R.id.toolbar_batch_spend));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         data = new ArrayList<BatchSendUtil.BatchSend>();
         listView = (ListView)findViewById(R.id.list);
         adapter = new BatchAdapter();
@@ -151,12 +153,6 @@ public class BatchSendActivity extends Activity {
         tvMax = (TextView)findViewById(R.id.max);
         try    {
             balance = APIFactory.getInstance(BatchSendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).xpubstr());
-        }
-        catch(IOException ioe)    {
-            balance = 0L;
-        }
-        catch(MnemonicException.MnemonicLengthException mle)    {
-            balance = 0L;
         }
         catch(java.lang.NullPointerException npe)    {
             balance = 0L;
@@ -361,13 +357,6 @@ public class BatchSendActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        BatchSendActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
-        super.onDestroy();
     }
 
     @Override

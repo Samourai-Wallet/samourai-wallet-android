@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="txPrefs">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="txPrefs">
 
     <CheckBoxPreference
         android:title="@string/options_segwit"
         android:summary="@string/options_segwit_2"
         android:defaultValue="true"
         android:key="segwit"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <CheckBoxPreference
@@ -13,6 +18,9 @@
         android:summary="@string/options_like_typed_change2"
         android:defaultValue="true"
         android:key="likeTypedChange"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <CheckBoxPreference
@@ -20,6 +28,9 @@
         android:summary="@string/options_rbf0_2"
         android:defaultValue="false"
         android:key="rbf"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <CheckBoxPreference
@@ -27,12 +38,18 @@
         android:summary="@string/options_broadcast_on2"
         android:defaultValue="true"
         android:key="broadcastTx"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <Preference
         android:title="@string/options_broadcast_hex"
         android:summary="@string/options_broadcast_hex2"
         android:key="broadcastHex"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <CheckBoxPreference
@@ -40,22 +57,34 @@
         android:summary="@string/options_strictoutputs2"
         android:defaultValue="true"
         android:key="strictOutputs"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         />
 
     <PreferenceCategory
         android:key="@string/experimental"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
         android:title="@string/experimental">
 
         <Preference
             android:title="@string/PSBT"
             android:summary="@string/options_psbt2"
             android:key="psbt"
+            app:iconSpaceReserved="false"
+            app:allowDividerBelow="true"
+            app:allowDividerAbove="true"
             />
 
         <Preference
             android:title="@string/options_whirlpool_gui"
             android:summary="@string/options_whirlpool_gui2"
             android:key="whirlpool_gui"
+            app:iconSpaceReserved="false"
+            app:allowDividerBelow="true"
+            app:allowDividerAbove="true"
             />
 
     </PreferenceCategory>

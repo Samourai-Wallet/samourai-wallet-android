@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomsheetOnboarding"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.MaterialComponents.BottomSheetDialog"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <FrameLayout
+        android:id="@+id/frameLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#434343">
+
+            <TextView
+                android:id="@+id/textView41"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Claim your PayNym Bot"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/skipClaim"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Skip"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/textView41"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView41" />
+
+            <FrameLayout
+                android:layout_width="100dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:id="@+id/avatarFramePaynym"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView41"
+                android:layout_height="100dp">
+                <com.samourai.wallet.widgets.CircleImageView
+                    android:id="@+id/claimPayNymAvatarPreview"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView41"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </FrameLayout>
+
+
+
+            <ScrollView
+                android:id="@+id/scrollView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toTopOf="@+id/claimButtonPaynym"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/avatarFramePaynym"
+                app:layout_constraintVertical_bias="0.0">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_editor_absoluteY="12dp">
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView17"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/ic_share_white_24dp"
+                        app:layout_constraintEnd_toStartOf="@+id/textView54"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView54"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/share_and_reuse"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/imageView17" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/appCompatImageView"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="42dp"
+                        android:src="@drawable/party_popper"
+                        android:tint="@color/white"
+                        app:layout_constraintEnd_toEndOf="@+id/imageView17"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView17" />
+
+
+                    <TextView
+                        android:id="@+id/textView61"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:lines="2"
+                        android:text="@string/unlocks_advanced"
+                        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/appCompatImageView2"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="42dp"
+                        android:src="@drawable/ic_baseline_contacts_24"
+                        android:tint="@color/white"
+                        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
+
+                    <TextView
+                        android:id="@+id/textView63"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/find_and_follow_your_friends"
+                        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/appCompatImageView2" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/appCompatImageView3"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="42dp"
+                        android:layout_marginBottom="16dp"
+                        android:src="@drawable/ic_casino_24px"
+                        android:tint="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView2"
+                        app:layout_constraintStart_toStartOf="@+id/guideline19"
+                        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/textView67"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/based_on_cryptography_and"
+                        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline21"
+                        app:layout_constraintStart_toStartOf="@+id/guideline20"
+                        app:layout_constraintTop_toTopOf="@+id/appCompatImageView3" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline19"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.06" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.21" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline21"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.9" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </ScrollView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/claimButtonPaynym"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="16dp"
+                android:text="@string/claim_paynym"
+                android:textColor="@color/white"
+                app:cornerRadius="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:rippleColor="@color/text_primary"
+                app:strokeColor="@color/white"
+                app:strokeWidth="1dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/claimProgress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#434343"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/textView47"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Claiming your PayNym Id..."
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.progressindicator.ProgressIndicator
+                android:id="@+id/claimProgressIndicator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/white"
+                app:indicatorCornerRadius="5dp"
+                app:indicatorSize="4dp"
+                app:layout_anchorGravity="bottom|center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textView47"
+                app:layout_constraintStart_toStartOf="@+id/textView47"
+                app:layout_constraintTop_toBottomOf="@+id/textView47"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

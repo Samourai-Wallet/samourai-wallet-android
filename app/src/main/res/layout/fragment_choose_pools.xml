@@ -10,7 +10,9 @@
         android:id="@+id/pool_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,37 +29,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/pool_fee_low_btn"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="54dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/whirlpool_btn_inactive"
         android:text="LOW"
         android:textAllCaps="true"
+        android:textColor="@color/txt_grey"
+        app:backgroundTint="@color/windowDark"
         app:layout_constraintEnd_toStartOf="@+id/pool_fee_normal_btn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView22" />
+        app:layout_constraintTop_toBottomOf="@+id/textView22"
+        app:rippleColor="@color/white"
+        app:strokeWidth="1dp"
+        app:cornerRadius="4dp"
+        app:strokeColor="@color/white" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/pool_fee_normal_btn"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
-        android:background="@drawable/whirlpool_btn_blue"
+        android:layout_height="54dp"
         android:text="NORMAL"
+        android:textColor="@color/white"
+        app:strokeWidth="1dp"
+        app:cornerRadius="4dp"
+        app:strokeColor="@color/txt_grey"
+        app:backgroundTint="@color/blue_ui_2"
         app:layout_constraintBottom_toBottomOf="@+id/pool_fee_low_btn"
         app:layout_constraintEnd_toStartOf="@+id/pool_fee_high_btn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/pool_fee_low_btn"
         app:layout_constraintTop_toTopOf="@+id/pool_fee_low_btn" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/pool_fee_high_btn"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
-        android:background="@drawable/whirlpool_btn_inactive"
+        android:layout_height="54dp"
         android:text="High"
+        app:strokeWidth="1dp"
+        app:cornerRadius="4dp"
+        app:strokeColor="@color/txt_grey"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/windowDark"
         app:layout_constraintBottom_toBottomOf="@+id/pool_fee_normal_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -69,6 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/pool_fee_low_btn"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/pool_fee_low_btn"

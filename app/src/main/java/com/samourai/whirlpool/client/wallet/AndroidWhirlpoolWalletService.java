@@ -94,7 +94,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig() throws Exception {
         WebUtil webUtil = WebUtil.getInstance(ctx);
-        TorManager torManager = TorManager.getInstance(ctx);
+        TorManager torManager = TorManager.INSTANCE;
 
         String dojoParams = DojoUtil.getInstance(ctx).getDojoParams();
         boolean useDojo = (dojoParams != null);
@@ -120,7 +120,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
             oAuthManager = Optional.empty();
         }
 
-        IHttpClientService httpClientService = new AndroidHttpClientService(webUtil, torManager);
+        IHttpClientService httpClientService = AndroidHttpClientService.getInstance(ctx);
         IHttpClient httpClient = httpClientService.getHttpClient(HttpUsage.BACKEND);
         BackendApi backendApi = new BackendApi(httpClient, backendUrl, oAuthManager);
 

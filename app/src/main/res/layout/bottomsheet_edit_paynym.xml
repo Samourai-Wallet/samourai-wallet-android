@@ -5,23 +5,21 @@
     android:id="@+id/layout_bottomsheet_edit_paynym"
     android:layout_width="match_parent"
     android:layout_height="420dp"
-    android:background="@color/windowDark"
     android:minHeight="420dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editText_layout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content"  
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:theme="@style/FloatingLabelStylePaynym"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView50">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/paynym_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,10 +42,9 @@
         app:layout_constraintEnd_toEndOf="@+id/editText_layout"
         app:layout_constraintStart_toStartOf="@+id/editText_layout"
         app:layout_constraintTop_toBottomOf="@+id/editText_layout"
-        android:theme="@style/FloatingLabelStylePaynym"
         app:layout_constraintVertical_bias="0.0">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/paynym_pcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +53,6 @@
             android:ems="10"
             android:gravity="start|top"
             android:hint="Pcode"
-            android:textColor="@color/white"
             android:inputType="textMultiLine"
             android:lines="5"
      />
@@ -66,25 +62,27 @@
 
     <TextView
         android:id="@+id/textView50"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="Edit Paynym"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/edit_paynym_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_blue"
-        tools:text="SAve"
+        app:backgroundTint="?attr/colorAccent"
+        android:padding="14dp"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        tools:text="Save"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

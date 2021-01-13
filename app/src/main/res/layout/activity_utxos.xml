@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="?attr/statusBarBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -19,7 +20,7 @@
             android:id="@+id/toolbar_utxos"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorAccent" />
+            android:background="?attr/statusBarBackground" />
 
         <ProgressBar
             android:id="@+id/utxo_progressBar"

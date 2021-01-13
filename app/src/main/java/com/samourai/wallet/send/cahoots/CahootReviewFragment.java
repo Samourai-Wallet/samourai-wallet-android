@@ -1,15 +1,8 @@
 package com.samourai.wallet.send.cahoots;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.Group;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +17,7 @@ import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.Stowaway;
-import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.cahoots.stowaway.Stowaway;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.widgets.EntropyBar;
 
@@ -37,7 +29,12 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
+import androidx.fragment.app.Fragment;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -56,6 +53,7 @@ public class CahootReviewFragment extends Fragment {
     Button sendBtn;
     Group cahootsEntropyGroup, cahootsProgressGroup;
     private Cahoots payload;
+    private Callable onBroadcast;
     private CompositeDisposable disposables = new CompositeDisposable();
 
     public static CahootReviewFragment newInstance() {
@@ -68,26 +66,7 @@ public class CahootReviewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        if (payload != null) {
-            toAddress.setText(payload.getDestination());
-            sendBtn.setText(getString(R.string.send).concat(" ").concat(formatForBtc(payload.getSpendAmount()+payload.getFeeAmount())));
-            amountInBtc.setText(formatForBtc(payload.getSpendAmount()));
-            amountInSats.setText(String.valueOf(payload.getSpendAmount()).concat(" sat"));
-            if ((payload.getFeeAmount() == 0)) {
-                feeInBtc.setText("__");
-                feeInSats.setText("__");
-            } else {
-                feeInBtc.setText(formatForBtc(payload.getFeeAmount()));
-                feeInSats.setText(String.valueOf(payload.getFeeAmount()).concat(" sat"));
 
-            }
-            if (payload instanceof Stowaway) {
-                cahootsEntropyGroup.setVisibility(View.GONE);
-            } else {
-                calculateEntropy();
-            }
-
-        }
 
         sendBtn.setOnClickListener(view1 -> {
 
@@ -109,13 +88,19 @@ public class CahootReviewFragment extends Fragment {
                         if (success) {
                             getActivity().runOnUiThread(() -> {
                                 Toast.makeText(getActivity(), R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                notifyWalletAndFinish();
                             });
+                            // notify
+                            if (onBroadcast != null) {
+                                try {
+                                    onBroadcast.call();
+                                } catch (Exception e) {}
+                            }
                         } else {
                             Toast.makeText(this.getActivity(), "Error broadcasting tx", Toast.LENGTH_SHORT).show();
                             getActivity().runOnUiThread(() -> {
                                 cahootsProgressGroup.setVisibility(View.GONE);
                             });
+                            sendBtn.setEnabled(true);
                         }
 
                         Looper.loop();
@@ -130,6 +115,7 @@ public class CahootReviewFragment extends Fragment {
             }
 
         });
+        showPayloadInfo();
     }
 
     private void calculateEntropy() {
@@ -162,6 +148,29 @@ public class CahootReviewFragment extends Fragment {
                 });
     }
 
+    private void showPayloadInfo(){
+        if (payload != null) {
+            toAddress.setText(payload.getDestination());
+            sendBtn.setText(getString(R.string.send).concat(" ").concat(formatForBtc(payload.getSpendAmount()+payload.getFeeAmount())));
+            amountInBtc.setText(formatForBtc(payload.getSpendAmount()));
+            amountInSats.setText(String.valueOf(payload.getSpendAmount()).concat(" sat"));
+            if ((payload.getFeeAmount() == 0)) {
+                feeInBtc.setText("__");
+                feeInSats.setText("__");
+            } else {
+                feeInBtc.setText(formatForBtc(payload.getFeeAmount()));
+                feeInSats.setText(String.valueOf(payload.getFeeAmount()).concat(" sat"));
+
+            }
+            if (payload instanceof Stowaway) {
+                cahootsEntropyGroup.setVisibility(View.GONE);
+            } else {
+                calculateEntropy();
+            }
+
+        }
+
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -181,8 +190,14 @@ public class CahootReviewFragment extends Fragment {
 
     public void setCahoots(Cahoots payload) {
         this.payload = payload;
+        if(isAdded()){
+            showPayloadInfo();
+        }
     }
 
+    public void setOnBroadcast(Callable onBroadcast) {
+        this.onBroadcast = onBroadcast;
+    }
 
     private String formatForBtc(Long amount) {
         return (String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) amount)).concat(" BTC"));
@@ -201,19 +216,6 @@ public class CahootReviewFragment extends Fragment {
         DecimalFormat decimalFormat = (DecimalFormat) nformat;
         decimalFormat.applyPattern("#,###");
         return decimalFormat.format(number).replace(",", " ");
-    }
-
-    private void notifyWalletAndFinish() {
-        Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-        intent.putExtra("notifTx", false);
-        intent.putExtra("fetch", true);
-        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
-        cahootsProgressGroup.setVisibility(View.GONE);
-        Intent i = new Intent(this.getActivity(), BalanceActivity.class);
-        this.getActivity().finish();
-        startActivity(i);
-        getActivity().finish();
-
     }
 
     private Observable<TxProcessorResult> CalculateEntropy(Cahoots payload) {
@@ -245,6 +247,7 @@ public class CahootReviewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        // notify Soroban partner
         super.onDestroy();
         disposables.dispose();
     }

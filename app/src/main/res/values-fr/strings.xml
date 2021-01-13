@@ -498,7 +498,7 @@
     <string name="invalid_mnemonic_word">Mot de récupération BIP39 invalide</string>
     <string name="invalid_mnemonic">Phrase de récupération BIP39 invalide</string>
     <string name="enter_your_code_here">Saisir votre code ici</string>
-    <string name="declaimer_recovery_words">Je confirme avoir noté les mots ci-dessus et les avoir mis dans un endroit sûr et sécurisé. Je suis conscient que quiconque ayant accès à la fois à ma passphrase et à ma phrase de récupération peut s\'emparer de mon portefeuille et de tous mes fonds.</string>
+    <string name="disclaimer_recovery_words">Je confirme avoir noté les mots ci-dessus et les avoir mis dans un endroit sûr et sécurisé. Je suis conscient que quiconque ayant accès à la fois à ma passphrase et à ma phrase de récupération peut s\'emparer de mon portefeuille et de tous mes fonds.</string>
     <string name="return_to_wallet">Retour au portefeuille</string>
     <string name="caution_message_recovery_words">Il ne serait pas sûr de conserver une copie de ces mots sur votre ordinateur ou dans le Cloud. Notez les sur une feuille de papier et conservez celle-ci dans un endroit secret et sécurisé.</string>
     <string name="these_words_are">Ces mots sont une sauvegarde de toutes les clés secrètes que renferme votre portefeuille.</string>
@@ -847,6 +847,52 @@
 <string name="sweep_no_amount">Aucune utxo pour cette clé privée.</string>
 
 
+
+
+<string name="note_privacy_addons_are_not_available_for_selected_utxo_s">REMARQUE: les addons de confidentialité ne sont pas disponibles pour les UTXOs sélectionnées</string>
+<string name="note_you_are_making_a_post_mix_spend_if_cahoots_nis_not_selected_samourai_will">REMARQUE: Vous effectuez une dépense post-mix. Si #Cahoots\nn\'est pas sélectionné, Samourai va tenter d\'effectuer une dépense STONEWALL.</string>
+<string name="off">Désactivé</string>
+<string name="privacy_addons">Addons de confidentialité</string>
+<string name="ricochet_">Ricochet</string>
+<string name="staggered_delivery">Livraison échelonnée</string>
+<string name="for_extra_privacy_message">Pour une confidentialité accrue et une meilleure résistance à toute tentative d\'analyse, chaque saut apparaîtra dans mempool à une bloc d\'intervalle. 30 mins à 2 heures peuvent être nécessaires pour finaliser la livraison.</string>
+
+
+<string name="full_spend_warning">Cette transaction va dépenser la totalité de votre portefeuille. Êtes-vous sûr de vouloir poursuivre ?</string>
+
+<!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Synchroniser</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Votre signature</string>
+    <string name="reply_title">Définir répondre comme action par défaut</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Synchroniser périodiquement les mails</string>
+    <string name="attachment_title">Télécharger les pièces jointes entrantes</string>
+    <string name="attachment_summary_on">Télécharger automatiquement les pièces jointes des mails entrants</string>
+    <string name="attachment_summary_off">Ne télécharger les pièces jointes qu\'en cas de requête manuelle</string>
+
+
+<string name="no_cahoots_detected">Pas de cahoots détectés. Rafraîchir pour relancer la recherche</string>
+<string name="waiting_for_cahoots_request">En attente de requête Cahoots...</string>
+
+
+<string name="paynym_follow_message_2">vers votre Suivre immediatement. Suivre PayNym pour prendre part aux transactions\nCoinjoin Cahoots.</string>
+<string name="paynym_connect_message">pour générer des adresses privées uniques pour l\'envoi de bitcoin\nà ce contact</string>
+<string name="follow_paynym_fee_free">Frais : Gratuit</string>
+<string name="connect_paynym_fee">Frais : 0.00015 BTC</string>
+<string name="connect"> Se connecter</string>
+<string name="blockchain_connect_with">Se connecter avec</string>
+<string name="following">Abonnement</string>
+<string name="based_on_cryptography_and">Repose sur la cryptographie et les maths et non sur vos informations personnelles</string>
+<string name="find_and_follow_your_friends">Retrouvez vos amis et contacts et suivez-les sans compromettre la confidentialité de vos données</string>
+<string name="unlocks_advanced">Déverrouille la fonctionnalité avancée de confidentialité dans votre portefeuille</string>
+<string name="share_and_reuse">Partager et réutiliser sans exposer vos autres transactions et soldes</string>
+
+<string name="options_soroban_collab">Soroban recevoir/collaborer</string>
+<string name="options_paste_cahoots">Copier/Coller charge utile cahoots</string>
 
 
 </resources>

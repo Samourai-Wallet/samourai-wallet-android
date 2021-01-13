@@ -517,7 +517,7 @@
     <string name="invalid_mnemonic">Mnemotécnica BIP39 no válida</string>
     <string name="enter_your_code_here">Introduce tu código aquí</string>
 
-    <string name="declaimer_recovery_words"> Confirmo que he escrito las palabras y las he guardado en un lugar seguro. Entiendo que cualquiera que pueda acceder a mi contraseña y mis palabra de recuperación será capaz de acceder a mi billetera y a todos mis fondos.</string>
+    <string name="disclaimer_recovery_words"> Confirmo que he escrito las palabras y las he guardado en un lugar seguro. Entiendo que cualquiera que pueda acceder a mi contraseña y mis palabra de recuperación será capaz de acceder a mi billetera y a todos mis fondos.</string>
     <string name="return_to_wallet">Volver a la billetera</string>
     <string name="caution_message_recovery_words"> No es seguro mantener una copia de seguridad de estas palabras ni en tu ordenador ni en la nube. Escribe estas palabras en un papel y mantenlo secreto y seguro.</string>
     <string name="these_words_are">Estas palabras son la copia de seguridad de todas las claves secretas de tu billeta.</string>

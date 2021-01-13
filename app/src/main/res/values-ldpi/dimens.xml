@@ -5,7 +5,7 @@
     </dimen>
 
     <dimen name="pinentry_box_size">
-        48dp
+        44dp
     </dimen>
 
 </resources>
