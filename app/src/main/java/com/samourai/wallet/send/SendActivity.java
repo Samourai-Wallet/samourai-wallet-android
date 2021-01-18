@@ -763,14 +763,8 @@ public class SendActivity extends SamouraiActivity {
                 balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
                 selectableBalance = balance;
             } else {
-                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts()
-                        .get(HD_WalletFactory.getInstance(SendActivity.this).get()
-                                .getAccount(0).xpubstr());
-                ;
-                if (tempBalance != null && tempBalance != 0L) {
-                    balance = Math.abs( tempBalance - BlockedUTXO.getInstance().getTotalValueBlocked0());
-                    selectableBalance = balance;
-                }
+                balance = APIFactory.getInstance(SendActivity.this).getXpubBalance();
+                selectableBalance = balance;
             }
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
