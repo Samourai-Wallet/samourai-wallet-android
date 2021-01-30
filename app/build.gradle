@@ -87,7 +87,7 @@ def getApiKey(key){
 dependencies {
 
     def lifecycle_version = "2.2.0"
-    def topl_android_version = "2.0.2"
+    def topl_android_version = "2.1.0"
     def coroutines_version = '1.3.9'
 
     api fileTree(include: ['*.jar'], dir: 'libs')
