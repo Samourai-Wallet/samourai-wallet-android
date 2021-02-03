@@ -46,7 +46,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="70dp"
+        android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:orientation="vertical"
@@ -60,18 +60,45 @@
             android:id="@+id/selected_fee_rate_in_layman"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="true"
             android:gravity="right"
+            android:onClick="onClick"
             android:text="Urgent"
             android:textColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/selected_fee_rate"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:textSize="12sp"
-            android:text="0 sat/b"
-            android:textAlignment="textEnd" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/selected_fee_rate"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
+                android:gravity="end"
+                android:imeOptions="flagNoPersonalizedLearning"
+                android:inputType="textMultiLine|phone"
+                android:scrollbars="vertical"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:textAlignment="textEnd"
+                android:textSize="12sp"
+                android:translationX="10dp" />
+
+            <TextView
+                android:id="@+id/sat_b"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="end"
+                android:onClick="onClick"
+                android:text=" sat/b"
+                android:textAlignment="textEnd"
+                android:textSize="12sp"
+                android:translationX="5sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
