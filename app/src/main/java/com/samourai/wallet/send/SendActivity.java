@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
@@ -144,7 +145,7 @@ public class SendActivity extends SamouraiActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice, satbText;
     private MaterialButton btnReview, btnSend;
     private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
@@ -238,6 +239,7 @@ public class SendActivity extends SamouraiActivity {
         ricochetStaggeredOptionGroup = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option_group);
         tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
+        satbText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.sat_b);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
@@ -567,18 +569,57 @@ public class SendActivity extends SamouraiActivity {
 
         FeeUtil.getInstance().sanitizeFee();
 
-        tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
+        tvSelectedFeeRate.setText((String.valueOf((int) feeMed)));
 
         feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
-        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+        DecimalFormat decimalFormat = new DecimalFormat("##.##");
+        decimalFormat.setDecimalSeparatorAlwaysShown(false);
         setFeeLabels();
+
+        View.OnClickListener inputFeeListener = v -> {
+            tvSelectedFeeRate.requestFocus();
+            tvSelectedFeeRate.setFocusableInTouchMode(true);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.showSoftInput(tvSelectedFeeRate, InputMethodManager.SHOW_FORCED);
+        };
+
+        tvSelectedFeeRateLayman.setOnClickListener(inputFeeListener);
+        satbText.setOnClickListener(inputFeeListener);
+
+        tvSelectedFeeRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    int i = (int) ((Double.parseDouble(tvSelectedFeeRate.getText().toString())*multiplier) - multiplier);
+                    //feeSeekBar.setMax(feeHighSliderValue - multiplier);
+                    feeSeekBar.setProgress(i);
+                } catch(NumberFormatException nfe) {
+                    System.out.println("Could not parse " + nfe);
+                }
+                int position = tvSelectedFeeRate.length();
+                Editable etext = (Editable) tvSelectedFeeRate.getText();
+                Selection.setSelection(etext, position);
+            }
+        });
+
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
                 double value = ((double) i + multiplier) / (double) multiplier;
 
-                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
+                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)));
                 if (value == 0.0) {
                     value = 1.0;
                 }
