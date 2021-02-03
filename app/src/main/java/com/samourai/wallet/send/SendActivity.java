@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
@@ -86,6 +87,7 @@ import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.whirlpool.WhirlpoolConst;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.samourai.xmanager.client.XManagerClient;
@@ -143,7 +145,7 @@ public class SendActivity extends SamouraiActivity {
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
-    private Button btnReview, btnSend;
+    private MaterialButton btnReview, btnSend;
     private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
     private SwitchCompat cahootsSwitch;
@@ -440,7 +442,7 @@ public class SendActivity extends SamouraiActivity {
         AppUtil.getInstance(SendActivity.this).checkTimeOut();
 
         try {
-            new Handler().postDelayed(this::setBalance, 1000);
+            new Handler().postDelayed(this::setBalance, 300);
         } catch (Exception ex) {
 
         }
@@ -448,7 +450,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
-        if(compoundButton.isPressed()){
+        if (compoundButton.isPressed()) {
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
             compoundButton.setChecked(checked);
             new Handler().postDelayed(this::prepareSpend, 100);
@@ -499,9 +501,9 @@ public class SendActivity extends SamouraiActivity {
     private void enableReviewButton(boolean enable) {
         btnReview.setEnabled(enable);
         if (enable) {
-            btnReview.setBackground(getDrawable(R.drawable.button_blue));
+            btnReview.setBackgroundColor(getResources().getColor(R.color.blue_ui_2));
         } else {
-            btnReview.setBackground(getDrawable(R.drawable.disabled_grey_button));
+            btnReview.setBackgroundColor(getResources().getColor(R.color.disabled_grey));
         }
     }
 
@@ -734,7 +736,7 @@ public class SendActivity extends SamouraiActivity {
                     SendNotifTxFactory.getInstance().setAddress(address);
                     return true;
                 });
-                return Completable.concatArray(completable,pcode);
+                return Completable.concatArray(completable, pcode);
             } else {
                 return completable;
             }
@@ -761,26 +763,41 @@ public class SendActivity extends SamouraiActivity {
                 balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
                 selectableBalance = balance;
             } else {
-                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
-                if (tempBalance != null && tempBalance != 0L) {
-                    balance = tempBalance;
-                    selectableBalance = balance;
-                }
+                balance = APIFactory.getInstance(SendActivity.this).getXpubBalance();
+                selectableBalance = balance;
             }
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
         }
 
-        if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
-            long amount = 0;
-            for (UTXOCoin utxo : preselectedUTXOs) {
-                amount += utxo.amount;
+        if (getIntent().getExtras().containsKey("preselected")) {
+            //Reloads preselected utxo's if it changed on last call
+            preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
+
+            if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
+
+                //Checks utxo's state, if the item is blocked it will be removed from preselectedUTXOs
+                for (int i = 0; i < preselectedUTXOs.size(); i++) {
+                    UTXOCoin coin = preselectedUTXOs.get(i);
+                    if (BlockedUTXO.getInstance().containsAny(coin.hash, coin.idx)) {
+                        try {
+                            preselectedUTXOs.remove(i);
+                        } catch (Exception ex) {
+
+                        }
+                    }
+                }
+                long amount = 0;
+                for (UTXOCoin utxo : preselectedUTXOs) {
+                    amount += utxo.amount;
+                }
+                balance = amount;
+            } else {
+                ;
             }
-            balance = amount;
+
         }
-        else {
-            ;
-        }
+
 
         final String strAmount;
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
@@ -1104,6 +1121,7 @@ public class SendActivity extends SamouraiActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        PreSelectUtil.getInstance().clear();
         if (compositeDisposables != null && !compositeDisposables.isDisposed())
             compositeDisposables.dispose();
     }
@@ -1620,6 +1638,11 @@ public class SendActivity extends SamouraiActivity {
                 }
             }
 
+            if(account== WhirlpoolConst.WHIRLPOOL_POSTMIX_ACCOUNT){
+                if(SPEND_TYPE == SPEND_SIMPLE){
+                    strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
+                }
+            }
             message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
             if (selectedCahootsType == SelectCahootsType.type.NONE) {
@@ -2216,12 +2239,16 @@ public class SendActivity extends SamouraiActivity {
 
         if (amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
             isValid = true;
-        } else
-            isValid = amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress);
+        } else if (amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+            isValid = true;
+        } else {
+            isValid = false;
+        }
 
         if (insufficientFunds) {
             Toast.makeText(this, getString(R.string.insufficient_funds), Toast.LENGTH_SHORT).show();
         }
+        Log.i(TAG, "validateSpend: ".concat(String.valueOf(isValid)).concat(" ").concat(String.valueOf(insufficientFunds)));
         if (!isValid || insufficientFunds) {
             enableReviewButton(false);
             return false;

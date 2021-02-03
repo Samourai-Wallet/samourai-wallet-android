@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".util.QRBottomSheetDialog">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".util.QRBottomSheetDialog">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgQrCode"
+            android:layout_width="320dp"
+            android:layout_height="320dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:elevation="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/qrDialogTitle"
+            tools:src="@tools:sample/backgrounds/scenic[7]" />
+
+        <TextView
+            android:id="@+id/qrTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="@+id/imgQrCode"
+            app:layout_constraintStart_toStartOf="@+id/imgQrCode"
+            app:layout_constraintTop_toBottomOf="@+id/imgQrCode">
+
+        </TextView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/qrDialogCopyToClipBoard"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/copy_to_clipboard"
+            app:layout_constraintEnd_toEndOf="@+id/imgQrCode"
+            app:layout_constraintStart_toStartOf="@+id/imgQrCode"
+            app:layout_constraintTop_toBottomOf="@+id/qrTextView" />
+
+        <Button
+            android:id="@+id/shareQrButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/share_qr"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/qrDialogCopyToClipBoard"
+            app:layout_constraintStart_toStartOf="@+id/qrDialogCopyToClipBoard"
+            app:layout_constraintTop_toBottomOf="@+id/qrDialogCopyToClipBoard"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/qrDialogTitle"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/app_name"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

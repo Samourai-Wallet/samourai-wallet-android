@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +44,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+
+import io.matthewnelson.topl_service.TorServiceController;
 
 import static com.samourai.wallet.R.id.dots;
 
@@ -366,7 +370,12 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                     PrefsUtil.getInstance(RestoreSeedWalletActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
                     PrefsUtil.getInstance(RestoreSeedWalletActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
                     PayloadUtil.getInstance(RestoreSeedWalletActivity.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
-
+                    //If dojo is enabled turn on tor automatically
+                    if(json.has("meta") && json.getJSONObject("meta").has("dojo")){
+                        if( json.getJSONObject("meta").getJSONObject("dojo").has("pairing")){
+                            PrefsUtil.getInstance(RestoreSeedWalletActivity.this).setValue(PrefsUtil.ENABLE_TOR,true);
+                        }
+                    }
                 } catch (MnemonicException.MnemonicLengthException mle) {
                     mle.printStackTrace();
                     Toast.makeText(RestoreSeedWalletActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
@@ -379,7 +388,7 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                     Toast.makeText(RestoreSeedWalletActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } catch (java.lang.NullPointerException npe) {
+                } catch (NullPointerException npe) {
                     npe.printStackTrace();
                     Toast.makeText(RestoreSeedWalletActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                 } catch (DecryptionException de) {

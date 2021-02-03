@@ -209,10 +209,7 @@ object TorManager {
         val jsonPayload = JSONObject();
 
         try {
-            if (jsonPayload.has("active")) {
-                PrefsUtil.getInstance(appContext).setValue(PrefsUtil.ENABLE_TOR, jsonPayload.getBoolean("active"));
-            }
-
+                jsonPayload.put("active", PrefsUtil.getInstance(appContext).getValue(PrefsUtil.ENABLE_TOR,false));
         } catch (ex: JSONException) {
 //            throw  RuntimeException(ex);
         } catch (ex: ClassCastException) {

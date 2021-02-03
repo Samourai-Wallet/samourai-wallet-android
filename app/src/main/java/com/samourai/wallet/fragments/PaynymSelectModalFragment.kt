@@ -1,7 +1,9 @@
 package com.samourai.wallet.fragments
 
+import android.accounts.NetworkErrorException
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +22,9 @@ import com.samourai.wallet.bip47.BIP47Meta
 import com.samourai.wallet.bip47.BIP47Util
 import com.samourai.wallet.bip47.PaynymModel
 import com.samourai.wallet.bip47.paynym.WebUtil
+import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.paynym.PayNymHome
+import com.samourai.wallet.paynym.api.PayNymApiService
 import com.samourai.wallet.util.fromJSON
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
@@ -71,50 +75,71 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
     }
 
     private fun getFromNetwork() {
+
+        fun getNymCache(): String? {
+            return if (PayloadUtil.getInstance(requireActivity()).getPaynymResponseFile().exists()) {
+                PayloadUtil.getInstance(requireActivity()).paynymResponseFile.readText();
+            } else {
+                null;
+            }
+        }
+
         loadingView.visibility = View.VISIBLE
         job = CoroutineScope(Dispatchers.Main).launch(Dispatchers.IO) {
             try {
                 val strPaymentCode = BIP47Util.getInstance(requireContext().applicationContext).paymentCode.toString()
                 val obj = JSONObject()
                 obj.put("nym", strPaymentCode)
-                val res = WebUtil.getInstance(requireContext().applicationContext).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString())
-                val json = JSONObject(res)
-                val mutableCollection = mutableListOf<PaynymModel>()
-
-                if (json.has("following")) {
-                    repeat(json.getJSONArray("following").length()) {
-                        val item = fromJSON<PaynymModel>(json.getJSONArray("following").getJSONObject(it).toString());
-                        item?.let { it1 -> mutableCollection.add(it1) }
-                    }
-                }
-
-                if (json.has("followers")) {
-                    repeat(json.getJSONArray("followers").length()) { position ->
-                        val item = fromJSON<PaynymModel>(json.getJSONArray("followers").getJSONObject(position).toString());
-                        mutableCollection.find {  it.code == item?.code }.let {
-                            if(it == null){
-                                item?.let { it1 -> mutableCollection.add(it1) }
-                            }
-                        }
-                    }
-                }
-                paymentCodes = ArrayList(mutableCollection)
-
-                withContext(Dispatchers.Main) {
-                    loadingView.visibility = View.GONE
-                    setAdapter()
+                val res = PayNymApiService.getInstance(strPaymentCode, activity?.applicationContext!!).getNymInfo()
+                if (res.isSuccessful) {
+                    parsePaynymResponse(res.body()?.string()!!)
+                } else {
+                    throw NetworkErrorException("paynym.is error");
                 }
             } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(activity, "Network error while loading from paynym.is", Toast.LENGTH_LONG).show()
+                }
+                if(!getNymCache().isNullOrBlank()){
+                    getNymCache()?.let { parsePaynymResponse(it) }
+                }
                 throw  CancellationException(e.message)
             }
         }
         job?.invokeOnCompletion {
-            if (it == null) {
 
-            } else {
-                if (it !is CancellationException)
-                    Toast.makeText(requireContext(), "Error ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    suspend fun parsePaynymResponse(res: String) {
+        val json = JSONObject(res)
+        val mutableCollection = mutableListOf<PaynymModel>()
+
+        if (json.has("following")) {
+            repeat(json.getJSONArray("following").length()) {
+                val item = fromJSON<PaynymModel>(json.getJSONArray("following").getJSONObject(it).toString());
+                item?.let { it1 -> mutableCollection.add(it1) }
             }
+        }
+
+        if (json.has("followers")) {
+            repeat(json.getJSONArray("followers").length()) { position ->
+                val item = fromJSON<PaynymModel>(json.getJSONArray("followers").getJSONObject(position).toString());
+                mutableCollection.find { it.code == item?.code }.let {
+                    if (it == null) {
+                        item?.let { it1 -> mutableCollection.add(it1) }
+                    }
+                }
+            }
+        }
+        paymentCodes = ArrayList(mutableCollection)
+        if (!PayloadUtil.getInstance(requireActivity()).paynymResponseFile.exists()) {
+            PayloadUtil.getInstance(requireActivity()).paynymResponseFile.createNewFile();
+        }
+        PayloadUtil.getInstance(requireActivity()).paynymResponseFile.writeText(res);
+        withContext(Dispatchers.Main) {
+            loadingView.visibility = View.GONE
+            setAdapter()
         }
     }
 

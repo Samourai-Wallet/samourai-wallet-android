@@ -182,7 +182,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_begin="66dp" />
+                    app:layout_constraintGuide_percent="0.15" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
@@ -276,7 +276,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.16301703" />
+                    app:layout_constraintGuide_percent="0.15" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -358,7 +358,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.16" />
+                    app:layout_constraintGuide_percent="0.15" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View

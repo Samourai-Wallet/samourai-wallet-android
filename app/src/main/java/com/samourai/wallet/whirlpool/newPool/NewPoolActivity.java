@@ -245,7 +245,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
             cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(coins)) / 1e8) + " BTC");
             // default set to lowest pool
-            calculateTx0(1000000L, mediumFee);
+            calculateTx0(WhirlpoolMeta.getInstance(NewPoolActivity.this).getMinimumPoolDenomination(), mediumFee);
         }
     }
 

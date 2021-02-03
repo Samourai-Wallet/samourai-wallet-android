@@ -203,18 +203,22 @@ public class ReceiveActivity extends AppCompatActivity {
                 switch (position) {
                     case 0: {
                         addr = addr49;
+                        idx = idx49;
                         break;
                     }
                     case 1: {
                         addr = addr84;
+                        idx = idx84;
                         break;
                     }
                     case 2: {
                         addr = addr44;
+                        idx = idx44;
                         break;
                     }
                     default: {
-                        addr = addr49;
+                        addr = addr84;
+                        idx = idx84;
                     }
                 }
                 displayQRCode();
@@ -778,20 +782,16 @@ public class ReceiveActivity extends AppCompatActivity {
 
         int sel = addressTypesSpinner.getSelectedItemPosition();
         String path = "m/";
-        int idx = 0;
 
         switch (sel) {
             case 0:
                 path += "49'";
-                idx = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive().getLeft();
                 break;
             case 1:
                 path += "84'";
-                idx = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive().getLeft();
                 break;
             default:
                 path += "44'";
-                idx = AddressFactory.getInstance(ReceiveActivity.this).getReceive().getLeft();
         }
 
         path += "/0'/0'/0/";

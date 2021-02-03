@@ -2,6 +2,7 @@ package com.samourai.wallet.whirlpool;
 
 import android.content.Context;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 
 import org.json.JSONException;
@@ -40,6 +41,10 @@ public class WhirlpoolMeta {
 
     public int getWhirlpoolBadBank() {
         return WhirlpoolAccount.BADBANK.getAccountIndex();
+    }
+
+    public long getMinimumPoolDenomination() {
+        return SamouraiWallet.getInstance().isTestNet() ? 100000L : 1000000L;
     }
 
     public void setSCODE(String scode) {

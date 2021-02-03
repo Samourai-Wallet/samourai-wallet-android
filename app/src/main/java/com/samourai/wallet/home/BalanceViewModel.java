@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 
@@ -25,6 +26,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
@@ -52,12 +54,18 @@ public class BalanceViewModel extends AndroidViewModel {
     private MutableLiveData<Long> balance = new MutableLiveData<>();
     private int account = 0;
 
+    Context mContext = this.getApplication();
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "com.samourai.wallet_preferences" ;
+    public static final String IS_SAT_KEY = "IS_SAT";
+
     private MutableLiveData<Boolean> toggleSat = new MutableLiveData<>();
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
     public BalanceViewModel(@NonNull Application application) {
         super(application);
-        toggleSat.setValue(false);
+        boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, true);
+        toggleSat.setValue(is_sat_prefs);
     }
 
     public LiveData<List<Tx>> getTxs() {
@@ -65,6 +73,7 @@ public class BalanceViewModel extends AndroidViewModel {
     }
 
     void loadOfflineData() {
+        boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, true);
         try {
             JSONObject response = new JSONObject("{}");
 
@@ -86,7 +95,7 @@ public class BalanceViewModel extends AndroidViewModel {
                             Long xpub_balance = pairValues.second;
                             Collections.sort(txes, new APIFactory.TxMostRecentDateComparator());
                             txs.postValue(txes);
-                            toggleSat.setValue(false);
+                            toggleSat.setValue(is_sat_prefs);
                             if (account == 0) {
                                 balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
                             }
@@ -99,7 +108,7 @@ public class BalanceViewModel extends AndroidViewModel {
                         }, error -> {
                             LogUtil.info(TAG,error.getMessage());
                             txs.postValue(new ArrayList<>());
-                            toggleSat.setValue(false);
+                            toggleSat.setValue(is_sat_prefs);
                             balance.postValue(0L);
                         });
 
@@ -110,7 +119,7 @@ public class BalanceViewModel extends AndroidViewModel {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
             txs.setValue(new ArrayList<>());
-            toggleSat.setValue(false);
+            toggleSat.setValue(is_sat_prefs);
             balance.setValue(0L);
         }
     }
@@ -130,12 +139,15 @@ public class BalanceViewModel extends AndroidViewModel {
         return toggleSat;
     }
 
-    void toggleSat() {
-
+    boolean toggleSat() {
+        sharedpreferences = mContext.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, true);
         if (toggleSat.getValue() == null) {
-            this.toggleSat.setValue(false);
+            this.toggleSat.setValue(is_sat_prefs);
+            return false;
         } else {
             this.toggleSat.setValue(!toggleSat.getValue());
+            return (toggleSat.getValue());
         }
 
     }
