@@ -56,12 +56,6 @@
     <string name="options_use_telno2">Only allow remote commands sent from your trusted mobile phone number.</string>
     <string name="options_alert_telno">Trusted number</string>
     <string name="options_alert_telno2">A trusted mobile number that you can restrict remote access to (use int\'l format without spaces ex.: +447385555555).</string>
-    <string name="options_hash">APK hash</string>
-    <string name="options_hash2">Get SHA-256 hash of this installed APK file (can be copied to clipboard).</string>
-    <string name="options_VPN">VPN</string>
-    <string name="options_VPN2">Launch OpenVPN for Android.</string>
-    <string name="options_Tor">Route via Tor?</string>
-    <string name="options_Tor2">Launch Orbot (Tor).</string>
     <string name="options_export">Export wallet backup</string>
     <string name="options_change_pin">Change PIN</string>
     <string name="options_change_pin2">Define a new PIN code; used to unlock your wallet.</string>
@@ -74,11 +68,7 @@
     <string name="options_boltzmann">STONEWALL spend</string>
     <string name="options_boltzmann_2">Spends will use STONEWALL algorithm for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
-    <string name="options_trusted_node">Set trusted node</string>
-    <string name="options_trusted_node2">Specify your own bitcoin node to broadcast transactions.</string>
-    <string name="options_use_trusted_node">Use trusted node</string>
-    <string name="options_use_trusted_node2">Broadcast transactions from your own node.</string>
-    <string name="options_rbf0">Spend using RBF</string>
+     <string name="options_rbf0">Spend using RBF</string>
     <string name="options_rbf0_2">Spends will use replace-by-fee to enable fee bumping.</string>
     <string name="options_troubleshoot">Troubleshoot</string>
     <string name="options_passphrase_test">Passphrase/backup test</string>
@@ -200,7 +190,6 @@
     <string name="options_scramble_pin">Scramble PIN Screen</string>
     <string name="options_scramble_pin2">Use scrambled numerical pad to enter your wallet. </string>
 
-    <string name="you_must_have_orbot">You must have Orbot installed and activated to proxy traffic through it. Would you like to install it from Google Play?</string>
 
     <string name="ssl_pinning_invalid">SSL certificate pinning has failed. This might indicate malicious activity. Please verify your network connection and device before continuing.</string>
     <string name="ssl_no_connection">We are unable to connect to the host to verify the SSL certificate. Please verify your network connection and device before continuing.</string>
@@ -297,7 +286,6 @@
 
     <string name="tor_routing_on">Samourai is routing via Tor.</string>
     <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
-    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
 
     <string name="premium_addons">Premium Addons</string>
 
@@ -323,19 +311,6 @@
 
     <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
 
-    <string name="trusted_node">Trusted node</string>
-    <string name="trusted_node_user_hint">rpc user name</string>
-    <string name="trusted_node_ip_hint">IP address</string>
-    <string name="trusted_node_port_hint">Port (8332 default)</string>
-    <string name="trusted_node_password_hint">rpc user password</string>
-    <string name="trusted_node_not_valid">Please supply valid info for your trusted node.</string>
-    <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
-    <string name="trusted_node_error">Error reaching proposed trusted node.</string>
-    <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
-    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
-    <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
-    <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
-    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
 
     <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
     <string name="refresh_tx">Retrieved transactions and balance.</string>
@@ -354,7 +329,6 @@
     <string name="options_soroban_collab">Soroban receive/collaborate</string>
     <string name="options_paste_cahoots">Paste cahoots payload</string>
 
-    <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
 
     <string name="options_fees">Show current miners\' fees</string>
     <string name="current_fee_selection">Your fee selection is set to:</string>
@@ -397,27 +371,6 @@
 
     <string name="select_app">Select application</string>
     <string name="samourai_opendime">Samourai: OpenDime</string>
-
-    <string name="replay_protection">Replay protection</string>
-    <string name="replay_unprotected">Unprotected</string>
-    <string name="replay_in_progress">In progress</string>
-    <string name="replay_protected">Protected</string>
-    <string name="replay_disclaimer">Chain split detected</string>
-    <string name="replay_text">All addresses will be merged into a single transaction and sent to an address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
-    <string name="replay_ENABLE">ENABLE REPLAY PROTECTION</string>
-
-    <string name="replay_broadcast_to_network">broadcast to network...</string>
-    <string name="replay_seen_on_network">seen on network...</string>
-    <string name="replay_split_tx_broadcast">split tx broadcast...</string>
-    <string name="replay_description">Your wallet will send a special transaction to itself that will permanently split your coins from the other chain. This will protect you against replay attacks.</string>
-    <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
-    <string name="replay_confirmed">confirmed</string>
-    <string name="replay_confirmations">confirmations:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
-
-    <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
-    <string name="replay_dismiss">DISMISS ALERT</string>
 
     <string name="show_qr">Show QR</string>
     <string name="share_qr">Share QR</string>
@@ -692,7 +645,7 @@
     <string name="create_to_existing_dojo">Create wallet and pair to Dojo</string>
     <string name="preorder">preorder</string>
     <string name="add_new">Add New</string>
-    <string name="paynym_follow_message_2">to your Follow instantly.Follow PayNym to participate in Cahoots CoinJoin\ntransactions with them.</string>
+    <string name="paynym_follow_message_2">to follow instantly. Follow this PayNym to participate in Cahoots CoinJoin\ntransactions with them.</string>
     <string name="paynym_connect_message">to generate unique private addresses for sending bitcoin\nto this contact</string>
     <string name="follow">Follow</string>
     <string name="wallet_locked">Wallet Locked</string>
@@ -701,8 +654,8 @@
     <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is established</string>
 
     <string name="you_received_s">You received</string>
-    <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
-    <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
+    <string name="paynym_follow_message">This fee covers the cost of creating a one-time transaction to create a record on the blockchain.  This keeps PayNyms decentralized</string>
+    <string name="paynym_follow_fee_message">A one time connection fee of  will be charged to follow contact</string>
     <string name="initializing_tor">initializing Tor...</string>
     <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
     <string name="message_copied">message copied</string>
