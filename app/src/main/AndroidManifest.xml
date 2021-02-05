@@ -115,10 +115,6 @@
             android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".BatchSendActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
-        <activity
             android:name=".FeeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
