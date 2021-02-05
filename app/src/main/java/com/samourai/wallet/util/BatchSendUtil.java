@@ -10,10 +10,11 @@ import java.util.List;
 
 public class BatchSendUtil {
 
-    public class BatchSend   {
+    public static class BatchSend   {
         public String pcode = null;
         public String addr = null;
         public long amount = 0L;
+        public long UUID = 0L;
     }
 
     private static BatchSendUtil instance = null;
