@@ -53,7 +53,10 @@
         android:theme="@style/SamouraiAppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".send.batch.BatchSpendActivity"></activity>
+        <activity android:name=".send.batch.BatchSpendActivity"
+            android:theme="@style/Theme.Samourai.Material"
+            android:label=""
+            />
         <activity
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
