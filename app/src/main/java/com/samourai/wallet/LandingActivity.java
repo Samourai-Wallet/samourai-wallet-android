@@ -56,11 +56,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import io.matthewnelson.topl_service.TorServiceController;
-import io.matthewnelson.topl_service.service.TorService;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class LandingActivity extends AppCompatActivity  {
 
@@ -170,12 +166,13 @@ public class LandingActivity extends AppCompatActivity  {
 
     public void RestoreWalletFromBackup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Restore backup");
+        builder.setTitle(R.string.restore_backup);
         LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.layout.landing_restore_dialog, null);
+        View view = inflater.inflate(R.layout.password_input_dialog_layout, null);
+        view.<TextView>findViewById(R.id.dialogMessage).setText(R.string.enter_your_wallet_passphrase);
         final EditText password = view.findViewById(R.id.restore_dialog_password_edittext);
         builder.setView(view);
-        builder.setPositiveButton("RESTORE", (dialog, which) -> {
+        builder.setPositiveButton(R.string.restore, (dialog, which) -> {
             dialog.dismiss();
             String backupData = readFromBackupFile();
             final String decrypted = PayloadUtil.getInstance(LandingActivity.this).getDecryptedBackupPayload(backupData, new CharSequenceX(password.getText()));
@@ -185,7 +182,7 @@ public class LandingActivity extends AppCompatActivity  {
                 RestoreWalletFromSamouraiBackup(decrypted);
             }
         });
-        builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }

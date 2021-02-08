@@ -679,7 +679,8 @@
     <string name="create_password">Create password</string>
     <string name="confirm_password">Confirm password</string>
 
-    <string name="pairing_password">Define pairing password: (6-255 characters)</string>
+    <string name="pairing_password">Define pairing password: (6–255 characters)</string>
+    <string name="backup_password">Define backup password: (6–255 characters)</string>
     <string name="password_error">Error creating password</string>
     <string name="password_invalid">Invalid password</string>
     <string name="review_whirlpool">Review Whirlpool Details</string>
@@ -795,5 +796,9 @@
     <string name="unlocks_advanced">Unlocks advanced privacy functionality in your wallet</string>
     <string name="share_and_reuse">Share and reuse without revealing your other
         transactions and balances</string>
+    <string name="enter_backup_password">Enter backup password</string>
+    <string name="restore_backup">Restore backup</string>
+    <string name="whirlpool_paring">Whirlpool Paring</string>
+    <string name="enter_pairing_password">Enter pairing password</string>
 
 </resources>
