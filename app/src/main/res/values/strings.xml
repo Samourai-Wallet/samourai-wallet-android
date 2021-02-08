@@ -783,7 +783,7 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="no_cahoots_detected">No cahoots detected.Refresh to search again</string>
+    <string name="no_cahoots_detected">No cahoots detected. Refresh to search again</string>
     <string name="waiting_for_cahoots_request">Waiting for Cahoots request...</string>
     <string name="follow_paynym_fee_free">Fee : Free</string>
     <string name="connect_paynym_fee">Fee : 0.00015 BTC</string>
