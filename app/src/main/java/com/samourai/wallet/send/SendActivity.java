@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -35,6 +34,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
@@ -44,7 +44,6 @@ import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.http.client.IHttpClient;
-import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
@@ -71,9 +70,9 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
+import com.samourai.wallet.send.batch.BatchSpendActivity;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
-import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.send.soroban.meeting.SorobanMeetingSendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -338,7 +337,7 @@ public class SendActivity extends SamouraiActivity {
         }
 
 
-    }
+    } 
 
 
     private void setUpCahoots() {
@@ -2428,7 +2427,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void doBatchSpend() {
-        Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
+        Intent intent = new Intent(SendActivity.this, BatchSpendActivity.class);
         startActivity(intent);
     }
 
@@ -2446,7 +2445,7 @@ public class SendActivity extends SamouraiActivity {
         message += "\n";
         message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(message)
                 .setCancelable(false)
