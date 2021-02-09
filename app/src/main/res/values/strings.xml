@@ -411,7 +411,7 @@
     <string name="options_display_privkey">Display private key</string>
     <string name="options_batch">Batch spend</string>
 
-    <string name="do_not_repeat_sent_to">Check box to not warn about repeat sends to this address.</string>
+    <string name="do_not_repeat_sent_to">Check box to not warn abobbut repeat sends to this address.</string>
 
     <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
 
@@ -800,5 +800,8 @@
     <string name="restore_backup">Restore backup</string>
     <string name="whirlpool_paring">Whirlpool Paring</string>
     <string name="enter_pairing_password">Enter pairing password</string>
+    <string name="add_to_batch">Add to batch</string>
+    <string name="update_to_batch">Update batch</string>
+    <string name="current_batch">Current Batch</string>
 
 </resources>

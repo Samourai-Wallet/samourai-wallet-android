@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="168dp"
+    android:id="@+id/feeSelectorView"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     tools:showIn="@layout/send_transaction_review">
