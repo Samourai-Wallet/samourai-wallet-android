@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
@@ -47,6 +46,9 @@ import com.samourai.wallet.send.cahoots.ManualCahootsActivity
 import com.samourai.wallet.util.*
 import com.samourai.wallet.utxos.UTXOSActivity
 import com.samourai.wallet.whirlpool.WhirlpoolConst
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_batch_spend.*
 import kotlinx.android.synthetic.main.batch_spend_compose.*
 import kotlinx.android.synthetic.main.batch_spend_review.*
@@ -88,6 +90,7 @@ class BatchSpendActivity : SamouraiActivity() {
     private var change_address: String? = null
     private val outpoints: MutableList<MyTransactionOutPoint> = mutableListOf()
     private val receivers: HashMap<String, BigInteger> = hashMapOf()
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -159,6 +162,12 @@ class BatchSpendActivity : SamouraiActivity() {
 
         })
 
+        val disposable = APIFactory.getInstance(applicationContext)
+                .walletBalanceObserver
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ setBalance() }) { obj: Throwable -> obj.printStackTrace() }
+        compositeDisposable.add(disposable)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -233,6 +242,13 @@ class BatchSpendActivity : SamouraiActivity() {
         } catch (npe: NullPointerException) {
             npe.printStackTrace()
         }
+    }
+
+    override fun onDestroy() {
+        if(!compositeDisposable.isDisposed){
+            compositeDisposable.dispose()
+        }
+        super.onDestroy()
     }
 
     private val btcWatcher: TextWatcher = object : TextWatcher {
