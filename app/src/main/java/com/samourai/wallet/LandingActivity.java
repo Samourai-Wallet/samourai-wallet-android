@@ -3,6 +3,7 @@ package com.samourai.wallet;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -27,6 +29,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -99,9 +102,6 @@ public class LandingActivity extends AppCompatActivity  {
         if (!PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(LandingActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
         }
-        if (!PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.CAMERA)) {
-            PermissionsUtil.getInstance(LandingActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
-        }
         /*
         if (!PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.SEND_SMS) || !PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.RECEIVE_SMS) || !PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.READ_PHONE_STATE)) {
             PermissionsUtil.getInstance(LandingActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.SMS_PERMISSION_CODE);
@@ -165,7 +165,7 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     public void RestoreWalletFromBackup() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.restore_backup);
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.password_input_dialog_layout, null);
@@ -183,8 +183,8 @@ public class LandingActivity extends AppCompatActivity  {
             }
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
-        AlertDialog alert = builder.create();
-        alert.show();
+        builder.create().show();
+
     }
 
     private String readFromBackupFile() {

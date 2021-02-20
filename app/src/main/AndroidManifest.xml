@@ -180,7 +180,7 @@
         <activity
             android:name=".LandingActivity"
             android:label=""
-            android:theme="@style/SamouraiAppDarkStatusTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity android:name=".RecoveryWordsActivity" />
         <!--
                 <receiver
