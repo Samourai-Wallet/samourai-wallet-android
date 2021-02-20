@@ -878,10 +878,11 @@ public class SendActivity extends SamouraiActivity {
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-//            bViaMenu = extras.getBoolean("via_menu", false);
             String strUri = extras.getString("uri");
             if (extras.containsKey("amount")) {
-                btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
+                DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+                format.setMaximumFractionDigits(8);
+                btcEditText.setText(format.format(getBtcValue(extras.getDouble("amount"))));
             }
 
             if (extras.getString("pcode") != null)
