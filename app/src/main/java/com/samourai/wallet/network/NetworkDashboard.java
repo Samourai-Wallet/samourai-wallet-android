@@ -41,8 +41,6 @@ import com.samourai.wallet.util.NetworkManager;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -218,7 +216,7 @@ public class NetworkDashboard extends AppCompatActivity {
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             try {
                 if (DojoUtil.getInstance(NetworkDashboard.this).isValidPairingPayload(code.trim())) {

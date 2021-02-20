@@ -417,7 +417,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
             cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
-            cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+            cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss();
                 try {
                     if (Cahoots.isCahoots(code.trim())) {

@@ -435,7 +435,7 @@ class BatchSpendActivity : SamouraiActivity() {
         val cameraFragmentBottomSheet = CameraFragmentBottomSheet()
         cameraFragmentBottomSheet.show(supportFragmentManager, cameraFragmentBottomSheet.tag)
 
-        cameraFragmentBottomSheet.setQrCodeScanLisenter { code: String? ->
+        cameraFragmentBottomSheet.setQrCodeScanListener { code: String? ->
             cameraFragmentBottomSheet.dismissAllowingStateLoss()
             code?.let { processScan(it) }
         }

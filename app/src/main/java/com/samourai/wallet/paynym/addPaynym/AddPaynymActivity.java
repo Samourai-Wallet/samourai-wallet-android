@@ -4,7 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -60,7 +60,7 @@ public class AddPaynymActivity extends SamouraiActivity {
         findViewById(R.id.add_paynym_scan_qr).setOnClickListener(view -> {
             CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
             cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
-            cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+            cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss();
                 processScan(code);
             });

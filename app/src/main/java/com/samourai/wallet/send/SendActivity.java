@@ -2408,7 +2408,7 @@ public class SendActivity extends SamouraiActivity {
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             processScan(code);
         });

@@ -37,7 +37,7 @@ public class ManualCahootsStepFragment extends AbstractCahootsStepFragment {
         scanQRbtn.setOnClickListener(view1 -> {
             CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
             cameraFragmentBottomSheet.show(getActivity().getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
-            cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+            cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss();
                 if (cahootsFragmentListener != null) {
                     cahootsFragmentListener.onScan(step, code);
