@@ -403,9 +403,7 @@ public class BalanceActivity extends SamouraiActivity {
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
         }
-        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
-            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
-        }
+
         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
         } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
@@ -1036,7 +1034,7 @@ public class BalanceActivity extends SamouraiActivity {
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
@@ -1067,7 +1065,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {

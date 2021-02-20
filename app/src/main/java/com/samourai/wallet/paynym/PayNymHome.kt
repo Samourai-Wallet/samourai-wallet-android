@@ -191,7 +191,7 @@ class PayNymHome : SamouraiActivity() {
             R.id.action_scan_qr -> {
                 val cameraFragmentBottomSheet = CameraFragmentBottomSheet()
                 cameraFragmentBottomSheet.show(supportFragmentManager, cameraFragmentBottomSheet.tag)
-                cameraFragmentBottomSheet.setQrCodeScanLisenter { code: String ->
+                cameraFragmentBottomSheet.setQrCodeScanListener { code: String ->
                     cameraFragmentBottomSheet.dismissAllowingStateLoss()
                     processScan(code)
                 }
