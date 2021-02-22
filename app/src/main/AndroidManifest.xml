@@ -258,7 +258,7 @@
         <activity
             android:name=".send.soroban.meeting.SorobanMeetingSendActivity"
             android:label="Send online Cahoots"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
 
         <provider
             android:name=".util.GenericFileProvider"

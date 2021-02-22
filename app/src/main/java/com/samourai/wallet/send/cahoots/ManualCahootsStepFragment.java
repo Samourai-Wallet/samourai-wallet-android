@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.material.button.MaterialButton;
 import com.samourai.wallet.R;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 
@@ -14,7 +15,7 @@ import androidx.annotation.Nullable;
 
 public class ManualCahootsStepFragment extends AbstractCahootsStepFragment {
 
-    private Button showQRBtn, scanQRbtn;
+    private MaterialButton showQRBtn, scanQRbtn;
 
     private CahootsFragmentListener cahootsFragmentListener;
 

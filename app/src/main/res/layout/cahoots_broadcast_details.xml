@@ -211,18 +211,20 @@
         app:layout_constraintStart_toStartOf="@+id/textView56"
         app:layout_constraintTop_toBottomOf="@+id/textView56" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/cahoot_send_btn"
         android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:background="@drawable/button_green"
-        android:text="Send"
+        android:layout_height="68dp"
+        android:paddingTop="12dp"
+        android:text="@string/send"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="18sp"
-        android:paddingTop="12dp"
+        android:textSize="16sp"
+        app:backgroundTint="@color/green_ui_2"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -230,7 +232,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Broadcasting Transaction"
+        android:text="@string/broadcasting_transaction"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
         app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
         app:layout_constraintTop_toBottomOf="@+id/progressBar4" />

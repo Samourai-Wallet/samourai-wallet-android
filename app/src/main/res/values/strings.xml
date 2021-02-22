@@ -803,5 +803,8 @@
     <string name="add_to_batch">Add to batch</string>
     <string name="update_to_batch">Update batch</string>
     <string name="current_batch">Current Batch</string>
+    <string name="have_your_mixing_partner">Have your mixing partner scan the QR to start.</string>
+    <string name="broadcast_transaction">Broadcast Transaction</string>
+    <string name="broadcasting_transaction">Broadcasting Transaction</string>
 
 </resources>
