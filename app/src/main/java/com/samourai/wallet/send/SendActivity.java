@@ -1104,7 +1104,7 @@ public class SendActivity extends SamouraiActivity {
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
                 warningMessage = R.string.postmix_full_spend;
             }
-            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+            MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                     .setTitle(R.string.app_name)
                     .setMessage(warningMessage)
                     .setCancelable(false)
@@ -1630,7 +1630,7 @@ public class SendActivity extends SamouraiActivity {
 
             if (change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE) {
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.change_is_dust)
                         .setCancelable(false)
@@ -1821,7 +1821,7 @@ public class SendActivity extends SamouraiActivity {
             compositeDisposables.add(disposable);
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(SendActivity.this);
         builder.setTitle(R.string.app_name);
         builder.setMessage(message);
         final CheckBox cbShowAgain;
@@ -1834,166 +1834,154 @@ public class SendActivity extends SamouraiActivity {
             cbShowAgain = null;
         }
         builder.setCancelable(false);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int whichButton) {
+        builder.setPositiveButton(R.string.yes, (dialog, whichButton) -> {
 
-                final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
-                for (UTXO u : selectedUTXO) {
-                    outPoints.addAll(u.getOutpoints());
-                }
-
-                // add change
-                if (_change > 0L) {
-                    if (SPEND_TYPE == SPEND_SIMPLE) {
-                        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
-                            String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        } else if (changeType == 84) {
-                            String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        } else if (changeType == 49) {
-                            String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        } else {
-                            String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        }
-
-                    } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
-                        // do nothing, change addresses included
-                        ;
-                    } else {
-                        ;
-                    }
-                }
-
-                SendParams.getInstance().setParams(outPoints,
-                        receivers,
-                        strPCode,
-                        SPEND_TYPE,
-                        _change,
-                        changeType,
-                        account,
-                        address,
-                        strPrivacyWarning.length() > 0,
-                        cbShowAgain != null ? cbShowAgain.isChecked() : false,
-                        amount,
-                        change_index
-                );
-
-                Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
-                startActivity(_intent);
-
+            final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
+            for (UTXO u : selectedUTXO) {
+                outPoints.addAll(u.getOutpoints());
             }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int whichButton) {
 
-                SendActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+            // add change
+            if (_change > 0L) {
+                if (SPEND_TYPE == SPEND_SIMPLE) {
+                    if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                        String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    } else if (changeType == 84) {
+                        String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    } else if (changeType == 49) {
+                        String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    } else {
+                        String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    }
+
+                } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
+                    // do nothing, change addresses included
+                    ;
+                } else {
+                    ;
+                }
+            }
+
+            SendParams.getInstance().setParams(outPoints,
+                    receivers,
+                    strPCode,
+                    SPEND_TYPE,
+                    _change,
+                    changeType,
+                    account,
+                    address,
+                    strPrivacyWarning.length() > 0,
+                    cbShowAgain != null ? cbShowAgain.isChecked() : false,
+                    amount,
+                    change_index
+            );
+
+            Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
+            startActivity(_intent);
+
+        });
+        builder.setNegativeButton(R.string.no, (dialog, whichButton) -> SendActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 //                            btSend.setActivated(true);
 //                            btSend.setClickable(true);
 //                                        dialog.dismiss();
-                    }
-                });
-
             }
-        });
+        }));
 
-        AlertDialog alert = builder.create();
-        alert.show();
+        builder.create().show();
 
     }
 
     private void ricochetSpend(boolean staggered) {
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(ricochetMessage)
                 .setCancelable(false)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
 
-                        dialog.dismiss();
+                    dialog.dismiss();
 
-                        if (staggered) {
+                    if (staggered) {
 
 //                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
 
-                            try {
-                                if (ricochetJsonObj.has("hops")) {
-                                    JSONArray hops = ricochetJsonObj.getJSONArray("hops");
-                                    if (hops.getJSONObject(0).has("nTimeLock")) {
+                        try {
+                            if (ricochetJsonObj.has("hops")) {
+                                JSONArray hops = ricochetJsonObj.getJSONArray("hops");
+                                if (hops.getJSONObject(0).has("nTimeLock")) {
 
-                                        JSONArray nLockTimeScript = new JSONArray();
-                                        for (int i = 0; i < hops.length(); i++) {
-                                            JSONObject hopObj = hops.getJSONObject(i);
-                                            int seq = i;
-                                            long locktime = hopObj.getLong("nTimeLock");
-                                            String hex = hopObj.getString("tx");
-                                            JSONObject scriptObj = new JSONObject();
-                                            scriptObj.put("hop", i);
-                                            scriptObj.put("nlocktime", locktime);
-                                            scriptObj.put("tx", hex);
-                                            nLockTimeScript.put(scriptObj);
-                                        }
+                                    JSONArray nLockTimeScript = new JSONArray();
+                                    for (int i = 0; i < hops.length(); i++) {
+                                        JSONObject hopObj = hops.getJSONObject(i);
+                                        int seq = i;
+                                        long locktime = hopObj.getLong("nTimeLock");
+                                        String hex = hopObj.getString("tx");
+                                        JSONObject scriptObj = new JSONObject();
+                                        scriptObj.put("hop", i);
+                                        scriptObj.put("nlocktime", locktime);
+                                        scriptObj.put("tx", hex);
+                                        nLockTimeScript.put(scriptObj);
+                                    }
 
-                                        JSONObject nLockTimeObj = new JSONObject();
-                                        nLockTimeObj.put("script", nLockTimeScript);
+                                    JSONObject nLockTimeObj = new JSONObject();
+                                    nLockTimeObj.put("script", nLockTimeScript);
 
 //                                        Log.d("SendActivity", "Ricochet nLockTime:" + nLockTimeObj.toString());
 
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                                                Looper.prepare();
+                                            Looper.prepare();
 
-                                                String url = WebUtil.getAPIUrl(SendActivity.this);
-                                                url += "pushtx/schedule";
-                                                try {
-                                                    String result = "";
-                                                    if (TorManager.INSTANCE.isRequired()) {
-                                                        result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj, null);
+                                            String url = WebUtil.getAPIUrl(SendActivity.this);
+                                            url += "pushtx/schedule";
+                                            try {
+                                                String result = "";
+                                                if (TorManager.INSTANCE.isRequired()) {
+                                                    result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj, null);
 
-                                                    } else {
-                                                        result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
+                                                } else {
+                                                    result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
 
-                                                    }
+                                                }
 //                                                    Log.d("SendActivity", "Ricochet staggered result:" + result);
-                                                    JSONObject resultObj = new JSONObject(result);
-                                                    if (resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok")) {
-                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_LONG).show();
-                                                        finish();
-                                                    } else {
-                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
-                                                        finish();
-                                                    }
-                                                } catch (Exception e) {
-                                                    Log.d("SendActivity", e.getMessage());
+                                                JSONObject resultObj = new JSONObject(result);
+                                                if (resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok")) {
+                                                    Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_LONG).show();
+                                                    finish();
+                                                } else {
                                                     Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
                                                     finish();
                                                 }
-
-                                                Looper.loop();
-
+                                            } catch (Exception e) {
+                                                Log.d("SendActivity", e.getMessage());
+                                                Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
+                                                finish();
                                             }
-                                        }).start();
 
-                                    }
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
+
                                 }
-                            } catch (JSONException je) {
-                                Log.d("SendActivity", je.getMessage());
                             }
-
-                        } else {
-                            RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
-
-                            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
-                            startActivityForResult(intent, RICOCHET);
+                        } catch (JSONException je) {
+                            Log.d("SendActivity", je.getMessage());
                         }
 
+                    } else {
+                        RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
+
+                        Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
+                        startActivityForResult(intent, RICOCHET);
                     }
 
                 }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -2040,7 +2028,7 @@ public class SendActivity extends SamouraiActivity {
         strDestinationBTCAddress = null;
         if (data.contains("https://bitpay.com")) {
 
-            AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+          MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.no_bitpay)
                     .setCancelable(false)
