@@ -141,12 +141,13 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Sycing payment code 2/15" />
+                tools:text="Syncing payment code 2/15" />
 
-            <ProgressBar
+            <com.google.android.material.progressindicator.ProgressIndicator
                 android:id="@+id/progressbar_payment_code_sync"
-                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
+                app:indicatorType="linear"
+                app:indicatorCornerRadius="8dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
