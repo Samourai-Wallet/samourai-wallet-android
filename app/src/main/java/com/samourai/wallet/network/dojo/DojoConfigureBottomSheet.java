@@ -105,7 +105,7 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
             dialog.dismiss();
             cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
             cameraFragmentBottomSheet.show(getActivity().getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
-            cameraFragmentBottomSheet.setQrCodeScanLisenter(this::connectToDojo);
+            cameraFragmentBottomSheet.setQrCodeScanListener(this::connectToDojo);
 
         });
         dialog.findViewById(R.id.dojo_paste_config).setVisibility(View.GONE);

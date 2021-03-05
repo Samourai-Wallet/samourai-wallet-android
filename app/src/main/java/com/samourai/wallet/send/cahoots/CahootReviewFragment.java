@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
 import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
@@ -50,7 +51,7 @@ public class CahootReviewFragment extends Fragment {
     private static final String TAG = "CahootReviewFragment";
     TextView toAddress, amountInBtc, amountInSats, feeInBtc, feeInSats, entropyBits;
     EntropyBar entropyBar;
-    Button sendBtn;
+    MaterialButton sendBtn;
     Group cahootsEntropyGroup, cahootsProgressGroup;
     private Cahoots payload;
     private Callable onBroadcast;

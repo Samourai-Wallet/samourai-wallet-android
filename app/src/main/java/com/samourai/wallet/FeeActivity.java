@@ -3,15 +3,20 @@ package com.samourai.wallet;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.Selection;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -42,7 +47,7 @@ public class FeeActivity extends SamouraiActivity {
     private final static int FEE_PRIORITY = 2;
     private int FEE_TYPE = FEE_LOW;
     private long feeLow, feeMed, feeHigh;
-    private TextView totalMinerFee, estBlockWait, totalFeeText, selectedFeeLayman, selectedFee;
+    private TextView totalMinerFee, estBlockWait, totalFeeText, selectedFeeLayman, selectedFee, satbText;
     int multiplier = 10000;
 
     private SeekBar feeSeekBar;
@@ -66,6 +71,7 @@ public class FeeActivity extends SamouraiActivity {
         selectedFeeLayman = findViewById(R.id.selected_fee_rate_in_layman);
         totalMinerFee.setVisibility(View.INVISIBLE);
         totalFeeText.setVisibility(View.INVISIBLE);
+        satbText = findViewById(R.id.sat_b);
 
         btOK = findViewById(R.id.ok);
         btOK.setOnClickListener(v -> {
@@ -134,10 +140,48 @@ public class FeeActivity extends SamouraiActivity {
 
         FeeUtil.getInstance().sanitizeFee();
 
-        selectedFee.setText((String.valueOf((int) feeMed).concat(" sats/b")));
+        selectedFee.setText((String.valueOf((int) feeMed)));
 
         // android slider starts at 0
         feeSeekBar.setProgress((int) feeMed - 1);
+        setFeeLabels();
+
+        View.OnClickListener inputFeeListener = v -> {
+            selectedFee.requestFocus();
+            selectedFee.setFocusableInTouchMode(true);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.showSoftInput(selectedFee, InputMethodManager.SHOW_FORCED);
+        };
+
+        selectedFeeLayman.setOnClickListener(inputFeeListener);
+        satbText.setOnClickListener(inputFeeListener);
+
+        selectedFee.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    int i = (int) ((Double.parseDouble(selectedFee.getText().toString())*multiplier) - multiplier);
+                    //feeSeekBar.setMax(feeHighSliderValue - multiplier);
+                    feeSeekBar.setProgress(i);
+                } catch(NumberFormatException nfe) {
+                    System.out.println("Could not parse " + nfe);
+                }
+                int position = selectedFee.length();
+                Editable etext = (Editable) selectedFee.getText();
+                Selection.setSelection(etext, position);
+            }
+        });
 
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -179,13 +223,14 @@ public class FeeActivity extends SamouraiActivity {
     }
 
     private void onSliderChange(int progress) {
-        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+        DecimalFormat decimalFormat = new DecimalFormat("##.##");
+        decimalFormat.setDecimalSeparatorAlwaysShown(false);
 
         // here we get progress value at 0 , so we need to add 1
 
         double value = ((double) progress + multiplier) / (double) multiplier;
 
-        selectedFee.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
+        selectedFee.setText(String.valueOf(decimalFormat.format(value)));
         if (value == 0.0) {
             value = 1.0;
         }

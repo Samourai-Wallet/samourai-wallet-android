@@ -1,8 +1,6 @@
 package com.samourai.wallet.home;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
@@ -405,9 +403,7 @@ public class BalanceActivity extends SamouraiActivity {
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
         }
-        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
-            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
-        }
+
         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
         } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
@@ -773,28 +769,28 @@ public class BalanceActivity extends SamouraiActivity {
 
             if (SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
                 if (HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
-                    doBackup();
-                }
-                else {
-
-                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-                    builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
-                    AlertDialog alert = builder.create();
-
-                    alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    if (!isFinishing()) {
-                        alert.show();
-                    }
-
+                    doBackup(HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase());
                 }
             }
             else {
-                Toast.makeText(BalanceActivity.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+                builder.setTitle(R.string.enter_backup_password);
+                View view = getLayoutInflater().inflate(R.layout.password_input_dialog_layout, null);
+                EditText password = view.findViewById(R.id.restore_dialog_password_edittext);
+                TextView message = view.findViewById(R.id.dialogMessage);
+                message.setText(R.string.backup_password);
+                builder.setPositiveButton(R.string.confirm,(dialog, which) -> {
+                    String pw = password.getText().toString();
+                    if (pw.length() >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length() <= AppUtil.MAX_BACKUP_PW_LENGTH) {
+                        doBackup(pw);
+                    }else{
+                        Toast.makeText(getApplicationContext(), R.string.password_error, Toast.LENGTH_SHORT).show();
+                    }
+                    dialog.dismiss() ;
+                });
+                builder.setNegativeButton(R.string.cancel,(dialog, which) -> dialog.dismiss());
+                builder.setView(view);
+                builder.show();
             }
 
         }
@@ -1038,7 +1034,7 @@ public class BalanceActivity extends SamouraiActivity {
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
@@ -1069,7 +1065,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
@@ -1240,9 +1236,8 @@ public class BalanceActivity extends SamouraiActivity {
 
     }
 
-    private void doBackup() {
+    private void doBackup(String passphrase) {
 
-        final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
 
         final String[] export_methods = new String[2];
         export_methods[0] = getString(R.string.export_to_clipboard);
