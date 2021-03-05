@@ -306,7 +306,7 @@ class TxDetailsActivity : SamouraiActivity() {
             minerFee!!.text = jsonObject.getString("fees") + " sats"
         }
         if (jsonObject.has("feerate")) {
-            minerFeeRate!!.text = jsonObject.getString("feerate") + " sats"
+            minerFeeRate!!.text = jsonObject.getString("vfeerate") + " sats"
         }
     }
 
