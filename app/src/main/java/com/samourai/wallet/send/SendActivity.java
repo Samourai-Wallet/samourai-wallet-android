@@ -35,6 +35,7 @@ import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
@@ -80,6 +81,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
@@ -152,7 +154,7 @@ public class SendActivity extends SamouraiActivity {
     private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
     private SwitchCompat cahootsSwitch;
-    private SeekBar feeSeekBar;
+    private Slider feeSeekBar;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
@@ -242,10 +244,8 @@ public class SendActivity extends SamouraiActivity {
         ricochetStaggeredOptionGroup = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option_group);
         tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
-        satbText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.sat_b);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
-        feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cohoots_options);
@@ -529,7 +529,7 @@ public class SendActivity extends SamouraiActivity {
         int feeMedSliderValue = (int) (feeMed * multiplier);
 
 
-        feeSeekBar.setMax(feeHighSliderValue - multiplier);
+        feeSeekBar.setValueTo(feeHighSliderValue - multiplier);
 
         if (feeLow == feeMed && feeMed == feeHigh) {
             feeLow = (long) ((double) feeMed * 0.85);
@@ -572,9 +572,9 @@ public class SendActivity extends SamouraiActivity {
 
         FeeUtil.getInstance().sanitizeFee();
 
-//        tvSelectedFeeRate.setText((String.valueOf((int) feeMed)));
+        tvSelectedFeeRate.setText((String.valueOf((int) feeMed)).concat(" sat/b"));
 
-        feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
+        feeSeekBar.setValue((feeMedSliderValue - multiplier) + 1);
         DecimalFormat decimalFormat = new DecimalFormat("##.##");
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
         setFeeLabels();
@@ -616,47 +616,39 @@ public class SendActivity extends SamouraiActivity {
 //            }
 //        });
 
-        feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        feeSeekBar.setLabelFormatter(i -> tvSelectedFeeRate.getText().toString());
 
-                double value = ((double) i + multiplier) / (double) multiplier;
+        feeSeekBar.addOnChangeListener((slider, i, fromUser) -> {
 
-//                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)));
-                if (value == 0.0) {
-                    value = 1.0;
+            double value = ((double) i + multiplier) / (double) multiplier;
+
+            if(selectedCahootsType != SelectCahootsType.type.NONE || SPEND_TYPE == SPEND_RICOCHET){
+                 tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value).concat(" sat/b")));
+            }
+            if (value == 0.0) {
+                value = 1.0;
+            }
+            double pct = 0.0;
+            int nbBlocks = 6;
+            if (value <= (double) feeLow) {
+                pct = ((double) feeLow / value);
+                nbBlocks = ((Double) Math.ceil(pct * 24.0)).intValue();
+            } else if (value >= (double) feeHigh) {
+                pct = ((double) feeHigh / value);
+                nbBlocks = ((Double) Math.ceil(pct * 2.0)).intValue();
+                if (nbBlocks < 1) {
+                    nbBlocks = 1;
                 }
-                double pct = 0.0;
-                int nbBlocks = 6;
-                if (value <= (double) feeLow) {
-                    pct = ((double) feeLow / value);
-                    nbBlocks = ((Double) Math.ceil(pct * 24.0)).intValue();
-                } else if (value >= (double) feeHigh) {
-                    pct = ((double) feeHigh / value);
-                    nbBlocks = ((Double) Math.ceil(pct * 2.0)).intValue();
-                    if (nbBlocks < 1) {
-                        nbBlocks = 1;
-                    }
-                } else {
-                    pct = ((double) feeMed / value);
-                    nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
-                }
-                tvEstimatedBlockWait.setText(nbBlocks + " blocks");
-                setFee(value);
-                setFeeLabels();
-
-                restoreChangeIndexes();
+            } else {
+                pct = ((double) feeMed / value);
+                nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
             }
+            tvEstimatedBlockWait.setText(nbBlocks + " blocks");
+            setFee(value);
+            setFeeLabels();
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            restoreChangeIndexes();
 
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                restoreChangeIndexes();
-            }
         });
 
 
@@ -679,7 +671,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void setFeeLabels() {
-        float sliderValue = (((float) feeSeekBar.getProgress()) / feeSeekBar.getMax());
+        float sliderValue = (((float) feeSeekBar.getValue()) / feeSeekBar.getValueTo());
 
         float sliderInPercentage = sliderValue * 100;
 
@@ -1627,7 +1619,7 @@ public class SendActivity extends SamouraiActivity {
                 outPoints.addAll(u.getOutpoints());
             }
 
-            Log.i(TAG, "calculateTransactionSize: ".concat(String.valueOf(outPoints.size()))
+            LogUtil.info(TAG, "calculateTransactionSize: ".concat(String.valueOf(outPoints.size()))
                     .concat(":")
                     .concat(String.valueOf(receivers.size())));
 
@@ -2057,7 +2049,7 @@ public class SendActivity extends SamouraiActivity {
                 .subscribe((transaction, throwable) -> {
                     if (throwable == null && transaction != null) {
                         decimalFormatSatPerByte.setDecimalSeparatorAlwaysShown(false);
-                        tvSelectedFeeRate.setText(decimalFormatSatPerByte.format((_fee.doubleValue()) / transaction.getVirtualTransactionSize()));
+                        tvSelectedFeeRate.setText(decimalFormatSatPerByte.format((_fee.doubleValue()) / transaction.getVirtualTransactionSize()).concat(" sat/b"));
                     }else{
                         tvSelectedFeeRate.setText("_");
                     }

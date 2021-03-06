@@ -30,16 +30,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SeekBar
+    <com.google.android.material.slider.Slider
         android:id="@+id/fee_seekbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:progressDrawable="@drawable/seekbar_green_bg"
-        android:splitTrack="false"
-        android:thumb="@drawable/seekbar_green_thumb"
+        app:thumbColor="@color/green_ui_2"
+        app:trackColorActive="@color/green_ui_2"
+        app:trackColorInactive="#1EFFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/total_miner_fee_group"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +74,7 @@
 
             <EditText
                 android:id="@+id/selected_fee_rate"
-                android:layout_width="40dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:digits="0,1,2,3,4,5,6,7,8,9,."
@@ -86,19 +86,8 @@
                 android:singleLine="true"
                 android:textAlignment="textEnd"
                 android:textSize="12sp"
-                android:translationX="10dp" />
+                />
 
-            <TextView
-                android:id="@+id/sat_b"
-                android:layout_width="45dp"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:gravity="end"
-                android:onClick="onClick"
-                android:text=" sat/b"
-                android:textAlignment="textEnd"
-                android:textSize="12sp"
-                android:translationX="5sp" />
         </LinearLayout>
     </LinearLayout>
 
