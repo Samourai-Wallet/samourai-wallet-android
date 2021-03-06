@@ -114,10 +114,7 @@
             android:label="@string/app_name"
             android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
-        <activity
-            android:name=".FeeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+
         <activity
             android:name=".settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -159,9 +156,6 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity
-            android:name=".ExodusActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PayNymCalcActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

@@ -326,7 +326,6 @@ public class SendActivity extends SamouraiActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(t -> {
-                        Log.i(TAG, "Fees : ".concat(t.toString()));
                         setUpFee();
                     }, Throwable::printStackTrace);
 
@@ -1576,7 +1575,6 @@ public class SendActivity extends SamouraiActivity {
             return false;
         }
 
-//         do spend here
         if (selectedUTXO.size() > 0) {
 
             // estimate fee for simple spend, already done if boltzmann
@@ -1618,10 +1616,6 @@ public class SendActivity extends SamouraiActivity {
             for (UTXO u : selectedUTXO) {
                 outPoints.addAll(u.getOutpoints());
             }
-
-            LogUtil.info(TAG, "calculateTransactionSize: ".concat(String.valueOf(outPoints.size()))
-                    .concat(":")
-                    .concat(String.valueOf(receivers.size())));
 
             Log.d("SendActivity", "spend type:" + SPEND_TYPE);
             Log.d("SendActivity", "amount:" + amount);
@@ -2329,7 +2323,6 @@ public class SendActivity extends SamouraiActivity {
         if (insufficientFunds) {
             Toast.makeText(this, getString(R.string.insufficient_funds), Toast.LENGTH_SHORT).show();
         }
-        Log.i(TAG, "validateSpend: ".concat(String.valueOf(isValid)).concat(" ").concat(String.valueOf(insufficientFunds)));
         if (!isValid || insufficientFunds) {
             enableReviewButton(false);
             return false;
