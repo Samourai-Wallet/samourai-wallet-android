@@ -1612,10 +1612,6 @@ public class SendActivity extends SamouraiActivity {
                     fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
                 }
             }
-            ArrayList<MyTransactionOutPoint> outPoints = new ArrayList<>();
-            for (UTXO u : selectedUTXO) {
-                outPoints.addAll(u.getOutpoints());
-            }
 
             Log.d("SendActivity", "spend type:" + SPEND_TYPE);
             Log.d("SendActivity", "amount:" + amount);
