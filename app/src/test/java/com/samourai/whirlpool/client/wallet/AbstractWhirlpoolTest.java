@@ -4,9 +4,7 @@ import android.content.Context;
 
 import com.samourai.stomp.client.AndroidStompClient;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.api.backend.MinerFeeTarget;
-import com.samourai.wallet.api.backend.beans.UnspentResponse;
+import com.samourai.wallet.api.backend.beans.UnspentOutput;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.wallet.client.indexHandler.MemoryIndexHandler;
@@ -30,7 +28,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import util.MockTorManager;
 
 public abstract class AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
@@ -40,9 +37,8 @@ public abstract class AbstractWhirlpoolTest {
     protected HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
     protected HD_WalletFactoryGeneric hdWalletFactoryGeneric;
     protected NetworkParameters networkParameters;
-    protected AndroidWhirlpoolWalletService whirlpoolWalletService = new AndroidWhirlpoolWalletService(context);
+    protected AndroidWhirlpoolWalletService whirlpoolWalletService = new AndroidWhirlpoolWalletService();
     protected WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
-    protected MockTorManager torManager = new MockTorManager();
 
     public void setUp(NetworkParameters networkParameters) throws Exception {
         this.networkParameters = networkParameters;
@@ -91,15 +87,15 @@ public abstract class AbstractWhirlpoolTest {
         return context;
     }
 
-    protected UnspentResponse.UnspentOutput newUnspentOutput(String hash, int index, long value) {
-        UnspentResponse.UnspentOutput spendFrom = new UnspentResponse.UnspentOutput();
+    protected UnspentOutput newUnspentOutput(String hash, int index, long value) {
+        UnspentOutput spendFrom = new UnspentOutput();
         spendFrom.tx_hash = hash;
         spendFrom.tx_output_n = index;
         spendFrom.value = value;
         spendFrom.script = "foo";
         spendFrom.addr = "foo";
         spendFrom.confirmations = 1234;
-        spendFrom.xpub = new UnspentResponse.UnspentOutput.Xpub();
+        spendFrom.xpub = new UnspentOutput.Xpub();
         spendFrom.xpub.path = "foo";
         return spendFrom;
     }

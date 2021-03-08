@@ -66,7 +66,7 @@ public class WhirlpoolNotificationService extends Service {
 
     private void listenService() {
         try {
-            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
             if (whirlpoolWallet == null) {
                 // whirlpool wallet not opened yet
                 return;
@@ -130,8 +130,8 @@ public class WhirlpoolNotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (Objects.requireNonNull(intent.getAction()).equals(WhirlpoolNotificationService.ACTION_START)) {
-            Disposable startDisposable = AndroidWhirlpoolWalletService.getInstance(getApplicationContext())
-                    .startService()
+            Disposable startDisposable = AndroidWhirlpoolWalletService.getInstance()
+                    .startService(getApplicationContext())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::listenService, er -> {
@@ -150,7 +150,7 @@ public class WhirlpoolNotificationService extends Service {
     private void stopWhirlPoolService() {
         compositeDisposable.clear();
 
-        AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).stop();
+        AndroidWhirlpoolWalletService.getInstance().stop();
         this.stopSelf();
     }
 
@@ -176,7 +176,7 @@ public class WhirlpoolNotificationService extends Service {
     }
 
     private void setMixState(NotificationCompat.Builder builder) {
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         if (whirlpoolWallet != null) {
             MixingState mixingState = whirlpoolWallet.getMixingState();
             builder.setContentTitle("Whirlpool online: ".concat(String.valueOf(mixingState.getNbMixing()))

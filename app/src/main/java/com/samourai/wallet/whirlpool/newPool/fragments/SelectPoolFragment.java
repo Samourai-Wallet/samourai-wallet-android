@@ -113,7 +113,7 @@ public class SelectPoolFragment extends Fragment {
 
         poolViewModels.clear();
         this.tx0Amount = NewPoolActivity.getCycleTotalAmount(coins);
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getContext()).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         if (whirlpoolWallet == null) {
             return;
         }

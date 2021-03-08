@@ -411,7 +411,7 @@ public class UTXODetailsActivity extends SamouraiActivity {
 
     private void sendUTXOtoWhirlpool() {
         // get mixable WhirlpoolUtxo when available
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         final WhirlpoolUtxo mixableUtxo = (whirlpoolWallet != null ? getWhirlpoolUtxoWhenMixable(whirlpoolWallet) : null);
 
         new MaterialAlertDialogBuilder(this)

@@ -11,8 +11,8 @@ import androidx.transition.AutoTransition
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import com.samourai.wallet.R
-import com.samourai.wallet.api.backend.beans.UnspentResponse.UnspentOutput
-import com.samourai.wallet.api.backend.beans.UnspentResponse.UnspentOutput.Xpub
+import com.samourai.wallet.api.backend.beans.UnspentOutput
+import com.samourai.wallet.api.backend.beans.UnspentOutput.Xpub
 import com.samourai.wallet.send.SendFactory
 import com.samourai.wallet.util.FormatsUtil
 import com.samourai.wallet.whirlpool.WhirlpoolTx0
@@ -36,6 +36,7 @@ class ReviewPoolFragment : Fragment() {
     private val account = 0
     private var tx0: WhirlpoolTx0? = null;
     private var tx0FeeTarget: Tx0FeeTarget? = null
+    private var mixFeeTarget: Tx0FeeTarget? = null
     private var pool: Pool? = null
     private var onLoading: (Boolean, Exception?) -> Unit = { _: Boolean, _: Exception? -> }
 
@@ -58,10 +59,11 @@ class ReviewPoolFragment : Fragment() {
         this.onLoading = listener
     }
 
-    fun setTx0(tx0: WhirlpoolTx0, tx0FeeTarget: Tx0FeeTarget?, pool: Pool?) {
+    fun setTx0(tx0: WhirlpoolTx0, tx0FeeTarget: Tx0FeeTarget?, mixFeeTarget: Tx0FeeTarget?, pool: Pool?) {
         this.pool = pool
         this.tx0 = tx0;
         this.tx0FeeTarget = tx0FeeTarget
+        this.mixFeeTarget = mixFeeTarget
         makeTxoPreview(tx0)
         minerFees.text = ""
         feePerUtxo.text = ""
@@ -77,7 +79,7 @@ class ReviewPoolFragment : Fragment() {
     private fun makeTxoPreview(tx0: WhirlpoolTx0) {
         showLoadingProgress(true)
         onLoading.invoke(true, null)
-        val whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(context).whirlpoolWalletOrNull
+        val whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().whirlpoolWalletOrNull
         val spendFroms: MutableCollection<UnspentOutputWithKey> = ArrayList()
         for (outPoint in tx0.outpoints) {
             val unspentOutput = UnspentOutput()
@@ -98,7 +100,7 @@ class ReviewPoolFragment : Fragment() {
             tx0Config.changeWallet = WhirlpoolAccount.DEPOSIT
             try {
                 val poolSelected: Pool = whirlpoolWallet.poolSupplier.findPoolById(pool?.poolId)
-                val tx0Preview = whirlpoolWallet.tx0Preview(poolSelected, spendFroms, tx0Config, tx0FeeTarget)
+                val tx0Preview = whirlpoolWallet.tx0Preview(poolSelected, spendFroms, tx0Config, tx0FeeTarget, mixFeeTarget)
                 withContext(Dispatchers.Main) {
                     showLoadingProgress(false)
                     setFees(tx0Preview);
@@ -127,8 +129,8 @@ class ReviewPoolFragment : Fragment() {
             TransitionManager.beginDelayedTransition(reviewLayout, Fade())
             val embeddedFees = tx0Preview.premixValue.minus(tx0!!.pool);
             val embeddedTotalFees =  (embeddedFees * it.nbPremix)
-            minerFees.text = getBTCDisplayAmount(it.minerFee);
-            val totalFees =embeddedTotalFees + tx0Preview.feeValue + tx0Preview.minerFee;
+            minerFees.text = getBTCDisplayAmount(it.tx0MinerFee);
+            val totalFees =embeddedTotalFees + tx0Preview.feeValue + tx0Preview.tx0MinerFee;
             poolTotalFees.text = getBTCDisplayAmount(totalFees);
             poolFees.text = getBTCDisplayAmount(tx0Preview.feeValue)
             if (it.feeDiscountPercent != 0) {
