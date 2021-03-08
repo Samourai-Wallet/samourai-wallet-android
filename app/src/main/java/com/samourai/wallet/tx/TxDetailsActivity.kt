@@ -18,6 +18,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.samourai.wallet.MainActivity2
 import com.samourai.wallet.R
 import com.samourai.wallet.SamouraiActivity
@@ -54,7 +56,7 @@ class TxDetailsActivity : SamouraiActivity() {
     private var txStatus: TextView? = null
     private var txId: TextView? = null
     private var txDate: TextView? = null
-    private var bottomButton: TextView? = null
+    private var bottomButton: MaterialButton? = null
     private var minerFee: TextView? = null
     private var minerFeeRate: TextView? = null
     private var tx: Tx? = null
@@ -63,6 +65,7 @@ class TxDetailsActivity : SamouraiActivity() {
     private var paynymDisplayName: String? = null
     private var rbfTask: RBFTask? = null
     private var progressBar: ProgressBar? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tx)
@@ -98,7 +101,7 @@ class TxDetailsActivity : SamouraiActivity() {
             }
         }
         txId?.setOnClickListener { view: View ->
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.txid_to_clipboard)
                     .setCancelable(false)
@@ -163,25 +166,23 @@ class TxDetailsActivity : SamouraiActivity() {
     private fun doBoosting() {
         val message = getString(R.string.options_unconfirmed_tx)
         if (isRBFPossible) {
-            val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+            val builder = MaterialAlertDialogBuilder(this)
             builder.setTitle(R.string.app_name)
             builder.setMessage(message)
             builder.setCancelable(true)
             builder.setPositiveButton(R.string.options_bump_fee) { dialog: DialogInterface?, whichButton: Int -> RBFBoost() }
             builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface, whichButton: Int -> dialog.dismiss() }
-            val alert = builder.create()
-            alert.show()
+            builder.create().show()
             return
         } else {
             if (isCPFPPossible) {
-                val builder = AlertDialog.Builder(this@TxDetailsActivity)
+                val builder = MaterialAlertDialogBuilder(this@TxDetailsActivity)
                 builder.setTitle(R.string.app_name)
                 builder.setMessage(message)
                 builder.setCancelable(true)
                 builder.setPositiveButton(R.string.options_bump_fee) { dialog: DialogInterface?, whichButton: Int -> CPFBoost() }
                 builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface, whichButton: Int -> dialog.dismiss() }
-                val alert = builder.create()
-                alert.show()
+                builder.create().show()
             }
         }
     }
@@ -193,7 +194,7 @@ class TxDetailsActivity : SamouraiActivity() {
             try {
                 val message = cpfp.checkCPFP()
                 withContext(Dispatchers.Main) {
-                    val dlg: AlertDialog.Builder = AlertDialog.Builder(this@TxDetailsActivity)
+                    val dlg: MaterialAlertDialogBuilder= MaterialAlertDialogBuilder(this@TxDetailsActivity)
                             .setTitle(R.string.app_name)
                             .setMessage(message)
                             .setCancelable(false)

@@ -3,21 +3,20 @@ package com.samourai.wallet.settings
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.widget.*
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -25,10 +24,6 @@ import androidx.transition.Transition
 import com.dm.zbar.android.scanner.ZBarConstants
 import com.dm.zbar.android.scanner.ZBarScannerActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.WriterException
-import com.google.zxing.client.android.Contents
-import com.google.zxing.client.android.encode.QRCodeEncoder
 import com.samourai.wallet.*
 import com.samourai.wallet.access.AccessFactory
 import com.samourai.wallet.cahoots.psbt.PSBTUtil
@@ -45,7 +40,6 @@ import com.samourai.wallet.send.RBFUtil
 import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.util.*
 import com.samourai.wallet.whirlpool.WhirlpoolMeta
-import com.samourai.wallet.util.QRBottomSheetDialog
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount
@@ -909,6 +903,15 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
 
     private fun doWhirlpoolGUIPairing() {
+
+        fun showQR(pairingObj: JSONObject) {
+            val dialog = QRBottomSheetDialog(
+                    qrData = pairingObj.toString(),
+                    getString(R.string.whirlpool_paring), clipboardLabel = getString(R.string.whirlpool_paring)
+            );
+            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+        }
+
         val pairingObj = JSONObject()
         val jsonObj = JSONObject()
         val dojoObj = JSONObject()
@@ -926,23 +929,51 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             jsonObj.put("version", "3.0.0")
             jsonObj.put("network", if (SamouraiWallet.getInstance().isTestNet) "testnet" else "mainnet")
             val mnemonic = HD_WalletFactory.getInstance(requireContext()).get().mnemonic
-            val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
-            jsonObj.put("mnemonic", encrypted)
             jsonObj.put("passphrase", true)
-            pairingObj.put("pairing", jsonObj)
-            if (dojoObj.has("url") && dojoObj.has("apikey")) {
-                val apiKey = dojoObj.getString("apikey")
-                val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase))
-                dojoObj.put("apikey", encryptedApiKey)
-                pairingObj.put("dojo", dojoObj)
-            }
-            val dialog = QRBottomSheetDialog(
-                    qrData = pairingObj.toString(),
-                    "Whirlpool Paring", clipboardLabel = "Whirlpool Paring"
-            );
-            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
+            if (SamouraiWallet.getInstance().hasPassphrase(requireContext())) {
+                val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+                jsonObj.put("mnemonic", encrypted)
+                pairingObj.put("pairing", jsonObj)
+                if (dojoObj.has("url") && dojoObj.has("apikey")) {
+                    val apiKey = dojoObj.getString("apikey")
+                    val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase))
+                    dojoObj.put("apikey", encryptedApiKey)
+                    pairingObj.put("dojo", dojoObj)
+                }
+                showQR(pairingObj)
+            } else {
 
-        }catch (Er:Exception){
+                val builder = MaterialAlertDialogBuilder(requireContext())
+                builder.setTitle(getString(R.string.enter_pairing_password))
+                val inflater = layoutInflater
+                val view = inflater.inflate(R.layout.password_input_dialog_layout, null)
+                val password = view.findViewById<EditText>(R.id.restore_dialog_password_edittext)
+                val message = view.findViewById<TextView>(R.id.dialogMessage)
+                message.setText(R.string.pairing_password)
+                builder.setPositiveButton(R.string.confirm) { dialog: DialogInterface, which: Int ->
+                    val pw = password.text.toString()
+                    if (pw.length >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length <= AppUtil.MAX_BACKUP_PW_LENGTH) {
+                        val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(pw), AESUtil.DefaultPBKDF2Iterations)
+                        jsonObj.put("mnemonic", encrypted)
+                        if (dojoObj.has("url") && dojoObj.has("apikey")) {
+                            val apiKey = dojoObj.getString("apikey")
+                            val encryptedApiKey = AESUtil.encrypt(apiKey, CharSequenceX(pw))
+                            dojoObj.put("apikey", encryptedApiKey)
+                            pairingObj.put("dojo", dojoObj)
+                        }
+                        pairingObj.put("pairing", jsonObj)
+                        showQR(pairingObj)
+                    }else{
+                        Toast.makeText(requireContext(), R.string.password_error, Toast.LENGTH_SHORT).show()
+                    }
+                    dialog.dismiss()
+                }
+                builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                builder.setView(view)
+                builder.show()
+            }
+
+        } catch (Er: Exception) {
 
         }
     }

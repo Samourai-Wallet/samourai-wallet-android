@@ -134,9 +134,9 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
                 sorobanType.text = "STONEWALLx2"
             }
 
-            message.text = "${paynym.text} wants you to send you Bitcoin using a ${sorobanType.text} CoinJoin"
+            message.text = "${paynym.text} wants to CAHOOT with you using a ${sorobanType.text} CoinJoin"
             if (this.type.isMinerFeeShared) {
-                sorobanFee.text = "Your pay half of the miner fee"
+                sorobanFee.text = "You pay half of the miner fee"
             } else {
                 sorobanFee.text = "None"
             }

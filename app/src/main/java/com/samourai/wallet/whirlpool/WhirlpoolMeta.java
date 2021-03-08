@@ -44,7 +44,7 @@ public class WhirlpoolMeta {
     }
 
     public long getMinimumPoolDenomination() {
-        return SamouraiWallet.getInstance().isTestNet() ? 100000L : 1000000L;
+        return 100000L;
     }
 
     public void setSCODE(String scode) {

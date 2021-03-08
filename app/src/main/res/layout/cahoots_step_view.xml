@@ -11,15 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cahoots_step_scan_qr_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:background="@drawable/border_button_rounded_transparent_shape"
             android:text="@string/launch_qr_scanner"
             android:textAllCaps="false"
             android:textColor="#2FC4D1"
+            app:strokeColor="@color/txt_grey"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            app:strokeWidth="1dp"
+            app:cornerRadius="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:layout_constraintEnd_toEndOf="@+id/textView65"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/textView65"
@@ -92,14 +97,19 @@
                 app:layout_constraintStart_toEndOf="@+id/textView40"
                 app:layout_constraintTop_toTopOf="@+id/textView40" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cahoots_step_show_qr_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:background="@drawable/border_button_rounded_transparent_shape"
             android:text="@string/show_qr_code"
             android:textAllCaps="true"
+            app:strokeColor="@color/txt_grey"
+            app:strokeWidth="1dp"
+            app:cornerRadius="8dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:textColor="@color/green_ui_2"
             app:layout_constraintEnd_toEndOf="@+id/textView65"
             app:layout_constraintStart_toStartOf="@+id/textView65"
@@ -124,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
-            android:text="Have your mixing partner scan the QR to start."
+            android:text="@string/have_your_mixing_partner"
             android:textColor="#FFbab9b9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/cahoots_step_text"

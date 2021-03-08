@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -58,6 +59,7 @@ public class PayNymCalcActivity extends SamouraiActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
+
                 //final int DRAWABLE_LEFT = 0;
                 //final int DRAWABLE_TOP = 1;
                 final int DRAWABLE_RIGHT = 2;
@@ -107,6 +109,10 @@ public class PayNymCalcActivity extends SamouraiActivity {
             public void onClick(View v) {
 
                 String strPayNym = edPayNym.getText().toString();
+                if(strPayNym.isEmpty()){
+                    Toast.makeText(getApplicationContext(), R.string.invalid_index, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String strIndex = edIndex.getText().toString();
 
                 PaymentCode pcode = new PaymentCode(strPayNym);

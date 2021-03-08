@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -34,6 +34,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
@@ -43,7 +44,6 @@ import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.http.client.IHttpClient;
-import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
@@ -70,9 +70,9 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
+import com.samourai.wallet.send.batch.BatchSpendActivity;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
-import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.send.soroban.meeting.SorobanMeetingSendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -144,7 +144,7 @@ public class SendActivity extends SamouraiActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice, satbText;
     private MaterialButton btnReview, btnSend;
     private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
@@ -238,6 +238,7 @@ public class SendActivity extends SamouraiActivity {
         ricochetStaggeredOptionGroup = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option_group);
         tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
+        satbText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.sat_b);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
@@ -336,7 +337,7 @@ public class SendActivity extends SamouraiActivity {
         }
 
 
-    }
+    } 
 
 
     private void setUpCahoots() {
@@ -567,18 +568,57 @@ public class SendActivity extends SamouraiActivity {
 
         FeeUtil.getInstance().sanitizeFee();
 
-        tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
+        tvSelectedFeeRate.setText((String.valueOf((int) feeMed)));
 
         feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
-        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+        DecimalFormat decimalFormat = new DecimalFormat("##.##");
+        decimalFormat.setDecimalSeparatorAlwaysShown(false);
         setFeeLabels();
+
+        View.OnClickListener inputFeeListener = v -> {
+            tvSelectedFeeRate.requestFocus();
+            tvSelectedFeeRate.setFocusableInTouchMode(true);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.showSoftInput(tvSelectedFeeRate, InputMethodManager.SHOW_FORCED);
+        };
+
+        tvSelectedFeeRateLayman.setOnClickListener(inputFeeListener);
+        satbText.setOnClickListener(inputFeeListener);
+
+        tvSelectedFeeRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    int i = (int) ((Double.parseDouble(tvSelectedFeeRate.getText().toString())*multiplier) - multiplier);
+                    //feeSeekBar.setMax(feeHighSliderValue - multiplier);
+                    feeSeekBar.setProgress(i);
+                } catch(NumberFormatException nfe) {
+                    System.out.println("Could not parse " + nfe);
+                }
+                int position = tvSelectedFeeRate.length();
+                Editable etext = (Editable) tvSelectedFeeRate.getText();
+                Selection.setSelection(etext, position);
+            }
+        });
+
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
                 double value = ((double) i + multiplier) / (double) multiplier;
 
-                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
+                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)));
                 if (value == 0.0) {
                     value = 1.0;
                 }
@@ -838,10 +878,11 @@ public class SendActivity extends SamouraiActivity {
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-//            bViaMenu = extras.getBoolean("via_menu", false);
             String strUri = extras.getString("uri");
             if (extras.containsKey("amount")) {
-                btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
+                DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+                format.setMaximumFractionDigits(8);
+                btcEditText.setText(format.format(getBtcValue(extras.getDouble("amount"))));
             }
 
             if (extras.getString("pcode") != null)
@@ -1063,7 +1104,7 @@ public class SendActivity extends SamouraiActivity {
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
                 warningMessage = R.string.postmix_full_spend;
             }
-            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+            MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                     .setTitle(R.string.app_name)
                     .setMessage(warningMessage)
                     .setCancelable(false)
@@ -1589,7 +1630,7 @@ public class SendActivity extends SamouraiActivity {
 
             if (change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE) {
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.change_is_dust)
                         .setCancelable(false)
@@ -1780,7 +1821,7 @@ public class SendActivity extends SamouraiActivity {
             compositeDisposables.add(disposable);
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(SendActivity.this);
         builder.setTitle(R.string.app_name);
         builder.setMessage(message);
         final CheckBox cbShowAgain;
@@ -1793,166 +1834,154 @@ public class SendActivity extends SamouraiActivity {
             cbShowAgain = null;
         }
         builder.setCancelable(false);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int whichButton) {
+        builder.setPositiveButton(R.string.yes, (dialog, whichButton) -> {
 
-                final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
-                for (UTXO u : selectedUTXO) {
-                    outPoints.addAll(u.getOutpoints());
-                }
-
-                // add change
-                if (_change > 0L) {
-                    if (SPEND_TYPE == SPEND_SIMPLE) {
-                        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
-                            String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        } else if (changeType == 84) {
-                            String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        } else if (changeType == 49) {
-                            String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        } else {
-                            String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
-                            receivers.put(change_address, BigInteger.valueOf(_change));
-                        }
-
-                    } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
-                        // do nothing, change addresses included
-                        ;
-                    } else {
-                        ;
-                    }
-                }
-
-                SendParams.getInstance().setParams(outPoints,
-                        receivers,
-                        strPCode,
-                        SPEND_TYPE,
-                        _change,
-                        changeType,
-                        account,
-                        address,
-                        strPrivacyWarning.length() > 0,
-                        cbShowAgain != null ? cbShowAgain.isChecked() : false,
-                        amount,
-                        change_index
-                );
-
-                Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
-                startActivity(_intent);
-
+            final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
+            for (UTXO u : selectedUTXO) {
+                outPoints.addAll(u.getOutpoints());
             }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int whichButton) {
 
-                SendActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+            // add change
+            if (_change > 0L) {
+                if (SPEND_TYPE == SPEND_SIMPLE) {
+                    if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                        String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    } else if (changeType == 84) {
+                        String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    } else if (changeType == 49) {
+                        String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    } else {
+                        String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                        receivers.put(change_address, BigInteger.valueOf(_change));
+                    }
+
+                } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
+                    // do nothing, change addresses included
+                    ;
+                } else {
+                    ;
+                }
+            }
+
+            SendParams.getInstance().setParams(outPoints,
+                    receivers,
+                    strPCode,
+                    SPEND_TYPE,
+                    _change,
+                    changeType,
+                    account,
+                    address,
+                    strPrivacyWarning.length() > 0,
+                    cbShowAgain != null ? cbShowAgain.isChecked() : false,
+                    amount,
+                    change_index
+            );
+
+            Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
+            startActivity(_intent);
+
+        });
+        builder.setNegativeButton(R.string.no, (dialog, whichButton) -> SendActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 //                            btSend.setActivated(true);
 //                            btSend.setClickable(true);
 //                                        dialog.dismiss();
-                    }
-                });
-
             }
-        });
+        }));
 
-        AlertDialog alert = builder.create();
-        alert.show();
+        builder.create().show();
 
     }
 
     private void ricochetSpend(boolean staggered) {
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(ricochetMessage)
                 .setCancelable(false)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
 
-                        dialog.dismiss();
+                    dialog.dismiss();
 
-                        if (staggered) {
+                    if (staggered) {
 
 //                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
 
-                            try {
-                                if (ricochetJsonObj.has("hops")) {
-                                    JSONArray hops = ricochetJsonObj.getJSONArray("hops");
-                                    if (hops.getJSONObject(0).has("nTimeLock")) {
+                        try {
+                            if (ricochetJsonObj.has("hops")) {
+                                JSONArray hops = ricochetJsonObj.getJSONArray("hops");
+                                if (hops.getJSONObject(0).has("nTimeLock")) {
 
-                                        JSONArray nLockTimeScript = new JSONArray();
-                                        for (int i = 0; i < hops.length(); i++) {
-                                            JSONObject hopObj = hops.getJSONObject(i);
-                                            int seq = i;
-                                            long locktime = hopObj.getLong("nTimeLock");
-                                            String hex = hopObj.getString("tx");
-                                            JSONObject scriptObj = new JSONObject();
-                                            scriptObj.put("hop", i);
-                                            scriptObj.put("nlocktime", locktime);
-                                            scriptObj.put("tx", hex);
-                                            nLockTimeScript.put(scriptObj);
-                                        }
+                                    JSONArray nLockTimeScript = new JSONArray();
+                                    for (int i = 0; i < hops.length(); i++) {
+                                        JSONObject hopObj = hops.getJSONObject(i);
+                                        int seq = i;
+                                        long locktime = hopObj.getLong("nTimeLock");
+                                        String hex = hopObj.getString("tx");
+                                        JSONObject scriptObj = new JSONObject();
+                                        scriptObj.put("hop", i);
+                                        scriptObj.put("nlocktime", locktime);
+                                        scriptObj.put("tx", hex);
+                                        nLockTimeScript.put(scriptObj);
+                                    }
 
-                                        JSONObject nLockTimeObj = new JSONObject();
-                                        nLockTimeObj.put("script", nLockTimeScript);
+                                    JSONObject nLockTimeObj = new JSONObject();
+                                    nLockTimeObj.put("script", nLockTimeScript);
 
 //                                        Log.d("SendActivity", "Ricochet nLockTime:" + nLockTimeObj.toString());
 
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                                                Looper.prepare();
+                                            Looper.prepare();
 
-                                                String url = WebUtil.getAPIUrl(SendActivity.this);
-                                                url += "pushtx/schedule";
-                                                try {
-                                                    String result = "";
-                                                    if (TorManager.INSTANCE.isRequired()) {
-                                                        result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj, null);
+                                            String url = WebUtil.getAPIUrl(SendActivity.this);
+                                            url += "pushtx/schedule";
+                                            try {
+                                                String result = "";
+                                                if (TorManager.INSTANCE.isRequired()) {
+                                                    result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj, null);
 
-                                                    } else {
-                                                        result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
+                                                } else {
+                                                    result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
 
-                                                    }
+                                                }
 //                                                    Log.d("SendActivity", "Ricochet staggered result:" + result);
-                                                    JSONObject resultObj = new JSONObject(result);
-                                                    if (resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok")) {
-                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_LONG).show();
-                                                        finish();
-                                                    } else {
-                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
-                                                        finish();
-                                                    }
-                                                } catch (Exception e) {
-                                                    Log.d("SendActivity", e.getMessage());
+                                                JSONObject resultObj = new JSONObject(result);
+                                                if (resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok")) {
+                                                    Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_LONG).show();
+                                                    finish();
+                                                } else {
                                                     Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
                                                     finish();
                                                 }
-
-                                                Looper.loop();
-
+                                            } catch (Exception e) {
+                                                Log.d("SendActivity", e.getMessage());
+                                                Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
+                                                finish();
                                             }
-                                        }).start();
 
-                                    }
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
+
                                 }
-                            } catch (JSONException je) {
-                                Log.d("SendActivity", je.getMessage());
                             }
-
-                        } else {
-                            RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
-
-                            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
-                            startActivityForResult(intent, RICOCHET);
+                        } catch (JSONException je) {
+                            Log.d("SendActivity", je.getMessage());
                         }
 
+                    } else {
+                        RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
+
+                        Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
+                        startActivityForResult(intent, RICOCHET);
                     }
 
                 }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -1999,7 +2028,7 @@ public class SendActivity extends SamouraiActivity {
         strDestinationBTCAddress = null;
         if (data.contains("https://bitpay.com")) {
 
-            AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+          MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.app_name)
                     .setMessage(R.string.no_bitpay)
                     .setCancelable(false)
@@ -2367,7 +2396,7 @@ public class SendActivity extends SamouraiActivity {
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
         cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+        cameraFragmentBottomSheet.setQrCodeScanListener(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             processScan(code);
         });
@@ -2387,7 +2416,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void doBatchSpend() {
-        Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
+        Intent intent = new Intent(SendActivity.this, BatchSpendActivity.class);
         startActivity(intent);
     }
 
@@ -2405,7 +2434,7 @@ public class SendActivity extends SamouraiActivity {
         message += "\n";
         message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+        MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(message)
                 .setCancelable(false)

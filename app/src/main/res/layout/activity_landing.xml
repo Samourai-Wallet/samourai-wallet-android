@@ -57,23 +57,22 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_create_new_wallet"
-        android:layout_width="376dp"
-        android:layout_height="60dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/border_button_shape"
-        android:drawableRight="@drawable/ic_navigate_next_white_24dp"
+        android:drawableEnd="@drawable/ic_navigate_next_white_24dp"
         android:paddingTop="18dp"
-        android:paddingRight="25dp"
         android:paddingBottom="18dp"
         android:text="@string/start_new_wallet"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/landing_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/landing_toolbar"
+        app:strokeColor="@color/txt_grey" />
 
 
     <FrameLayout
