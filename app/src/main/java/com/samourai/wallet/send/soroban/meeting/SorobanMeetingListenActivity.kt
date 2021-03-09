@@ -23,11 +23,9 @@ import com.samourai.wallet.bip47.rpc.PaymentCode
 import com.samourai.wallet.cahoots.AndroidSorobanCahootsService
 import com.samourai.wallet.cahoots.CahootsType
 import com.samourai.wallet.send.cahoots.SorobanCahootsActivity
-import com.samourai.wallet.tor.TorManager
 import com.samourai.wallet.util.AppUtil
 import com.samourai.wallet.util.PrefsUtil
 import com.squareup.picasso.Picasso
-import io.matthewnelson.topl_service.TorServiceController
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -49,20 +47,7 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
         loaderText = findViewById(R.id.loader_text)
         if (supportActionBar != null) supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         sorobanMeetingService = AndroidSorobanCahootsService.getInstance(applicationContext).sorobanMeetingService
-        if (TorManager.torState == TorManager.TorState.OFF || TorManager.torState == TorManager.TorState.WAITING) {
-            if(TorManager.torState == TorManager.TorState.OFF){
-                TorServiceController.startTor()
-                PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.ENABLE_TOR, true)
-            }
-            loaderText.text = "Initializing Tor..."
-            TorManager.getTorStateLiveData().observe(this, {
-                if (it == TorManager.TorState.ON) {
-                    startListen()
-                }
-            })
-        }else{
-            startListen()
-        }
+        startListen()
     }
 
     private fun startListen() {
