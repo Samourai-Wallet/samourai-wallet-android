@@ -29,6 +29,7 @@ import com.samourai.wallet.access.AccessFactory
 import com.samourai.wallet.cahoots.psbt.PSBTUtil
 import com.samourai.wallet.crypto.AESUtil
 import com.samourai.wallet.crypto.DecryptionException
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.hd.HD_WalletFactory
 import com.samourai.wallet.network.dojo.DojoUtil
 import com.samourai.wallet.payload.PayloadUtil
@@ -443,17 +444,6 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == SCAN_HEX_TX) {
-            if (data?.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
-                val strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT)
-                doBroadcastHex(strResult)
-            }
-        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_HEX_TX) {
-        } else {
-        }
-    }
-
     private fun getHDSeed(mnemonic: Boolean) {
         var seed: String? = null
         try {
@@ -639,9 +629,16 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     }
 
     private fun doScanHexTx() {
-        val intent = Intent(requireContext(), ZBarScannerActivity::class.java)
-        intent.putExtra(ZBarConstants.SCAN_MODES, intArrayOf(Symbol.QRCODE))
-        startActivityForResult(intent, SCAN_HEX_TX)
+
+        val cameraFragmentBottomSheet =  CameraFragmentBottomSheet()
+        cameraFragmentBottomSheet.show(requireActivity().supportFragmentManager, cameraFragmentBottomSheet.tag)
+
+        cameraFragmentBottomSheet.setQrCodeScanListener { code: String? ->
+            cameraFragmentBottomSheet.dismissAllowingStateLoss()
+            code?.let {
+                doBroadcastHex(it)
+            }
+        }
     }
 
     private fun doIndexes() {
