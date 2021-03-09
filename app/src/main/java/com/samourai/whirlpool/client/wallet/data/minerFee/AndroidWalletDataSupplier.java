@@ -37,6 +37,7 @@ public class AndroidWalletDataSupplier extends WalletDataSupplier {
         }
         JSONObject data = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletResponse();
         if (data == null) {
+            // should never happen
             throw new Exception("No walletResponse available");
         }
         return objectMapper.readValue(data.toString(), WalletResponse.class);

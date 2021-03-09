@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
@@ -135,7 +136,10 @@ public class WhirlpoolNotificationService extends Service {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::listenService, er -> {
+                        // start failed
                         Log.e(TAG, "onStartCommand: ".concat(er.getMessage()));
+                        Toast.makeText(getApplicationContext(), er.getMessage(), Toast.LENGTH_LONG).show();
+                        stopWhirlPoolService();
                     });
             compositeDisposable.add(startDisposable);
 

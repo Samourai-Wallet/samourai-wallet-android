@@ -22,6 +22,7 @@ import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.wallet.util.AppUtil;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -104,6 +105,12 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
 
                         }
                         case DISCONNECTED:
+                            statusText.setText("Disconnected");
+                            statusProgress.setProgressCompat(0,true);
+                            new Handler().postDelayed(() -> {
+                                // exit on Whirlpool start failure
+                                getActivity().onBackPressed();
+                            }, 1200);
                             break;
                         default:
 

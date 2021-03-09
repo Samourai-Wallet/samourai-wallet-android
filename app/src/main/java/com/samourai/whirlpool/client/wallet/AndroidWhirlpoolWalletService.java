@@ -22,6 +22,7 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.FormatsUtilGeneric;
 import com.samourai.wallet.util.oauth.OAuthManager;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.whirlpool.client.exception.NotifiableException;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.utils.MessageListener;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
@@ -79,6 +80,11 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     private WhirlpoolWallet getOrOpenWhirlpoolWallet(Context ctx) throws Exception {
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
+            // make sure utxos are loaded - we need it to initialize Whirlpool
+            if (getWhirlpoolWalletResponse() == null) {
+                throw new NotifiableException("Wallet is not synchronized yet, please retry later");
+            }
+
             WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx);
 
             // wallet closed => open WhirlpoolWallet
@@ -167,11 +173,17 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         if (source.hasObservers())
             source.onNext(ConnectionStates.STARTING);
         return Completable.fromCallable(() -> {
-            this.getOrOpenWhirlpoolWallet(ctx).start();
-            if (source.hasObservers()) {
-                source.onNext(ConnectionStates.CONNECTED);
+            try {
+                this.getOrOpenWhirlpoolWallet(ctx).start();
+                if (source.hasObservers()) {
+                    source.onNext(ConnectionStates.CONNECTED);
+                }
+                return true;
+            } catch (Exception e) {
+                // start failed
+                stop();
+                throw e;
             }
-            return true;
         });
     }
 
