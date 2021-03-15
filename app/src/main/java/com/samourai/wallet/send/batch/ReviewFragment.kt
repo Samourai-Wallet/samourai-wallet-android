@@ -2,6 +2,7 @@ package com.samourai.wallet.send.batch;
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -106,14 +107,14 @@ class ReviewFragment : Fragment() {
         //        tvEstimatedBlockWait.setText("6 blocks");
         tvSelectedFeeRateLayman.text = getString(R.string.normal)
         FeeUtil.getInstance().sanitizeFee()
-        tvSelectedFeeRate.text = ("${feeMed} sats/b")
+        tvSelectedFeeRate.text = ("${feeMed}")
         feeSeekBar.progress = feeMedSliderValue - 10000 + 1
         val decimalFormat = DecimalFormat("##.00")
         setFeeLabels()
         feeSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 var value = (i.toDouble() + 10000) / 10000.toDouble()
-                tvSelectedFeeRate.text = decimalFormat.format(value).toString() + " sats/b"
+                tvSelectedFeeRate.text = decimalFormat.format(value).toString()
                 if (value == 0.0) {
                     value = 1.0
                 }
@@ -157,7 +158,7 @@ class ReviewFragment : Fragment() {
                 FeeUtil.getInstance().sanitizeFee()
             }
         }
-        setFee((feeMedSliderValue - 10000 + 1).toDouble())
+        setFee(((feeMedSliderValue-10000) /10000).toDouble())
     }
 
     private fun setFeeLabels() {
