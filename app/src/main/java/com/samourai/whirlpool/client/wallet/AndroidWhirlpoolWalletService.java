@@ -10,6 +10,7 @@ import com.samourai.http.client.IHttpClient;
 import com.samourai.http.client.IHttpClientService;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.stomp.client.IStompClientService;
+import com.samourai.tor.client.TorClientService;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.backend.BackendApi;
@@ -134,6 +135,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(TorManager torManager, boolean testnet, boolean onion, String scode, IHttpClientService httpClientService, BackendApi backendApi) {
         IStompClientService stompClientService = new AndroidStompClientService(torManager);
+        TorClientService torClientService = new AndroidWhirlpoolTorService(torManager);
 
         WhirlpoolServer whirlpoolServer = testnet ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
         String serverUrl = whirlpoolServer.getServerUrl(onion);
@@ -141,7 +143,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         NetworkParameters params = whirlpoolServer.getParams();
         WhirlpoolWalletConfig whirlpoolWalletConfig =
                 new WhirlpoolWalletConfig(
-                        httpClientService, stompClientService, serverApi, params, true, backendApi);
+                        httpClientService, stompClientService, torClientService, serverApi, params, true, backendApi);
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
         whirlpoolWalletConfig.setAutoMix(true); // enable auto-mix
