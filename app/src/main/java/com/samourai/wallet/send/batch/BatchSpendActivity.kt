@@ -251,6 +251,10 @@ class BatchSpendActivity : SamouraiActivity() {
         if(!compositeDisposable.isDisposed){
             compositeDisposable.dispose()
         }
+        composeJob?.let {
+            if(it.isActive)
+                it.cancel()
+        }
         super.onDestroy()
     }
 
