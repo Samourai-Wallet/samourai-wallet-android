@@ -119,6 +119,7 @@ class ReviewFragment : Fragment() {
         //        tvEstimatedBlockWait.setText("6 blocks");
         tvSelectedFeeRateLayman.text = getString(R.string.normal)
         FeeUtil.getInstance().sanitizeFee()
+<<<<<<< HEAD
         tvSelectedFeeRate.text = ("${feeMed} sats/b")
         feeSeekBar.value = (feeMedSliderValue - 10000 + 1).toFloat()
         setFeeLabels()
@@ -137,6 +138,33 @@ class ReviewFragment : Fragment() {
                 nbBlocks = Math.ceil(pct * 2.0).toInt()
                 if (nbBlocks < 1) {
                     nbBlocks = 1
+=======
+        tvSelectedFeeRate.text = ("${feeMed}")
+        feeSeekBar.progress = feeMedSliderValue - 10000 + 1
+        val decimalFormat = DecimalFormat("##.00")
+        setFeeLabels()
+        feeSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                var value = (i.toDouble() + 10000) / 10000.toDouble()
+                tvSelectedFeeRate.text = decimalFormat.format(value).toString()
+                if (value == 0.0) {
+                    value = 1.0
+                }
+                var pct = 0.0
+                var nbBlocks = 6
+                if (value <= feeLow.toDouble()) {
+                    pct = feeLow.toDouble() / value
+                    nbBlocks = Math.ceil(pct * 24.0).toInt()
+                } else if (value >= feeHigh.toDouble()) {
+                    pct = feeHigh.toDouble() / value
+                    nbBlocks = Math.ceil(pct * 2.0).toInt()
+                    if (nbBlocks < 1) {
+                        nbBlocks = 1
+                    }
+                } else {
+                    pct = feeMed.toDouble() / value
+                    nbBlocks = Math.ceil(pct * 6.0).toInt()
+>>>>>>> 0.99.96f
                 }
             } else {
                 pct = feeMed.toDouble() / value
