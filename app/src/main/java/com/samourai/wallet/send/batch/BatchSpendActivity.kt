@@ -762,6 +762,11 @@ class BatchSpendActivity : SamouraiActivity() {
               LogUtil.debug("BatchSendActivity", "change output:$changeAmount")
               LogUtil.debug("BatchSendActivity", "change output:$change_address")
         }
+        else    {
+            reviewFragment.setTotalMinerFees(BigInteger.ZERO)
+            Toast.makeText(applicationContext, R.string.error_change_output, Toast.LENGTH_SHORT).show()
+            return
+        }
 
         tx = SendFactory.getInstance(applicationContext).makeTransaction(0, outpoints, receivers)
 
