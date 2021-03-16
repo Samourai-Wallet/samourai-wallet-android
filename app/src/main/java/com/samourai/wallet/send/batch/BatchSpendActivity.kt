@@ -622,16 +622,12 @@ class BatchSpendActivity : SamouraiActivity() {
         isInReviewMode = true
 
         reviewFragment.setOnFeeChangeListener {
-<<<<<<< HEAD
-            this.prepareSpend()
-=======
             composeJob =  viewModel.viewModelScope.launch(Dispatchers.Default) {
                 delay(300)
                 withContext(Dispatchers.Main){
-                    doSpend()
+                    prepareSpend()
                 }
             }
->>>>>>> 0.99.96f
         }
         reviewFragment.setOnClickListener {
             this.initiateSpend()
@@ -689,12 +685,8 @@ class BatchSpendActivity : SamouraiActivity() {
 
     }
 
-<<<<<<< HEAD
-    fun prepareSpend() {
-=======
     @Synchronized
-    fun doSpend() {
->>>>>>> 0.99.96f
+    fun prepareSpend() {
         //Resets current receivers,outpoints etc..
         this.reset()
         for (_data in viewModel.getBatchList()) {
