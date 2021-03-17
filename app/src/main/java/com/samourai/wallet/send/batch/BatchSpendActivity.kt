@@ -1,4 +1,4 @@
-package com.samourai.wallet.send.batch
+ package com.samourai.wallet.send.batch
 
 import android.annotation.SuppressLint
 import android.content.ClipboardManager
@@ -19,6 +19,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.*
 import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.google.common.base.Splitter
@@ -156,13 +158,9 @@ class BatchSpendActivity : SamouraiActivity() {
             }
         }
 
-        to_address_review.setOnClickListener {
-
-        }
         viewModel.getBatchListLive().observe(this, {
             to_address_review.text = "${it.size} Recipients"
             send_review_amount.text = "${FormatsUtil.getBTCDecimalFormat(viewModel.getBatchAmount())} BTC"
-
         })
 
         val disposable = APIFactory.getInstance(applicationContext)
@@ -205,7 +203,8 @@ class BatchSpendActivity : SamouraiActivity() {
         }
         val dAmount: Double = btcAmount
         val amountRounded = (dAmount * 1e8)
-        if (amountRounded > balance) {
+        val walletBalance =  viewModel.totalWalletBalance() ?: 0
+        if (amountRounded > walletBalance) {
             insufficientFunds = true
         }
 
@@ -630,6 +629,7 @@ class BatchSpendActivity : SamouraiActivity() {
             }
         }
         reviewFragment.setOnClickListener {
+            if(validate())
             this.initiateSpend()
         }
 
@@ -745,13 +745,17 @@ class BatchSpendActivity : SamouraiActivity() {
         }
         val outpointTypes = FeeUtil.getInstance().getOutpointCount(Vector(outpoints))
         fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.left, outpointTypes.middle, outpointTypes.right, receivers.size + 1)
-          LogUtil.debug("BatchSendActivity", "fee:" + fee.toLong())
-
-        if (amount + fee.toLong() > balance) {
+        val walletBalance =  viewModel.totalWalletBalance() ?: 0L
+        if (amount + fee.toLong() > walletBalance) {
             reviewFragment.setTotalMinerFees(BigInteger.ZERO)
-            Toast.makeText(applicationContext, R.string.insufficient_funds, Toast.LENGTH_SHORT).show()
+            Snackbar
+                    .make(appBarLayoutBatch.rootView,R.string.insufficient_funds, Snackbar.LENGTH_SHORT)
+                    .setAnchorView(reviewFragment.getSendButton())
+                    .show()
+            reviewFragment.enableSendButton(false)
             return
         }
+        reviewFragment.enableSendButton(true)
 
         val changeAmount: Long = totalValueSelected - (amount + fee.toLong())
         change_idx = 0

@@ -40,6 +40,10 @@ class BatchSpendViewModel() : ViewModel() {
         feeLivedata.postValue(fee)
     }
 
+    fun totalWalletBalance(): Long? {
+        return balance.value;
+    }
+
     //A livedata instance that returns balance
     //balance will be recalculated when batch list changed
     fun getBalance(): LiveData<Long> {
