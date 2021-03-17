@@ -70,8 +70,8 @@ public class RicochetMeta {
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
 
-    public final static BigInteger samouraiFeeAmountV1 = BigInteger.valueOf(200000L);
-    public final static BigInteger samouraiFeeAmountV2 = BigInteger.valueOf(200000L);
+    public final static BigInteger samouraiFeeAmountV1 = BigInteger.valueOf(100000L);
+    public final static BigInteger samouraiFeeAmountV2 = BigInteger.valueOf(100000L);
 
     public final static int defaultNbHops = 4;
 
@@ -378,7 +378,7 @@ public class RicochetMeta {
                 int _outgoingIdx = BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode);
 
                 for (int i = 0; i < 4; i++) {
-                    int val = random.nextInt(25000);
+                    int val = random.nextInt((int)(samouraiFeeAmountV2.longValue() / 8L));
                     int sign = random.nextInt(1);
                     if (sign == 0) {
                         val *= -1L;
