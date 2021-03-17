@@ -305,7 +305,7 @@
     <string name="ricochet_hopping">Отправлено через Ricochet на</string>
     <string name="ricochet_spend1">Отправлено через Ricochet на</string>
     <string name="ricochet_spend2">на общую сумму в</string>
-    <string name="ricochet_spend3">(включая вознаграждение Samourai в размере 0,002 BTC и комиссию майнерам)?</string>
+    <string name="ricochet_spend3">(включая вознаграждение Samourai в размере 0,001 BTC и комиссию майнерам)?</string>
 
     <string name="action_ricochet">Повторить Ricochet</string>
     <string name="action_empty_ricochet">Пустая Ricochet-очередь</string>

@@ -285,7 +285,7 @@
   <string name="ricochet_hopping">Ricochet yapılan:</string>
   <string name="ricochet_spend1">Harcanacak Ricochet</string>
   <string name="ricochet_spend2">toplam tutar</string>
-  <string name="ricochet_spend3">(Samourai ve madencilerin\' 0.002 BTC işlem masrafını içerir)?</string>
+  <string name="ricochet_spend3">(Samourai ve madencilerin\' 0.001 BTC işlem masrafını içerir)?</string>
 
   <string name="action_ricochet">Ricochet\'i tekrarla</string>
   <string name="action_empty_ricochet">Ricochet kuyruğunu boşalt</string>

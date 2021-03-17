@@ -299,7 +299,7 @@
     <string name="ricochet_hopping">Ricocheted do</string>
     <string name="ricochet_spend1">Ricochet minúť do</string>
     <string name="ricochet_spend2">pre celkovú sumu z</string>
-    <string name="ricochet_spend3">(zahrňuje 0.002 BTC poplatok pre Samourai a ťažiarom\' poplatky)?</string>
+    <string name="ricochet_spend3">(zahrňuje 0.001 BTC poplatok pre Samourai a ťažiarom\' poplatky)?</string>
 
     <string name="action_ricochet">Opakuj Ricochet</string>
     <string name="action_empty_ricochet">Prázdna Ricochet fronta</string>

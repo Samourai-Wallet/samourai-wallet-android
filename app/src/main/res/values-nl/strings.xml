@@ -285,7 +285,7 @@
     <string name="ricochet_hopping">Gericochet naar</string>
     <string name="ricochet_spend1">Ricochet-uitgave naar</string>
     <string name="ricochet_spend2">van in totaal</string>
-    <string name="ricochet_spend3">(inclusief 0,002 BTC aan transactiekosten voor Samourai en miners)?</string>
+    <string name="ricochet_spend3">(inclusief 0,001 BTC aan transactiekosten voor Samourai en miners)?</string>
 
     <string name="action_ricochet">Ricochet opnieuw spelen</string>
     <string name="action_empty_ricochet">Ricochet-wachtrij legen</string>

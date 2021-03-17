@@ -285,7 +285,7 @@
     <string name="ricochet_hopping">Ricochet továbbítva ide:</string>
     <string name="ricochet_spend1">Biztosan szeretnél Ricochet-küldeni a(z)</string>
     <string name="ricochet_spend2">címre, összesen</string>
-    <string name="ricochet_spend3">BTC-t? Ez tartalmaz 0.002 BTC-nyi fix díjat, ami fedezi a bányász díjakat, és a Samourai költségeit.</string>
+    <string name="ricochet_spend3">BTC-t? Ez tartalmaz 0.001 BTC-nyi fix díjat, ami fedezi a bányász díjakat, és a Samourai költségeit.</string>
 
     <string name="action_ricochet">Ricochet újraküldése</string>
     <string name="action_empty_ricochet">Ricochet sor kiürítése</string>

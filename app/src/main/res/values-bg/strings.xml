@@ -280,7 +280,7 @@
     <string name="ricochet_hopping">Рикоширано до</string>
     <string name="ricochet_spend1">Изпращане чрез Рикошет</string>
     <string name="ricochet_spend2">на общо количество от</string>
-    <string name="ricochet_spend3">(включва такса от 0.002 BTC към Самурай и копачите)?</string>
+    <string name="ricochet_spend3">(включва такса от 0.001 BTC към Самурай и копачите)?</string>
 
     <string name="action_ricochet">Повтаряне на Рикошет</string>
     <string name="action_empty_ricochet">Изпразни опашката за Рикошет</string>

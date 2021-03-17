@@ -286,7 +286,7 @@
     <string name="ricochet_hopping">Weitergeleited an</string>
     <string name="ricochet_spend1">Ricochet Zahlung an</string>
     <string name="ricochet_spend2">für einen Gesamtbetrag von</string>
-    <string name="ricochet_spend3">(beinhaltet 0.002 BTC Gebühren an Samourai und Miner) ausführen?</string>
+    <string name="ricochet_spend3">(beinhaltet 0.001 BTC Gebühren an Samourai und Miner) ausführen?</string>
 
     <string name="action_ricochet">Ricochet Wiederholen</string>
     <string name="action_empty_ricochet">Ricochet-Kette leeren</string>

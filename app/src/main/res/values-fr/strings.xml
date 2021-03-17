@@ -279,7 +279,7 @@
     <string name="ricochet_hopping">Envoyé avec Ricochet à</string>
     <string name="ricochet_spend1">Effectuer l\'envoi avec Ricochet à</string>
     <string name="ricochet_spend2">pour un total de</string>
-    <string name="ricochet_spend3">(inclure 0.002 BTC de frais dus à Samourai et aux mineurs) ?</string>
+    <string name="ricochet_spend3">(inclure 0.001 BTC de frais dus à Samourai et aux mineurs) ?</string>
 
     <string name="action_ricochet">Relancer Ricochet</string>
     <string name="action_empty_ricochet">Vider la file d\'attente Ricochet</string>

@@ -281,7 +281,7 @@
     <string name="ricochet_hopping">Ricocheted untuk</string>
     <string name="ricochet_spend1">Pengeluaran Ricochet untuk</string>
     <string name="ricochet_spend2">total jumlah untuk</string>
-    <string name="ricochet_spend3">(termasuk biaya 0.002 BTC untuk Samourai dan penambang\' biaya)?</string>
+    <string name="ricochet_spend3">(termasuk biaya 0.001 BTC untuk Samourai dan penambang\' biaya)?</string>
 
     <string name="action_ricochet">Ulangi Ricochet</string>
     <string name="action_empty_ricochet">Antrian Ricochet kosong</string>
