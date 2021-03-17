@@ -57,7 +57,7 @@ The fee is automatically paid by your wallet as part of the Connection transacti
 
 ### How much does Ricochet cost?
 
-Samourai Wallet charges 0.002 BTC + normal miner fees for every 4 hop Ricochet transaction.
+Samourai Wallet charges 0.001 BTC + normal miner fees for every 4 hop Ricochet transaction.
 
 The fee is automatically paid by your wallet as part of the Ricochet transaction. You will be asked to review and accept the total fee before confirming the send. 
 
