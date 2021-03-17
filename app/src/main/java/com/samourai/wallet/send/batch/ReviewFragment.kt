@@ -10,6 +10,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.button.MaterialButton
@@ -60,6 +61,21 @@ class ReviewFragment : Fragment() {
         tvTotalFee = view.findViewById(R.id.total_fee)
         sendButtonBatch?.setOnClickListener { onClickListener?.onClick(it) }
         setUpFee()
+    }
+
+    fun getSendButton(): MaterialButton? {
+        return sendButtonBatch;
+    }
+
+    fun enableSendButton(enable:Boolean){
+        if(isAdded){
+            sendButtonBatch?.isEnabled = enable
+            if(enable){
+                sendButtonBatch?.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.green_ui_2))
+            }else{
+                sendButtonBatch?.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.disabled_grey))
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

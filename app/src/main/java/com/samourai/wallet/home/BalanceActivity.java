@@ -49,6 +49,7 @@ import android.widget.Toast;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.ProgressIndicator;
+import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
@@ -680,6 +681,9 @@ public class BalanceActivity extends SamouraiActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
+        if (BuildConfig.FLAVOR.equals("staging") )
+            menu.findItem(R.id.action_mock_fees).setVisible(true);
+
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
@@ -721,6 +725,15 @@ public class BalanceActivity extends SamouraiActivity {
             this.finish();
             return super.onOptionsItemSelected(item);
         }
+
+        if(id == R.id.action_mock_fees){
+            SamouraiWallet.MOCK_FEE =  ! SamouraiWallet.MOCK_FEE;
+            refreshTx(false, true, false);
+            txSwipeLayout.setRefreshing(false);
+            showProgress();
+            return super.onOptionsItemSelected(item);
+        }
+
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_network_dashboard) {
             startActivity(new Intent(this, NetworkDashboard.class));

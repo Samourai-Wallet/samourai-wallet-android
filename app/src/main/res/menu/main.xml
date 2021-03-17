@@ -99,4 +99,12 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
 
+    <!--For Testing -->
+    <item
+        android:id="@+id/action_mock_fees"
+        android:orderInCategory="100"
+        android:visible="false"
+        android:title="Mock main-net fees"
+        app:showAsAction="never" />
+
 </menu>
