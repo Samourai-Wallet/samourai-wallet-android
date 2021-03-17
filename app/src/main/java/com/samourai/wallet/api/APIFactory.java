@@ -1494,6 +1494,15 @@ public class APIFactory {
             return;
         }
 
+        if(BuildConfig.FLAVOR.equals("staging") && SamouraiWallet.MOCK_FEE ){
+                payload = new JSONObject("{\n" +
+                        "\"2\": 101,\n" +
+                        "\"4\": 91,\n" +
+                        "\"6\": 62,\n" +
+                        "\"12\": 38,\n" +
+                        "\"24\": 38\n" +
+                        "}");
+        }
         if(payload.has("info")){
             if(payload.getJSONObject("info").has("fees")){
                 jsonObject =  payload.getJSONObject("info").getJSONObject("fees");

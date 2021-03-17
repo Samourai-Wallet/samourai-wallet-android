@@ -30,6 +30,8 @@ public class SamouraiWallet extends SamouraiWalletConst {
 
     private static SamouraiWallet instance = null;
 
+    public static boolean MOCK_FEE = false;
+
     private static int currentSelectedAccount = 0;
     private static boolean showTotalBalance = false;
 
