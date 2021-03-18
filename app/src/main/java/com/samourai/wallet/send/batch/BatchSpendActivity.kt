@@ -116,7 +116,9 @@ class BatchSpendActivity : SamouraiActivity() {
 
         btcEditText.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(8, 8))
 
-        setBalance()
+        listenBalance()
+
+        viewModel.setBalance(applicationContext,account)
 
         showCompose()
 
@@ -159,7 +161,7 @@ class BatchSpendActivity : SamouraiActivity() {
         }
 
         viewModel.getBatchListLive().observe(this, {
-            to_address_review.text = "${it.size} Recipients"
+            to_address_review.text = "${it.size} ${getString(R.string.recipients)}"
             send_review_amount.text = "${FormatsUtil.getBTCDecimalFormat(viewModel.getBatchAmount())} BTC"
         })
 
@@ -167,7 +169,9 @@ class BatchSpendActivity : SamouraiActivity() {
                 .walletBalanceObserver
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ setBalance() }) { obj: Throwable -> obj.printStackTrace() }
+                .subscribe({
+                    viewModel.setBalance(applicationContext,account)
+                }) { obj: Throwable -> obj.printStackTrace() }
         compositeDisposable.add(disposable)
     }
 
@@ -224,26 +228,14 @@ class BatchSpendActivity : SamouraiActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setBalance() {
+    private fun listenBalance() {
         viewModel.getBalance().observe(this, {
-            balance = it
-            totalBTC.text = "${FormatsUtil.getBTCDecimalFormat(it)} BTC"
-            batchCurrentAmount.text = getString(R.string.current_batch) + " (${FormatsUtil.getBTCDecimalFormat(viewModel.getBatchAmount())} BTC)"
-        })
-        try {
-            var balance = 0L
-            if (account == WhirlpoolConst.WHIRLPOOL_POSTMIX_ACCOUNT) {
-                balance = APIFactory.getInstance(applicationContext).xpubPostMixBalance
-            } else {
-                val tempBalance = APIFactory.getInstance(applicationContext).xpubAmounts[HD_WalletFactory.getInstance(this).get().getAccount(0).xpubstr()]
-                if (tempBalance != null && tempBalance != 0L) {
-                    balance = tempBalance
-                }
+            it?.let{
+                balance = it
+                totalBTC.text = "${FormatsUtil.getBTCDecimalFormat(it)} BTC"
+                batchCurrentAmount.text = getString(R.string.current_batch) + " (${FormatsUtil.getBTCDecimalFormat(viewModel.getBatchAmount())} BTC)"
             }
-            viewModel.setBalance(balance);
-        } catch (npe: NullPointerException) {
-            npe.printStackTrace()
-        }
+        })
     }
 
     override fun onDestroy() {

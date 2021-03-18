@@ -1,5 +1,6 @@
 package com.samourai.wallet.send.batch
 
+import android.content.Context
 import androidx.lifecycle.*
 import com.samourai.wallet.api.APIFactory
 import com.samourai.wallet.hd.HD_WalletFactory
@@ -44,13 +45,15 @@ class BatchSpendViewModel() : ViewModel() {
         return balance.value;
     }
 
-    //A livedata instance that returns balance
+    //A live-data instance that returns balance
     //balance will be recalculated when batch list changed
-    fun getBalance(): LiveData<Long> {
-        return MediatorLiveData<Long>().apply {
+    fun getBalance(): LiveData<Long?> {
+        return MediatorLiveData<Long?>().apply {
             fun update() {
-                val totalBatchAmount = getBatchAmount()
-                value = balance.value?.minus(totalBatchAmount)
+                try {
+                    val totalBatchAmount = getBatchAmount()
+                    value = balance.value?.minus(totalBatchAmount)
+                } catch (e: Exception) { }
             }
             addSource(batchList) { update() }
             addSource(balance) { update() }
@@ -84,7 +87,20 @@ class BatchSpendViewModel() : ViewModel() {
         batchList.postValue(list)
     }
 
-    fun setBalance(balance: Long) {
-        this.balance.postValue(balance)
+    fun setBalance(context:Context, account:Int) {
+        try {
+            var balance = 0L
+            if (account == WhirlpoolConst.WHIRLPOOL_POSTMIX_ACCOUNT) {
+                balance = APIFactory.getInstance(context).xpubPostMixBalance
+            } else {
+                val tempBalance = APIFactory.getInstance(context).xpubAmounts[HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr()]
+                if (tempBalance != null) {
+                    balance = tempBalance
+                }
+            }
+            this.balance.postValue(balance)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
