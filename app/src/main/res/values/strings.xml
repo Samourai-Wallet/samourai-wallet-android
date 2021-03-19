@@ -769,7 +769,7 @@
     <string name="privacy_addons">Privacy Addons</string>
     <string name="ricochet_">Ricochet</string>
     <string name="staggered_delivery">Staggered delivery</string>
-    <string name="for_extra_privacy_message">For extra privacy and analysis resistance, each hop will appear in mempool 1 block apart. Final delivery can take between 30 min and 2 hours.</string>
+    <string name="for_extra_privacy_message">For extra privacy and analysis resistance, each hop will appear in mempool 1 block apart.  Designed to be slow. Do not enable for urgent sends.</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
