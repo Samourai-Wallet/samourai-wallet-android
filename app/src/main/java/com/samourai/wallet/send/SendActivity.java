@@ -192,6 +192,7 @@ public class SendActivity extends SamouraiActivity {
     private int change_index;
     private String ricochetMessage;
     private JSONObject ricochetJsonObj = null;
+    private boolean stoneWallChecked = true;
 
     private int idxBIP44Internal = 0;
     private int idxBIP49Internal = 0;
@@ -319,6 +320,7 @@ public class SendActivity extends SamouraiActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(aLong -> setBalance(), Throwable::printStackTrace);
             compositeDisposables.add(disposable);
+
 
 
             // Update fee
@@ -456,6 +458,7 @@ public class SendActivity extends SamouraiActivity {
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
         if (compoundButton.isPressed()) {
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+            stoneWallChecked = checked;
             compoundButton.setChecked(checked);
             new Handler().postDelayed(this::prepareSpend, 100);
         }
@@ -1164,6 +1167,10 @@ public class SendActivity extends SamouraiActivity {
 
     synchronized private boolean prepareSpend() {
 
+        if(SPEND_TYPE == SPEND_SIMPLE && stoneWallChecked){
+            SPEND_TYPE = SPEND_BOLTZMANN;
+        }
+
         restoreChangeIndexes();
 
         double btc_amount = 0.0;
@@ -1278,7 +1285,6 @@ public class SendActivity extends SamouraiActivity {
                 SPEND_TYPE = SPEND_SIMPLE;
             }
         }
-
         // entire balance (can only be simple spend)
         else if (amount == balance) {
             // make sure we are using simple spend
@@ -1658,16 +1664,16 @@ public class SendActivity extends SamouraiActivity {
             } else {
                 strPrivacyWarning = "";
             }
+
+            if(SPEND_TYPE == SPEND_BOLTZMANN){
+                sendTransactionDetailsView.enableStonewall(canDoBoltzmann);
+                sendTransactionDetailsView.getStoneWallSwitch().setChecked(canDoBoltzmann);
+            }else{
+                sendTransactionDetailsView.enableStonewall(false);
+            }
+
             if (!canDoBoltzmann) {
                 restoreChangeIndexes();
-                sendTransactionDetailsView.getStoneWallSwitch().setOnClickListener(null);
-                sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(null);
-                sendTransactionDetailsView.getStoneWallSwitch().setEnabled(false);
-                sendTransactionDetailsView.getStoneWallSwitch().setChecked(false);
-                sendTransactionDetailsView.enableStonewall(false);
-                sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
-                sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
-
                 if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                     strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
                 }

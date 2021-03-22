@@ -122,6 +122,9 @@ public class SendTransactionDetailsView extends FrameLayout {
         for (int i = 0; i < stoneWallLayout.getChildCount(); i++) {
             stoneWallLayout.getChildAt(i).setAlpha(enable ? 1f : 0.6f);
         }
+        getStoneWallSwitch().setChecked(enable);
+        if (!enable)
+            this.setEntropyBarStoneWallX1(null);
     }
 
 
