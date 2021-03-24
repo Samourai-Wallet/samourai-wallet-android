@@ -798,7 +798,7 @@
         transactions and balances</string>
     <string name="enter_backup_password">Enter backup password</string>
     <string name="restore_backup">Restore backup</string>
-    <string name="whirlpool_paring">Whirlpool Paring</string>
+    <string name="whirlpool_pairing">Whirlpool Pairing</string>
     <string name="enter_pairing_password">Enter pairing password</string>
     <string name="add_to_batch">Add to batch</string>
     <string name="update_to_batch">Update batch</string>

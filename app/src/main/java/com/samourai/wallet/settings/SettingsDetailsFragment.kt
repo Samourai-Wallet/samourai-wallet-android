@@ -900,7 +900,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         fun showQR(pairingObj: JSONObject) {
             val dialog = QRBottomSheetDialog(
                     qrData = pairingObj.toString(),
-                    getString(R.string.whirlpool_paring), clipboardLabel = getString(R.string.whirlpool_paring)
+                    getString(R.string.whirlpool_pairing), clipboardLabel = getString(R.string.whirlpool_paring)
             );
             dialog.show(requireActivity().supportFragmentManager, dialog.tag)
         }
