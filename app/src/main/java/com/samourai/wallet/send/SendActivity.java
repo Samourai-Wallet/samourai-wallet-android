@@ -2360,6 +2360,9 @@ public class SendActivity extends SamouraiActivity {
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
         }
+        if(preselectedUTXOs!=null){
+            menu.findItem(R.id.action_batch).setVisible(false);
+        }
 
         if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
             MenuItem item = menu.findItem(R.id.action_send_menu_account);
