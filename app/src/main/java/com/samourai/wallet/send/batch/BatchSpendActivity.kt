@@ -1,4 +1,4 @@
- package com.samourai.wallet.send.batch
+package com.samourai.wallet.send.batch
 
 import android.annotation.SuppressLint
 import android.content.ClipboardManager
@@ -28,6 +28,7 @@ import com.samourai.wallet.R
 import com.samourai.wallet.SamouraiActivity
 import com.samourai.wallet.SamouraiWallet
 import com.samourai.wallet.TxAnimUIActivity
+import com.samourai.wallet.access.AccessFactory
 import com.samourai.wallet.api.APIFactory
 import com.samourai.wallet.bip47.BIP47Meta
 import com.samourai.wallet.bip47.BIP47Util
@@ -38,6 +39,7 @@ import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.fragments.PaynymSelectModalFragment
 import com.samourai.wallet.fragments.PaynymSelectModalFragment.Companion.newInstance
 import com.samourai.wallet.hd.HD_WalletFactory
+import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity
 import com.samourai.wallet.segwit.BIP84Util
 import com.samourai.wallet.segwit.SegwitAddress
@@ -178,6 +180,7 @@ class BatchSpendActivity : SamouraiActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.send_menu, menu)
         menu.findItem(R.id.action_batch).isVisible = false
+        menu.findItem(R.id.action_clear_batch).isVisible = true
         menu.findItem(R.id.action_ricochet).isVisible = false
         menu.findItem(R.id.action_empty_ricochet).isVisible = false
         this.menu = menu
@@ -241,6 +244,11 @@ class BatchSpendActivity : SamouraiActivity() {
     override fun onDestroy() {
         if(!compositeDisposable.isDisposed){
             compositeDisposable.dispose()
+        }
+        try {
+            PayloadUtil.getInstance(applicationContext)
+                    .saveWalletToJSON(CharSequenceX(AccessFactory.getInstance(applicationContext).guid + AccessFactory.getInstance(applicationContext).pin))
+        } catch (e: Exception) {
         }
         composeJob?.let {
             if(it.isActive)
@@ -364,6 +372,10 @@ class BatchSpendActivity : SamouraiActivity() {
         val id = item.itemId
         if (item.itemId == android.R.id.home) {
             onBackPressed()
+            return true
+        }
+        if (item.itemId == R.id.action_clear_batch) {
+            viewModel.clearBatch()
             return true
         }
         if (item.itemId == R.id.select_paynym) {
@@ -621,7 +633,6 @@ class BatchSpendActivity : SamouraiActivity() {
             }
         }
         reviewFragment.setOnClickListener {
-            if(validate())
             this.initiateSpend()
         }
 
@@ -711,7 +722,7 @@ class BatchSpendActivity : SamouraiActivity() {
         var totalSelected = 0
 
         for (utxo in utxos) {
-              LogUtil.debug("BatchSendActivity", "utxo value:" + utxo.value)
+            LogUtil.debug("BatchSendActivity", "utxo value:" + utxo.value)
             selectedUTXO.add(utxo)
             totalValueSelected += utxo.value
             totalSelected += utxo.outpoints.size

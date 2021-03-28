@@ -24,6 +24,13 @@
         android:showAsAction="never"
         />
 
+    <item android:id="@+id/action_clear_batch"
+        android:title="@string/clear_batch_list"
+        android:orderInCategory="100"
+        android:visible="false"
+        android:showAsAction="never"
+        />
+
     <item android:id="@+id/action_utxo"
         android:title="@string/options_utxo"
         android:orderInCategory="100"

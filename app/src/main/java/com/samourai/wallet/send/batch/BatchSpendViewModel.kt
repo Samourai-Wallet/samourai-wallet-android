@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.samourai.wallet.api.APIFactory
 import com.samourai.wallet.hd.HD_WalletFactory
+import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.util.BatchSendUtil
 import com.samourai.wallet.util.FeeUtil
 import com.samourai.wallet.whirlpool.WhirlpoolConst
@@ -78,6 +79,7 @@ class BatchSpendViewModel() : ViewModel() {
         list.sortByDescending { it.UUID }
         list.let {
             batchList.postValue(list)
+            BatchSendUtil.getInstance().sends.addAll(list)
         }
     }
 
@@ -85,6 +87,8 @@ class BatchSpendViewModel() : ViewModel() {
         val list = ArrayList<BatchSendUtil.BatchSend>().apply { batchList.value?.let { addAll(it) } }
         list.remove(it)
         batchList.postValue(list)
+        BatchSendUtil.getInstance().sends.clear()
+        BatchSendUtil.getInstance().sends.addAll(list)
     }
 
     fun setBalance(context:Context, account:Int) {
@@ -102,5 +106,10 @@ class BatchSpendViewModel() : ViewModel() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun clearBatch() {
+        batchList.postValue(arrayListOf())
+        BatchSendUtil.getInstance().sends.clear()
     }
 }
