@@ -808,5 +808,6 @@
     <string name="broadcasting_transaction">Broadcasting Transaction</string>
     <string name="recipients">Recipients</string>
     <string name="clear_batch_list">Clear batch list</string>
+    <string name="confirm_batch_list_clear">Are you sure want to clear batch list?</string>
 
 </resources>

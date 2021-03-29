@@ -1,6 +1,7 @@
 package com.samourai.wallet.send.batch
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.samourai.wallet.api.APIFactory
 import com.samourai.wallet.hd.HD_WalletFactory
@@ -79,6 +80,7 @@ class BatchSpendViewModel() : ViewModel() {
         list.sortByDescending { it.UUID }
         list.let {
             batchList.postValue(list)
+            BatchSendUtil.getInstance().sends.clear()
             BatchSendUtil.getInstance().sends.addAll(list)
         }
     }

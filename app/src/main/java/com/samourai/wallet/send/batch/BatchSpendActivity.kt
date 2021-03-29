@@ -375,7 +375,11 @@ class BatchSpendActivity : SamouraiActivity() {
             return true
         }
         if (item.itemId == R.id.action_clear_batch) {
-            viewModel.clearBatch()
+         MaterialAlertDialogBuilder(this)
+                  .setMessage(getString(R.string.confirm_batch_list_clear))
+                  .setPositiveButton(R.string.ok) { _, _ ->
+                          viewModel.clearBatch()
+                  }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }.show()
             return true
         }
         if (item.itemId == R.id.select_paynym) {
