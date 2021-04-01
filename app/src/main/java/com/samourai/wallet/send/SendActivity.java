@@ -1998,7 +1998,8 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void backToTransactionView() {
-        SPEND_TYPE = SPEND_BOLTZMANN;
+        if (SPEND_TYPE == SPEND_SIMPLE)
+            SPEND_TYPE = SPEND_BOLTZMANN;
         //Revert to default
         selectedUTXO = new ArrayList<>();
         receivers = new HashMap<>();
