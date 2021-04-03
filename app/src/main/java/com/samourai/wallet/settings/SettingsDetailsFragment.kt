@@ -712,14 +712,14 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
         val utxo = whirlpoolUtxo.utxo
         builder.append("[").append(utxo.tx_hash).append(":").append(utxo.tx_output_n).append("] ").append(utxo.value.toString() + "sats").append(", ").append(utxo.confirmations).append("confs")
         builder.append(", ").append(if (whirlpoolUtxo.poolId != null) whirlpoolUtxo.poolId else "no pool")
-        builder.append(", ").append(whirlpoolUtxo.mixsDone.toString() + "/" + whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT)).append(" mixed")
+        builder.append(", ").append(whirlpoolUtxo.mixsDone.toString()).append(" mixed")
         builder.append(", ").append(whirlpoolUtxo.account).append(", ").append(whirlpoolUtxo.utxo.path)
         builder.append(", ").append(whirlpoolUtxo.utxoState)
         return builder.toString()
     }
 
     private fun doWhirlpoolState() {
-        val whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance(requireContext().applicationContext)
+        val whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance()
         val whirlpoolWallet = whirlpoolWalletService.whirlpoolWalletOrNull
         val builder = StringBuilder()
 
@@ -751,6 +751,10 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
     """.trimIndent())
                 }
             }
+
+            // wallet state
+            builder.append("WALLET STATE\n");
+            builder.append(whirlpoolWallet.walletSupplier.walletStateSupplier.value.toString()+"\n")
 
             // premix
             builder.append("\n")

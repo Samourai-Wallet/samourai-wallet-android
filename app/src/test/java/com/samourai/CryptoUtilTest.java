@@ -2,6 +2,7 @@ package com.samourai;
 
 import com.samourai.wallet.crypto.CryptoUtil;
 import com.samourai.wallet.crypto.impl.ECDHKeySet;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import org.bitcoinj.core.ECKey;
 import org.junit.Assert;
@@ -11,7 +12,7 @@ import java.security.Security;
 
 
 public class CryptoUtilTest {
-  private CryptoUtil cryptoUtil = CryptoUtil.getInstance("SC");
+  private CryptoUtil cryptoUtil = CryptoUtil.getInstance(new BouncyCastleProvider());
   static {
     Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
   }

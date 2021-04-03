@@ -68,7 +68,7 @@ public class WhirlpoolUtils {
 
     public Collection<String> getWhirlpoolTags(UTXOCoin item, Context ctx ) {
         List<String> tags = new LinkedList<>();
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(ctx).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         if (whirlpoolWallet != null) {
             WhirlpoolUtxo whirlpoolUtxo = whirlpoolWallet.getUtxoSupplier().findUtxo(item.hash, item.idx);
 
@@ -85,7 +85,7 @@ public class WhirlpoolUtils {
                 // tag only premix & postmix utxos
                 if (WhirlpoolAccount.PREMIX.equals(whirlpoolUtxo.getAccount()) || WhirlpoolAccount.POSTMIX.equals(whirlpoolUtxo.getAccount())) {
                     // show whirlpool tag
-                    tags.add(whirlpoolUtxo.getMixsDone() + "/" + whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT) + " MIXED");
+                    tags.add(whirlpoolUtxo.getMixsDone() + " MIXED");
 
                     // show reason when not mixable
                     MixableStatus mixableStatus = whirlpoolUtxo.getUtxoState().getMixableStatus();
