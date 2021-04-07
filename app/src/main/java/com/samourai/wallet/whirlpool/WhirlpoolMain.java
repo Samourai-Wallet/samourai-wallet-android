@@ -126,7 +126,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         whirlpoolBalance.setText(getBTCDecimalFormat(postMixBalance + preMixBalance).concat(" BTC"));
         startWhirlpool();
 
-        Disposable disposable = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).listenConnectionStatus()
+        Disposable disposable = AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(connectionStates -> {
@@ -156,7 +156,7 @@ public class WhirlpoolMain extends AppCompatActivity {
     }
 
     private void loadMixes(boolean loadSilently) {
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         if (whirlpoolWallet == null) {
             return;
         }
@@ -248,7 +248,7 @@ public class WhirlpoolMain extends AppCompatActivity {
     }
 
     private void startWhirlpool() {
-        if (AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).listenConnectionStatus().getValue()
+        if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue()
                 == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED && WhirlpoolNotificationService.isRunning(getApplicationContext())) {
             validateIntentAndStartNewPool();
         } else {
@@ -336,7 +336,7 @@ public class WhirlpoolMain extends AppCompatActivity {
 
 
     private void listenPoolState() throws Exception {
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         if (whirlpoolWallet == null) {
             return;
         }
@@ -360,7 +360,7 @@ public class WhirlpoolMain extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEWPOOL_REQ_CODE && resultCode == Activity.RESULT_OK) {
-            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
             if (whirlpoolWallet == null) {
                 return;
             }
@@ -615,8 +615,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 // prefix with "Mix x/y - "
                 try {
                     int currentMix = whirlpoolUtxo.getMixsDone() + 1;
-                    int mixsTarget = whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
-                    String mixInfo = "Mix " + currentMix + "/" + mixsTarget + " - ";
+                    String mixInfo = "Mix " + currentMix + " - ";
                     holder.mixingProgress.setText(mixInfo + holder.mixingProgress.getText());
                 } catch (Exception ex) {
                     ex.printStackTrace();

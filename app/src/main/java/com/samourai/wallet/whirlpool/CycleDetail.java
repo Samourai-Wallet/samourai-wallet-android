@@ -96,7 +96,7 @@ public class CycleDetail extends AppCompatActivity {
     }
 
     private void setMixStatus() {
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
         if (whirlpoolWallet == null) {
             return;
         }
