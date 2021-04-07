@@ -125,6 +125,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
@@ -1145,6 +1146,7 @@ public class SendActivity extends SamouraiActivity {
             }
             amountViewSwitcher.showNext();
             hideKeyboard();
+            hideMenus(true);
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
         }
@@ -1155,6 +1157,11 @@ public class SendActivity extends SamouraiActivity {
         if (imm != null) {
             imm.hideSoftInputFromWindow(amountViewSwitcher.getWindowToken(), 0);
         }
+    }
+    private void hideMenus(boolean hide) {
+        Toolbar toolbar =  findViewById(R.id.toolbar_send);
+        toolbar.getMenu().findItem(R.id.action_scan_qr).setVisible(!hide);
+        toolbar.getMenu().findItem(R.id.select_paynym).setVisible(!hide);
     }
 
     @Override
@@ -2005,7 +2012,7 @@ public class SendActivity extends SamouraiActivity {
         receivers = new HashMap<>();
         amountViewSwitcher.showPrevious();
         sendTransactionDetailsView.showTransaction();
-
+        hideMenus(false);
     }
 
     private void calculateTransactionSize(BigInteger _fee) {
