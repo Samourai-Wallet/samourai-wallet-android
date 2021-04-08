@@ -128,9 +128,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static java.text.NumberFormat.Field.DECIMAL_SEPARATOR;
-import static org.bitcoinj.utils.BtcFixedFormat.REPEATING_PLACES;
-
 public class BalanceActivity extends SamouraiActivity {
 
     private final static int SCAN_COLD_STORAGE = 2011;

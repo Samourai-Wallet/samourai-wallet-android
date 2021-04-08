@@ -19,15 +19,18 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.utils.BtcFormat;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,8 +56,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     private int account = 0;
     private CompositeDisposable disposables = new CompositeDisposable();
     private OnClickListener listener;
-    private Boolean displaySatUnit = false;
-    private static int MAX_CONFIRM_COUNT = 3;
+    private static final int MAX_CONFIRM_COUNT = 3;
 
     public interface OnClickListener {
         void onClick(int position, Tx tx);
@@ -137,13 +139,13 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.out_going_tx_whtie_arrow));
 
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-                holder.tvAmount.setText("-".concat(is_sat_prefs ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC")));
+                holder.tvAmount.setText("-".concat(is_sat_prefs ? FormatsUtil.formatSats(_amount) :FormatsUtil.formatBTC(_amount)));
 
             } else {
                 TransitionManager.beginDelayedTransition((ViewGroup) holder.tvAmount.getRootView(), new ChangeBounds());
 
                 holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.incoming_tx_green));
-                String amount = is_sat_prefs ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC");
+                String amount = is_sat_prefs ?  FormatsUtil.formatSats(_amount): FormatsUtil.formatBTC(_amount);
                 if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
                     amount = amount.concat(" (Remix)");
                 }
@@ -167,7 +169,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             fmt.setTimeZone(TimeZone.getDefault());
             Date date = new Date(tx.getTS());
             if (tx.getTS() == -1L) {
-                holder.tvSection.setText("  Pending");
+                holder.tvSection.setText("  ".concat(holder.itemView.getContext().getString(R.string.pending)));
             } else {
                 holder.tvSection.setText(fmt.format(date));
             }
@@ -184,11 +186,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     @Override
     public int getItemViewType(int position) {
         return txes.get(position).section != null ? VIEW_SECTION : VIEW_ITEM;
-    }
-
-    public void toggleDisplayUnit(Boolean showSat) {
-        this.displaySatUnit = showSat;
-        this.notifyDataSetChanged();
     }
 
     public void setTxes(List<Tx> txs) {
@@ -320,21 +317,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     }
 
-
-    private String getBTCDisplayAmount(long value) {
-        return Coin.valueOf(value).toPlainString();
-    }
-
-    private String getSatoshiDisplayAmount(long value) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(' ');
-        DecimalFormat df = new DecimalFormat("#", symbols);
-        df.setMinimumIntegerDigits(1);
-        df.setMaximumIntegerDigits(16);
-        df.setGroupingUsed(true);
-        df.setGroupingSize(3);
-        return df.format(value);
-    }
 
 
 }
