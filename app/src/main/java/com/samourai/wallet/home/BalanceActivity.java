@@ -90,8 +90,8 @@ import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
-import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
@@ -114,8 +114,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -129,6 +127,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static java.text.NumberFormat.Field.DECIMAL_SEPARATOR;
+import static org.bitcoinj.utils.BtcFixedFormat.REPEATING_PLACES;
 
 public class BalanceActivity extends SamouraiActivity {
 
@@ -547,7 +548,7 @@ public class BalanceActivity extends SamouraiActivity {
                 state = false;
             }
             setBalance(balanceViewModel.getBalance().getValue(), state);
-            adapter.toggleDisplayUnit(state);
+            adapter.notifyDataSetChanged();
         });
         balanceViewModel.getTxs().observe(this, new Observer<List<Tx>>() {
             @Override
@@ -576,19 +577,13 @@ public class BalanceActivity extends SamouraiActivity {
 
         if (getSupportActionBar() != null) {
             TransitionManager.beginDelayedTransition(mCollapsingToolbar, new ChangeBounds());
-
-            String displayAmount = "".concat(isSat ? getSatoshiDisplayAmount(balance) : getBTCDisplayAmount(balance));
-            String Unit = isSat ? getSatoshiDisplayUnits() : getBTCDisplayUnits();
-
-            displayAmount = displayAmount.concat(" ").concat(Unit);
+            String displayAmount = isSat ? FormatsUtil.formatSats(balance) : FormatsUtil.formatBTC(balance);
             toolbar.setTitle(displayAmount);
             setTitle(displayAmount);
             mCollapsingToolbar.setTitle(displayAmount);
-
         }
 
-
-        Log.i(TAG, "setBalance: ".concat(getBTCDisplayAmount(balance)));
+        LogUtil.info(TAG, "setBalance: ".concat(FormatsUtil.formatSats(balance)));
 
     }
 
@@ -1382,33 +1377,6 @@ public class BalanceActivity extends SamouraiActivity {
 //        } else {
 //            startService(intent);
 //        }
-
-    }
-
-    private String getBTCDisplayAmount(long value) {
-        return Coin.valueOf(value).toPlainString();
-    }
-
-    private String getSatoshiDisplayAmount(long value) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(' ');
-        DecimalFormat df = new DecimalFormat("#", symbols);
-        df.setMinimumIntegerDigits(1);
-        df.setMaximumIntegerDigits(16);
-        df.setGroupingUsed(true);
-        df.setGroupingSize(3);
-        return df.format(value);
-    }
-
-    private String getBTCDisplayUnits() {
-
-        return MonetaryUtil.getInstance().getBTCUnits();
-
-    }
-
-    private String getSatoshiDisplayUnits() {
-
-        return MonetaryUtil.getInstance().getSatoshiUnits();
 
     }
 
