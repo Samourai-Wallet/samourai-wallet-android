@@ -102,6 +102,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.script.Script;
+import org.bitcoinj.utils.BtcFormat;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -839,16 +840,11 @@ public class SendActivity extends SamouraiActivity {
 
 
         final String strAmount;
-        NumberFormat nf = NumberFormat.getInstance(Locale.US);
-        nf.setMaximumFractionDigits(8);
-        nf.setMinimumFractionDigits(1);
-        nf.setMinimumIntegerDigits(1);
-
-        strAmount = nf.format(balance / 1e8);
+        strAmount = FormatsUtil.formatBTC(balance);
 
         if (account == 0) {
             tvMaxAmount.setOnClickListener(view -> {
-                btcEditText.setText(strAmount);
+                btcEditText.setText(strAmount.replace("BTC","").trim());
             });
         }
         tvMaxAmount.setOnLongClickListener(view -> {
@@ -856,7 +852,7 @@ public class SendActivity extends SamouraiActivity {
             return true;
         });
 
-        tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
+        tvMaxAmount.setText(strAmount);
 
         if(!AppUtil.getInstance(getApplication()).isOfflineMode())
             if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
@@ -2156,13 +2152,8 @@ public class SendActivity extends SamouraiActivity {
                 }
             }
 
-            final String strAmount;
-            NumberFormat nf = NumberFormat.getInstance(Locale.US);
-            nf.setMinimumIntegerDigits(1);
-            nf.setMinimumFractionDigits(1);
-            nf.setMaximumFractionDigits(8);
-            strAmount = nf.format(balance / 1e8);
-            tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
+            final String strAmount = FormatsUtil.formatBTCWithoutUnit(balance);
+            tvMaxAmount.setText(strAmount);
 
             try {
                 if (amount != null && Double.parseDouble(amount) != 0.0) {
@@ -2205,11 +2196,6 @@ public class SendActivity extends SamouraiActivity {
         validateSpend();
     }
 
-    public String getDisplayUnits() {
-
-        return MonetaryUtil.getInstance().getBTCUnits();
-
-    }
 
     private void processPCode(String pcode, String meta) {
 

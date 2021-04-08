@@ -45,10 +45,14 @@ public class FormatsUtil extends FormatsUtilGeneric {
     }
 
     public static String formatBTC(Long sats) {
+        return  formatBTCWithoutUnit(sats).concat(" ").concat(MonetaryUtil.getInstance().getBTCUnits());
+    }
+
+    public static String formatBTCWithoutUnit(Long sats) {
         return   BtcFormat
                 .builder()
                 .fractionDigits(8)
-                .build().format(sats).concat(" ").concat(MonetaryUtil.getInstance().getBTCUnits());
+                .build().format(sats);
     }
 
 
