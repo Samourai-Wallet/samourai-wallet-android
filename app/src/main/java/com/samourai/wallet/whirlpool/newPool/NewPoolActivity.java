@@ -36,6 +36,7 @@ import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
@@ -113,7 +114,7 @@ public class NewPoolActivity extends AppCompatActivity {
         }
 
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
-        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(new ArrayList<UTXOCoin>())) / 1e8) + " BTC");
+        cycleTotalAmount.setText(FormatsUtil.formatBTC(0L));
 
         fees.add(FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L);
         fees.add(FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L);
@@ -245,7 +246,7 @@ public class NewPoolActivity extends AppCompatActivity {
         } else {
             long mediumFee = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
 
-            cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(coins)) / 1e8) + " BTC");
+            cycleTotalAmount.setText(FormatsUtil.formatBTC(getCycleTotalAmount(coins)));
             // default set to lowest pool
             calculateTx0(WhirlpoolMeta.getInstance(NewPoolActivity.this).getMinimumPoolDenomination(), mediumFee);
         }
@@ -435,7 +436,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
         String reviewMessage = getString(R.string.review_cycle_details).concat("\n");
         String reviewAmountMessage = getString(R.string.total_whirlpool_balance).concat(" ");
-        String amount = MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(coins)) / 1e8) + " BTC";
+        String amount = FormatsUtil.formatBTC(getCycleTotalAmount(coins));
 
         SpannableString spannable = new SpannableString(reviewMessage.concat(reviewAmountMessage).concat(amount));
         spannable.setSpan(
@@ -627,12 +628,5 @@ public class NewPoolActivity extends AppCompatActivity {
         disposables.dispose();
         super.onDestroy();
     }
-
-    /*
-    private void displayCycleTotalAmount(List<Coin> coins)   {
-
-        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC");
-
-    }
-*/
+    
 }
