@@ -68,7 +68,7 @@
     <string name="options_boltzmann">STONEWALL spend</string>
     <string name="options_boltzmann_2">Spends will use STONEWALL algorithm for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
-     <string name="options_rbf0">Spend using RBF</string>
+    <string name="options_rbf0">Spend using RBF</string>
     <string name="options_rbf0_2">Spends will use replace-by-fee to enable fee bumping.</string>
     <string name="options_troubleshoot">Troubleshoot</string>
     <string name="options_passphrase_test">Passphrase/backup test</string>
@@ -809,5 +809,9 @@
     <string name="recipients">Recipients</string>
     <string name="clear_batch_list">Clear batch list</string>
     <string name="confirm_batch_list_clear">Are you sure want to clear batch list?</string>
+    <string name="break_free">Break free of third party custody.Remain in complete control of your wallet at all times.</string>
+    <string name="perfect_toolbox">The perfect toolbox for managing your bitcoin experiance privately</string>
+    <string name="offline_mode_allows">Offline mode allows you to interact with your bitcoin even without data</string>
+    <string name="connect_your_wallet_to_your_own">Connect your wallet to your own full bitcoin node with a single QR scan</string>
 
 </resources>
