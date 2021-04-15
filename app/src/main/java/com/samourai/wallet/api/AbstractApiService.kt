@@ -2,6 +2,7 @@ package com.samourai.wallet.api
 
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 import java.io.IOException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -26,11 +27,11 @@ abstract class AbstractApiService {
     abstract fun buildClient(url: HttpUrl): OkHttpClient
 
     companion object {
-        val JSON: MediaType = MediaType.get("application/json; charset=utf-8")
+        val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
     }
 
     suspend fun executeRequest(request: Request): Response {
-        val client = buildClient(request.url())
+        val client = buildClient(request.url)
         return client.newCall(request).await()
     }
 

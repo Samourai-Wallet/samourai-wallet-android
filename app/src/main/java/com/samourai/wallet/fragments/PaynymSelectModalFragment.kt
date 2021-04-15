@@ -92,7 +92,7 @@ class PaynymSelectModalFragment : BottomSheetDialogFragment() {
                 obj.put("nym", strPaymentCode)
                 val res = PayNymApiService.getInstance(strPaymentCode, activity?.applicationContext!!).getNymInfo()
                 if (res.isSuccessful) {
-                    parsePaynymResponse(res.body()?.string()!!)
+                    parsePaynymResponse(res.body?.string()!!)
                 } else {
                     throw NetworkErrorException("paynym.is error");
                 }
