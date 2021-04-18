@@ -440,7 +440,11 @@ public class LandingActivity extends AppCompatActivity  {
                 DojoUtil.getInstance(LandingActivity.this).clear();
                 APIFactory.getInstance(LandingActivity.this).setAccessToken(null);
                 APIFactory.getInstance(LandingActivity.this).setAppToken(null);
-                APIFactory.getInstance(LandingActivity.this).getToken(true);
+                try {
+                    APIFactory.getInstance(LandingActivity.this).getToken(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 Looper.loop();
 
