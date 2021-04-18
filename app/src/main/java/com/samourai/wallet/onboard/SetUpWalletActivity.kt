@@ -1,0 +1,281 @@
+package com.samourai.wallet.onboard
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.view.ViewPropertyAnimator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.*
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.samourai.wallet.CreateWalletActivity
+import com.samourai.wallet.R
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet
+import com.samourai.wallet.network.dojo.DojoUtil
+import com.samourai.wallet.tor.TorManager
+import io.matthewnelson.topl_service.TorServiceController
+import kotlinx.android.synthetic.main.activity_set_up_wallet.*
+import java.util.regex.Pattern
+
+class SetUpWalletActivity : AppCompatActivity() {
+
+    var activeColor = 0
+    var disabledColor: Int = 0
+    var waiting: Int = 0
+
+    private val setUpWalletViewModel: SetUpWalletViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_set_up_wallet)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.window)
+
+        activeColor = ContextCompat.getColor(this, R.color.green_ui_2)
+        disabledColor = ContextCompat.getColor(this, R.color.disabledRed)
+        waiting = ContextCompat.getColor(this, R.color.warning_yellow)
+
+        TorManager.getTorStateLiveData().observe(this, {
+            setTorState(it)
+        })
+
+        setTorState(TorManager.torState)
+
+        setUpWalletTorSwitch.setOnClickListener {
+            if (setUpWalletTorSwitch.isChecked) {
+                TorServiceController.startTor()
+            } else {
+                if (DojoUtil.getInstance(applicationContext).dojoParams != null) {
+                    setUpWalletTorSwitch.isChecked = true
+                    MaterialAlertDialogBuilder(this)
+                            .setMessage(R.string.cannot_disable_tor_dojo)
+                            .setPositiveButton(R.string.ok) { dialog,
+                                                              _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    return@setOnClickListener
+                }
+                TorServiceController.stopTor()
+            }
+        }
+        setUpWalletViewModel.errorsLiveData.observe(this, {
+            it?.let {
+                Snackbar.make(setUpWalletContainer, "Error: $it", Snackbar.LENGTH_LONG)
+                        .show()
+            }
+        })
+        setUpWalletViewModel.apiEndpoint.observe(this, {
+            if (setUpWalletAddressInput.text.toString() != it)
+                setUpWalletAddressInput.setText(it)
+        })
+        setUpWalletViewModel.apiKey.observe(this, {
+            if (setUpWalletApiKeyInput.text.toString() != it)
+                setUpWalletApiKeyInput.setText(it)
+        })
+        setUpWalletViewModel.dojoStatus.observe(this, {
+            val defaultColor = MaterialColors.getColor(applicationContext, R.attr.colorPrimary, ContextCompat.getColor(this, R.color.primary_light))
+            onBoardingDojoStatus.setTextColor(defaultColor)
+            when (it) {
+                SetUpWalletViewModel.DojoStatus.CONNECTED -> {
+                    disableInputs(false)
+                    onBoardingDojoStatus.text = getString(R.string.connected)
+                    onBoardingDojoStatus.setTextColor(activeColor)
+                    setUpWalletDojoSwitch.visibility = View.VISIBLE
+                    setUpWalletDojoProgress.visibility = View.GONE
+                }
+                SetUpWalletViewModel.DojoStatus.NOT_CONFIGURED -> {
+                    disableInputs(false)
+                    onBoardingDojoStatus.text = getString(R.string.not_configured)
+                }
+
+                SetUpWalletViewModel.DojoStatus.CONNECTING -> {
+                    disableInputs(true)
+                    onBoardingDojoStatus.text = getString(R.string.connecting)
+                    onBoardingDojoStatus.setTextColor(waiting)
+                    setUpWalletDojoProgress.visibility = View.VISIBLE
+                    setUpWalletDojoSwitch.visibility = View.INVISIBLE
+                }
+                SetUpWalletViewModel.DojoStatus.ERROR -> {
+                    disableInputs(false)
+                    onBoardingDojoStatus.text = "Error"
+                    setUpWalletDojoProgress.visibility = View.GONE
+                    setUpWalletDojoSwitch.visibility = View.VISIBLE
+                }
+                else -> {
+
+                }
+            }
+
+        })
+        setUpDojoLayout()
+        setUpWalletConnectDojo.setOnClickListener {
+            connectDojo()
+        }
+        setUpWalletCreateNewWallet.setOnClickListener {
+            val intent = Intent(this, CreateWalletActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun connectDojo() {
+        val urlPattern = Pattern.compile("^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
+        val apiUrl = setUpWalletAddressInput.text.toString()
+        if (!urlPattern.matcher(apiUrl).matches()) {
+            setUpWalletAddressInput.error = getString(R.string.invalid_api_endpoint)
+            setUpWalletAddressInput.requestFocus()
+            return
+        }
+        if (setUpWalletApiKeyInput.text.toString().length < 25) {
+            setUpWalletApiKeyInput.error = getString(R.string.invalid_api_key)
+            setUpWalletApiKeyInput.requestFocus()
+            return
+        }
+
+        setUpWalletViewModel.setApiUrl(apiUrl)
+        setUpWalletViewModel.setApiKey(setUpWalletApiKeyInput.text.toString())
+
+        if (TorManager.isConnected()) {
+            setUpWalletViewModel.connectToDojo(applicationContext)
+        } else {
+            TorServiceController.startTor()
+            TorManager.getTorStateLiveData().observe(this, Observer {
+                if (it == TorManager.TorState.ON) {
+                    setUpWalletViewModel.connectToDojo(applicationContext)
+                }
+            })
+        }
+    }
+
+    private fun setUpDojoLayout() {
+
+        setUpWalletScanDojo.setOnClickListener {
+            val cameraFragmentBottomSheet = CameraFragmentBottomSheet()
+            cameraFragmentBottomSheet.show(supportFragmentManager, cameraFragmentBottomSheet.tag)
+            cameraFragmentBottomSheet.setQrCodeScanListener { code: String ->
+                cameraFragmentBottomSheet.dismissAllowingStateLoss()
+
+                try {
+                    setUpWalletViewModel.setDojoParams(code, applicationContext)
+                } catch (e: Exception) {
+                }
+            }
+        }
+
+        setUpWalletDojoSwitch.setOnCheckedChangeListener { buttonView,
+                                                           isChecked ->
+            run {
+                if (!isChecked && DojoUtil.getInstance(applicationContext).dojoParams != null) {
+                    setUpWalletDojoSwitch.isChecked = true
+                    MaterialAlertDialogBuilder(this)
+                            .setTitle(R.string.confirm)
+                            .setMessage(getString(R.string.do_you_want_to_unpair))
+                            .setPositiveButton(R.string.ok) { _,
+                                                              _ ->
+                                run {
+                                    setUpWalletViewModel.unPairDojo(applicationContext)
+                                    setUpWalletDojoSwitch.isChecked = false
+                                }
+                            }.setNegativeButton(R.string.cancel) { dialog,
+                                                                   _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                } else {
+                    showDojoInputLayout(isChecked)
+                }
+            }
+        }
+
+        setUpWalletDojoMessage.setOnClickListener {
+            setUpWalletDojoSwitch.isChecked = !setUpWalletDojoSwitch.isChecked
+        }
+
+        slideDown(setUpWalletDojoInputGroup)
+    }
+
+    private fun showDojoInputLayout(checked: Boolean) {
+        if (checked) {
+            slideUp(setUpWalletDojoInputGroup)
+        } else {
+            slideDown(setUpWalletDojoInputGroup)
+        }
+    }
+
+    private fun setTorState(state: TorManager.TorState) {
+        when (state) {
+            TorManager.TorState.WAITING -> {
+                onBoardingTorStatus.text = getString(R.string.tor_initializing)
+                onBoardingTorStatus.setTextColor(waiting)
+                makeViewTransition(setUpWalletTorProgress, setUpWalletTorSwitch)
+            }
+            TorManager.TorState.ON -> {
+                disableInputs(false)
+                onBoardingTorStatus.text = getString(R.string.active)
+                onBoardingTorStatus.setTextColor(activeColor)
+                setUpWalletTorSwitch.isChecked = true
+                makeViewTransition(setUpWalletTorSwitch, setUpWalletTorProgress)
+            }
+            TorManager.TorState.OFF -> {
+                setUpWalletTorSwitch.isChecked = false
+                onBoardingTorStatus.text = getString(R.string.off)
+                onBoardingTorStatus.setTextColor(disabledColor)
+                makeViewTransition(setUpWalletTorSwitch, setUpWalletTorProgress)
+            }
+        }
+    }
+
+    private fun makeViewTransition(entering: View?, leaving: View?) {
+        TransitionManager.beginDelayedTransition(setUpWalletContainer, Fade())
+        leaving?.let {
+            it.visibility = View.INVISIBLE
+        }
+        entering?.let {
+            it.visibility = View.VISIBLE
+        }
+    }
+
+    private fun disableInputs(enable: Boolean) {
+        setUpWalletRestoreButton.isEnabled = !enable
+        setUpWalletAddressInput.isEnabled = !enable
+        setUpWalletScanDojo.isEnabled = !enable
+        setUpWalletTorSwitch.isEnabled = !enable
+        setUpWalletApiKeyInput.isEnabled = !enable
+        setUpWalletCreateNewWallet.isEnabled = !enable
+        setUpWalletConnectDojo.isEnabled = !enable
+    }
+
+    private fun slideDown(view: View): ViewPropertyAnimator? {
+        return view.animate()
+                .translationY(100F)
+                .alpha(0f)
+                .setInterpolator(DecelerateInterpolator())
+                .setDuration(200)
+                .withEndAction {
+                    view.visibility = View.GONE
+                }.apply {
+                    this.start()
+                }
+
+    }
+
+    private fun slideUp(view: View): ViewPropertyAnimator? {
+        view.visibility = View.VISIBLE
+        view.alpha = 0f
+        return view.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(200)
+                .setInterpolator(AccelerateInterpolator())
+                .apply {
+                    this.start()
+                }
+    }
+
+}

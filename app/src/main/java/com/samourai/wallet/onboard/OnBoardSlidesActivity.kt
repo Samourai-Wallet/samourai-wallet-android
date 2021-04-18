@@ -1,5 +1,6 @@
 package com.samourai.wallet.onboard
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayoutMediator
 import com.samourai.wallet.R
 import kotlinx.android.synthetic.main.activity_on_board_slides.*
-import kotlinx.android.synthetic.main.activity_onboard.onBoardViewPager
 import kotlinx.android.synthetic.main.item_onboard_slide.*
 
 
@@ -26,8 +24,10 @@ class OnBoardSlidesActivity : AppCompatActivity() {
         onBoardViewPager.adapter = ScreenSlidePagerAdapter(this)
         window.statusBarColor = ContextCompat.getColor(this, R.color.window);
         sliderIndicator.setViewPager2(onBoardViewPager)
+        getStarted.setOnClickListener {
+            startActivity(Intent(this, SetUpWalletActivity::class.java))
+        }
     }
- 
     class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         override fun getItemCount(): Int = 4
         override fun createFragment(position: Int) = OnBoardSliderItem.newInstance(position)

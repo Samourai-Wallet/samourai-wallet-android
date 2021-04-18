@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/setUpWalletContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".onboard.SetUpWalletActivity">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setUpWalletCreateNewWallet"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/create_a_new_wallet"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/blue_ui_2"
+            app:cornerRadius="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/setUpWalletRestoreButton"
+            app:layout_constraintEnd_toEndOf="@+id/setUpWalletRestoreButton"
+            app:layout_constraintStart_toStartOf="@+id/setUpWalletRestoreButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setUpWalletRestoreButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="@string/restore_an_existing_wallet"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView85"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Before anything else,lets take\ncare of some network\nhousekeeping."
+            android:textAlignment="textStart"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline27"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"
+            app:layout_constraintStart_toStartOf="@+id/guideline24"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.23000002" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.06" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.94" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline27"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.18" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.36" />
+
+        <TextView
+            android:id="@+id/textView87"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Would you like to enable Tor? "
+            android:textColor="#C3C3C3"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/guideline28"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline24"
+            app:layout_constraintTop_toTopOf="@+id/guideline27"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/setUpWalletDojoMessage"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Would you like to connect to your\nown dojo server? "
+            android:textColor="#C3C3C3"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline24"
+            app:layout_constraintTop_toTopOf="@+id/guideline28" />
+
+        <TextView
+            android:id="@+id/textView848"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Tor Status: "
+            app:layout_constraintBottom_toTopOf="@+id/guideline28"
+            app:layout_constraintEnd_toEndOf="@+id/textView87"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/textView87"
+            app:layout_constraintTop_toBottomOf="@+id/textView87"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/onBoardingTorStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView848"
+            app:layout_constraintEnd_toEndOf="@+id/textView87"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textView848"
+            app:layout_constraintTop_toTopOf="@+id/textView848"
+            tools:text="Active" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/setUpWalletTorSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:elevation="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView848"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/textView87"
+            app:layout_constraintTop_toTopOf="@+id/textView87" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/setUpWalletDojoSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/setUpWalletDojoMessage"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/setUpWalletDojoMessage"
+            app:layout_constraintTop_toTopOf="@+id/setUpWalletDojoMessage" />
+
+
+        <ProgressBar
+            android:id="@+id/setUpWalletTorProgress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/setUpWalletTorSwitch"
+            app:layout_constraintEnd_toEndOf="@+id/setUpWalletTorSwitch"
+            app:layout_constraintStart_toStartOf="@+id/setUpWalletTorSwitch"
+            app:layout_constraintTop_toTopOf="@+id/setUpWalletTorSwitch"
+            tools:visibility="visible" />
+
+
+        <LinearLayout
+            android:id="@+id/setUpWalletDojoInputGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:alpha="0"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/setUpWalletCreateNewWallet"
+            app:layout_constraintEnd_toEndOf="@+id/setUpWalletDojoSwitch"
+            app:layout_constraintStart_toStartOf="@+id/setUpWalletDojoMessage"
+            app:layout_constraintTop_toBottomOf="@+id/textView86"
+            app:layout_constraintVertical_bias="0.0"
+            tools:alpha="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/setUpWalletAddressInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:hint="Dojo onion address"
+                android:inputType="textUri"
+                android:textSize="14sp" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/setUpWalletApiKeyInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="API Key"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/setUpWalletScanDojo"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/scan_qr"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/setUpWalletConnectDojo"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/connect"
+                    android:textAllCaps="false"
+                    app:iconTint="@color/white" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textView86"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Dojo status:"
+            app:layout_constraintEnd_toEndOf="@+id/setUpWalletDojoMessage"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/setUpWalletDojoMessage"
+            app:layout_constraintTop_toBottomOf="@+id/setUpWalletDojoMessage" />
+
+        <TextView
+            android:id="@+id/onBoardingDojoStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="13sp"
+            tools:text="No connected"
+            app:layout_constraintBottom_toBottomOf="@+id/textView86"
+            app:layout_constraintEnd_toEndOf="@+id/setUpWalletDojoMessage"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textView86"
+            app:layout_constraintTop_toTopOf="@+id/textView86" />
+
+        <ProgressBar
+            android:id="@+id/setUpWalletDojoProgress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/setUpWalletDojoSwitch"
+            app:layout_constraintEnd_toEndOf="@+id/setUpWalletDojoSwitch"
+            app:layout_constraintStart_toStartOf="@+id/setUpWalletDojoSwitch"
+            app:layout_constraintTop_toTopOf="@+id/setUpWalletDojoSwitch"
+            tools:visibility="visible" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

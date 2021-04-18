@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/onBoardFrame"
-    tools:context=".onboard.OnBoardActivity">
+    tools:context=".onboard.OnBoardSlidesActivity">
 
 
     <androidx.viewpager2.widget.ViewPager2
@@ -26,24 +26,22 @@
         android:layout_marginBottom="8dp"
         app:dotsCornerRadius="12dp"
         app:dotsSize="12dp"
-        app:dotsColor="@color/accent"
         app:dotsSpacing="6dp"
-        app:dotsStrokeColor="@color/white"
         app:dotsClickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/getStarted"
         app:layout_constraintEnd_toEndOf="@+id/onBoardViewPager"
         app:layout_constraintStart_toStartOf="@+id/onBoardViewPager"
           />
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button2"
+        android:id="@+id/getStarted"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
-        android:text="Get Started"
+        android:text="@string/get_started"
         android:paddingTop="18dp"
         android:textAllCaps="false"
         android:paddingBottom="18dp"

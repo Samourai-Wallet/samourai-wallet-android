@@ -4,9 +4,9 @@
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
-    <string name="creating_wallet">Creating wallet. Please wait...</string>
-    <string name="restoring_wallet">Restoring wallet. Please wait...</string>
-    <string name="decrypting_bip38">Decrypting BIP38 password. Please wait...</string>
+    <string name="creating_wallet">Creating wallet. Please wait…</string>
+    <string name="restoring_wallet">Restoring wallet. Please wait…</string>
+    <string name="decrypting_bip38">Decrypting BIP38 password. Please wait…</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_support">Support</string>
@@ -516,11 +516,11 @@
     <string name="total_blocked">Total blocked:</string>
 
 
-    <string name="tx_creating_ok">Creating transaction...</string>
+    <string name="tx_creating_ok">Creating transaction…</string>
     <string name="tx_creating_ko">Cannot create transaction</string>
-    <string name="tx_signing_ok">Signing transaction...</string>
+    <string name="tx_signing_ok">Signing transaction…</string>
     <string name="tx_signing_ko">Cannot sign transaction</string>
-    <string name="tx_broadcast_ok">Broadcasting transaction...</string>
+    <string name="tx_broadcast_ok">Broadcasting transaction…</string>
     <string name="tx_broadcast_ko">Cannot broadcast transaction</string>
     <string name="tx_sent_ok">Transaction sent</string>
     <string name="tx_sent_ko">Transaction not sent</string>
@@ -575,7 +575,7 @@
     <string name="_48_hours">48 hours +</string>
     <string name="free">FREE</string>
     <string name="_1_50">1.50%</string>
-    <string name="_0_5_mins">0-5 mins</string>
+    <string name="_0_5_mins">0–5 mins</string>
     <string name="select_a_cycle_type">Select a cycle type</string>
     <string name="supercharge">SuperCharge</string>
     <string name="transaction_broadcast">Transaction Broadcast</string>
@@ -810,8 +810,21 @@
     <string name="clear_batch_list">Clear batch list</string>
     <string name="confirm_batch_list_clear">Are you sure want to clear batch list?</string>
     <string name="break_free">Break free of third party custody.Remain in complete control of your wallet at all times.</string>
-    <string name="perfect_toolbox">The perfect toolbox for managing your bitcoin experiance privately</string>
+    <string name="perfect_toolbox">The perfect toolbox for managing your bitcoin experience privately</string>
     <string name="offline_mode_allows">Offline mode allows you to interact with your bitcoin even without data</string>
     <string name="connect_your_wallet_to_your_own">Connect your wallet to your own full bitcoin node with a single QR scan</string>
+    <string name="get_started">Get Started</string>
+    <string name="restore_an_existing_wallet">Restore an existing wallet</string>
+    <string name="create_a_new_wallet">Create a new wallet</string>
+    <string name="scan_qr">Scan QR</string>
+    <string name="tor_initializing">Tor initializing</string>
+    <string name="connected">Connected</string>
+    <string name="not_configured">Not configured</string>
+    <string name="connecting">Connecting…</string>
+    <string name="invalid_api_endpoint">Invalid API endpoint</string>
+    <string name="invalid_api_key">Invalid Api key</string>
+    <string name="do_you_want_to_unpair">Do you want to unpair dojo ?</string>
+    <string name="dojo_connection_error">Unable to connect dojo. please check the api key or dojo status</string>
+    <string name="invalid_dojo_payload">Invalid dojo payload</string>
 
 </resources>
