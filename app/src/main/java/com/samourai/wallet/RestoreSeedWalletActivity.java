@@ -497,7 +497,8 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
 
                             String seed = HD_WalletFactory.getInstance(RestoreSeedWalletActivity.this).get().getMnemonic();
                             Intent intent = new Intent(RestoreSeedWalletActivity.this, RecoveryWordsActivity.class);
-                            intent.putExtra("BIP39_WORD_LIST", seed);
+                            intent.putExtra( RecoveryWordsActivity.WORD_LIST, seed);
+                            intent.putExtra(RecoveryWordsActivity.PASSPHRASE, passphrase);
                             startActivity(intent);
                             finish();
 
