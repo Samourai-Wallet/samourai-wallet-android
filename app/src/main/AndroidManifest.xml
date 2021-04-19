@@ -175,7 +175,6 @@
             android:name=".LandingActivity"
             android:label=""
             android:theme="@style/Theme.Samourai.Material" />
-        <activity android:name=".RecoveryWordsActivity" />
         <!--
                 <receiver
                     android:name=".receivers.BootIntentReceiver"
@@ -232,11 +231,10 @@
         <activity
             android:name=".tx.TxDetailsActivity"
             android:label=" "
-            android:theme="@style/Theme.Samourai.Material" />
-<!--        <activity-->
-<!--            android:name=".tx.TxPrivacyDetailsActivity"-->
-<!--            android:label=""-->
-<!--            android:theme="@style/SamouraiAppTheme" />-->
+            android:theme="@style/Theme.Samourai.Material" /> <!-- <activity -->
+        <!-- android:name=".tx.TxPrivacyDetailsActivity" -->
+        <!-- android:label="" -->
+        <!-- android:theme="@style/SamouraiAppTheme" /> -->
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"
