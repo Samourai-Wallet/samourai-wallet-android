@@ -19,6 +19,7 @@
         <item name="tabBackground">@color/grey_accent</item>
         <item name="snackbarStyle">@style/Widget.Samourai.SnackBar</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActivityTransitions">true</item>
         <item name="materialAlertDialogTheme">@style/Theme.Samourai.MaterialDialog.Rounded</item>
     </style>
 

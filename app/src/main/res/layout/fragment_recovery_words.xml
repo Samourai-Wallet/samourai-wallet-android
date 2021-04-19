@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView85"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text="@string/write_down_words_down_and_keep_them"
+            android:textAlignment="center"
+            android:textSize="18sp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word1"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="1. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word2"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="2. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word3"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="3. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word4"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="4. word" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word5"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="5. word" />
+
+        <com.google.android.material.button.MaterialButton
+
+            android:id="@+id/word6"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="6. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word7"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="7. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word8"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="8. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word9"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="9. word" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word10"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="10. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word11"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="11. word" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/word12"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="gravity"
+            app:cornerRadius="0dp"
+            app:elevation="12dp"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:strokeColor="@color/text_ui2_grey"
+            tools:text="12. word" />
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            app:constraint_referenced_ids="word1,word2,word3,word4,word5,word6,word7,word8,word9,word10,word11,word12"
+            app:flow_horizontalGap="8dp"
+            app:flow_horizontalStyle="spread"
+            app:flow_maxElementsWrap="2"
+            app:flow_verticalGap="4dp"
+            app:flow_wrapMode="aligned"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textView85"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/textView85"
+            app:layout_constraintTop_toBottomOf="@+id/textView85" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

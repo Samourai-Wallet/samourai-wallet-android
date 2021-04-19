@@ -53,10 +53,13 @@
         android:theme="@style/SamouraiAppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".send.batch.BatchSpendActivity"
-            android:theme="@style/Theme.Samourai.Material"
+        <activity
+            android:name=".RecoveryWordsActivity"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
+            android:name=".send.batch.BatchSpendActivity"
             android:label=""
-            />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
@@ -114,7 +117,6 @@
             android:label="@string/app_name"
             android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
-
         <activity
             android:name=".settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

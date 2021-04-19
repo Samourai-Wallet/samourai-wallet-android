@@ -68,7 +68,7 @@
     <string name="options_boltzmann">STONEWALL spend</string>
     <string name="options_boltzmann_2">Spends will use STONEWALL algorithm for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
-     <string name="options_rbf0">Spend using RBF</string>
+    <string name="options_rbf0">Spend using RBF</string>
     <string name="options_rbf0_2">Spends will use replace-by-fee to enable fee bumping.</string>
     <string name="options_troubleshoot">Troubleshoot</string>
     <string name="options_passphrase_test">Passphrase/backup test</string>
@@ -809,5 +809,12 @@
     <string name="recipients">Recipients</string>
     <string name="clear_batch_list">Clear batch list</string>
     <string name="confirm_batch_list_clear">Are you sure want to clear batch list?</string>
+    <string name="your_passphrase">Your passphrase</string>
+    <string name="your_passphrase_will_not_be_shown_to_you_again">Your passphrase will not be shown to you again.</string>
+    <string name="your_passphrase_is_a_required_part_of_your_noffline">Your passphrase is a required part of your\noffline paper backup. Without it you\ncannot restore your wallet</string>
+    <string name="write_down_words_down_and_keep_them">Write down words down and keep them\nsecret. Together with your passphrase\nthey allow access to your wallet</string>
+    <string name="create_your_offline_paper_backup">Create your offline paper backup</string>
+    <string name="without_a_backup_your_bitcoin">Without a backup your bitcoin wallet is at\nrisk of unrecoverable loss\n\nDownload end print the PDF template to\nmake the backup as easy as possible.</string>
+    <string name="download_pdf_template">Download PDF Template</string>
 
 </resources>
