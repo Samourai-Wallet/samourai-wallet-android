@@ -60,6 +60,9 @@
             android:name=".onboard.OnBoardSlidesActivity"
             android:theme="@style/Theme.Samourai.Material" />
         <activity
+            android:name=".RecoveryWordsActivity"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
             android:name=".send.batch.BatchSpendActivity"
             android:label=""
             android:theme="@style/Theme.Samourai.Material" />
@@ -120,7 +123,6 @@
             android:label="@string/app_name"
             android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
-
         <activity
             android:name=".settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -181,7 +183,6 @@
             android:name=".LandingActivity"
             android:label=""
             android:theme="@style/Theme.Samourai.Material" />
-        <activity android:name=".RecoveryWordsActivity" />
         <!--
                 <receiver
                     android:name=".receivers.BootIntentReceiver"
@@ -238,11 +239,10 @@
         <activity
             android:name=".tx.TxDetailsActivity"
             android:label=" "
-            android:theme="@style/Theme.Samourai.Material" />
-<!--        <activity-->
-<!--            android:name=".tx.TxPrivacyDetailsActivity"-->
-<!--            android:label=""-->
-<!--            android:theme="@style/SamouraiAppTheme" />-->
+            android:theme="@style/Theme.Samourai.Material" /> <!-- <activity -->
+        <!-- android:name=".tx.TxPrivacyDetailsActivity" -->
+        <!-- android:label="" -->
+        <!-- android:theme="@style/SamouraiAppTheme" /> -->
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"

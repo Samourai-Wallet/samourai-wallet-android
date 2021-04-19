@@ -402,7 +402,8 @@ public class CreateWalletActivity extends FragmentActivity implements
 
                             String seed = HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getMnemonic();
                             Intent intent = new Intent(CreateWalletActivity.this,  RecoveryWordsActivity.class);
-                            intent.putExtra("BIP39_WORD_LIST",seed);
+                            intent.putExtra(RecoveryWordsActivity.WORD_LIST,seed);
+                            intent.putExtra(RecoveryWordsActivity.PASSPHRASE,passphrase);
                             startActivity(intent);
                             finish();
 
