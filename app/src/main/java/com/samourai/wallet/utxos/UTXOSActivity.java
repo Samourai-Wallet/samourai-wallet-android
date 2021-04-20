@@ -1042,7 +1042,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            TextView address, amount, doNotSpend, label, paynym, section;
+            TextView address, amount, section;
             LinearLayout notesLayout;
             LinearLayout tagsLayout;
             CheckBox checkBox;
@@ -1056,7 +1056,6 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
                 }
                 amount = itemView.findViewById(R.id.utxo_item_amount);
 //                doNotSpend = itemView.findViewById(R.id.do_not_spend_text);
-                label = itemView.findViewById(R.id.label);
                 address = itemView.findViewById(R.id.utxo_item_address);
                 notesLayout = itemView.findViewById(R.id.utxo_item_notes_layout);
                 tagsLayout = itemView.findViewById(R.id.utxo_item_tags_layout);
