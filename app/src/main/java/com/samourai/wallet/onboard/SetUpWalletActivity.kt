@@ -1,13 +1,19 @@
 package com.samourai.wallet.onboard
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.transition.Fade
@@ -19,6 +25,7 @@ import com.samourai.wallet.CreateWalletActivity
 import com.samourai.wallet.R
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.network.dojo.DojoUtil
+import com.samourai.wallet.permissions.PermissionsUtil
 import com.samourai.wallet.tor.TorManager
 import io.matthewnelson.topl_service.TorServiceController
 import kotlinx.android.synthetic.main.activity_set_up_wallet.*
@@ -26,9 +33,10 @@ import java.util.regex.Pattern
 
 class SetUpWalletActivity : AppCompatActivity() {
 
-    var activeColor = 0
-    var disabledColor: Int = 0
-    var waiting: Int = 0
+    private var activeColor = 0
+    private var disabledColor: Int = 0
+    private var waiting: Int = 0
+    private var storagePermGranted = false
 
     private val setUpWalletViewModel: SetUpWalletViewModel by viewModels()
 
@@ -40,6 +48,13 @@ class SetUpWalletActivity : AppCompatActivity() {
         activeColor = ContextCompat.getColor(this, R.color.green_ui_2)
         disabledColor = ContextCompat.getColor(this, R.color.disabledRed)
         waiting = ContextCompat.getColor(this, R.color.warning_yellow)
+
+
+        if (!PermissionsUtil.getInstance(applicationContext).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(applicationContext).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            askPermission()
+        } else {
+            storagePermGranted = true;
+        }
 
         TorManager.getTorStateLiveData().observe(this, {
             setTorState(it)
@@ -119,9 +134,63 @@ class SetUpWalletActivity : AppCompatActivity() {
             connectDojo()
         }
         setUpWalletCreateNewWallet.setOnClickListener {
+            if (!storagePermGranted) {
+                askPermission()
+                return@setOnClickListener
+            }
             val intent = Intent(this, CreateWalletActivity::class.java)
             startActivity(intent)
         }
+        setUpWalletRestoreButton.setOnClickListener {
+            if (!storagePermGranted) {
+               askPermission()
+                return@setOnClickListener
+            }
+            val intent = Intent(this, RestoreOptionActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun askPermission() {
+
+        val title = getString(R.string.permission_alert_dialog_title_external)
+        val message = getString(R.string.permission_dialog_message_external)
+
+        val permissionDialog = MaterialAlertDialogBuilder(this)
+        permissionDialog.setTitle(title)
+                .setMessage(message)
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    run {
+                        dialog.dismiss()
+                    }
+                }
+
+        var openSettings = false;
+        if (!shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                !shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            openSettings = true;
+        }
+        if(!openSettings){
+            permissionDialog .setPositiveButton(R.string.action_settings) { dialog, _ ->
+                run {
+                    dialog.dismiss()
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    intent.data = Uri.parse("package:" + applicationContext.packageName)
+                    startActivity(intent)
+                }
+            }
+        }else{
+            permissionDialog .setPositiveButton(R.string.ok) { dialog, _ ->
+                run {
+                    dialog.dismiss()
+                    ActivityCompat
+                            .requestPermissions(this@SetUpWalletActivity,
+                                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                                    PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE)
+                }
+            }
+        }
+        permissionDialog.show()
     }
 
     private fun connectDojo() {
@@ -229,6 +298,13 @@ class SetUpWalletActivity : AppCompatActivity() {
                 makeViewTransition(setUpWalletTorSwitch, setUpWalletTorProgress)
             }
         }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (grantResults.size > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            storagePermGranted = true;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun makeViewTransition(entering: View?, leaving: View?) {
