@@ -835,7 +835,7 @@
     <string name="download_pdf_template">Download PDF Template</string>
     <string name="i_have_an_external_wallet">I have an external wallet</string>
     <string name="_12_15_18_24_mnemonic_words">12/15/18/24 Mnemonic words</string>
-    <string name="restoring_a_wallet_no_problem_let_s_figure">Restoring a wallet? No problem, let's figure out what kind of restore to perform.</string>
+    <string name="restoring_a_wallet_no_problem_let_s_figure">Restoring a wallet? No problem, let\'s figure out what kind of restore to perform.</string>
     <string name="i_have_a_samourai_backup_file">I have a Samourai backup file</string>
     <string name="encrypted_backup_file_passphrase">Encrypted backup file + passphrase</string>
 
