@@ -50,7 +50,7 @@ class RestoreOptionActivity : AppCompatActivity() {
         }
         externalWalletRestore.setOnClickListener {
             val intent = Intent(this@RestoreOptionActivity, RestoreSeedWalletActivity::class.java)
-            intent.putExtra("mode", "backup")
+            intent.putExtra("mode", "mnemonic")
             startActivity(intent)
         }
 
