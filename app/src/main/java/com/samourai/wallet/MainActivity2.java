@@ -27,6 +27,8 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.onboard.OnBoardSlidesActivity;
+import com.samourai.wallet.onboard.SetUpWalletActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
@@ -267,7 +269,7 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     private void initDialog() {
-        Intent intent = new Intent(MainActivity2.this, LandingActivity.class);
+        Intent intent = new Intent(MainActivity2.this, OnBoardSlidesActivity.class);
         startActivity(intent);
         finish();
     }
