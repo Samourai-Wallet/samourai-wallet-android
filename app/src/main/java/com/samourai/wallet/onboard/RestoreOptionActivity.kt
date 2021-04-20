@@ -1,16 +1,17 @@
 package com.samourai.wallet.onboard
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.samourai.wallet.R
 import com.samourai.wallet.RestoreSeedWalletActivity
 import com.samourai.wallet.access.AccessFactory
@@ -74,7 +75,7 @@ class RestoreOptionActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun showLoading(show:Boolean){
+    private fun showLoading(show: Boolean){
         if(show){
             loaderRestore.visibility = View.VISIBLE
             restoreBtn.visibility = View.GONE
@@ -150,4 +151,35 @@ class RestoreOptionActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.get_help_menu_create -> {
+                doSupportCreate()
+                false
+            }
+            R.id.get_help_menu_restore -> {
+                doSupportRestore()
+                false
+            }
+            else -> {
+                false
+            }
+        }
+
+    }
+
+
+    private fun doSupportCreate() {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/section/1-starting-a-new-wallet"))
+        startActivity(intent)
+    }
+
+    private fun doSupportRestore() {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/category/3-restore-recovery"))
+        startActivity(intent)
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.landing_activity_menu, menu)
+        return true
+    }
 }
