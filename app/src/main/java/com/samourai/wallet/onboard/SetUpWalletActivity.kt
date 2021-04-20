@@ -29,6 +29,10 @@ import com.samourai.wallet.permissions.PermissionsUtil
 import com.samourai.wallet.tor.TorManager
 import io.matthewnelson.topl_service.TorServiceController
 import kotlinx.android.synthetic.main.activity_set_up_wallet.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
 class SetUpWalletActivity : AppCompatActivity() {
@@ -216,7 +220,12 @@ class SetUpWalletActivity : AppCompatActivity() {
             TorServiceController.startTor()
             TorManager.getTorStateLiveData().observe(this, Observer {
                 if (it == TorManager.TorState.ON) {
-                    setUpWalletViewModel.connectToDojo(applicationContext)
+                  setUpWalletViewModel.viewModelScope.launch(Dispatchers.Default) {
+                      delay(600)
+                      withContext(Dispatchers.Main){
+                          setUpWalletViewModel.connectToDojo(applicationContext)
+                      }
+                  }
                 }
             })
         }
