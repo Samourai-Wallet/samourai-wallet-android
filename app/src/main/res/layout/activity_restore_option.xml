@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/restoreContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/restoreOptionToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/textView85"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="start"
+            android:text="@string/restoring_a_wallet_no_problem_let_s_figure"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline31"
+            app:layout_constraintStart_toStartOf="@+id/guideline30"
+            app:layout_constraintTop_toBottomOf="@+id/restoreOptionToolBar" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.08" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.92" />
+
+        <LinearLayout
+            android:id="@+id/samouraiMnemonicRestore"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="24dp"
+            android:background="?selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline31"
+            app:layout_constraintStart_toStartOf="@+id/guideline30"
+            app:layout_constraintTop_toBottomOf="@+id/textView85"
+            app:layout_constraintVertical_bias="0.050000012">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I have a Samourai paper wallet"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline31"
+                    app:layout_constraintStart_toStartOf="@+id/guideline30"
+                    app:layout_constraintTop_toTopOf="@+id/guideline29" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="12 recovery words + passphrase"
+                    app:layout_constraintEnd_toEndOf="@+id/textView89"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/textView89"
+                    app:layout_constraintTop_toBottomOf="@+id/textView89" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/textView90"
+                app:layout_constraintEnd_toEndOf="@+id/textView89"
+                app:layout_constraintStart_toEndOf="@+id/textView89"
+                app:layout_constraintTop_toTopOf="@+id/textView89"
+                app:srcCompat="@drawable/ic_chevron_right_white_24dp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/samouraiBackupFileRestore"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="24dp"
+            android:background="?selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline31"
+            app:layout_constraintStart_toStartOf="@+id/guideline30"
+            app:layout_constraintTop_toBottomOf="@+id/samouraiMnemonicRestore"
+            app:layout_constraintVertical_bias="0.0">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/i_have_a_samourai_backup_file"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline31"
+                    app:layout_constraintStart_toStartOf="@+id/guideline30"
+                    app:layout_constraintTop_toTopOf="@+id/guideline29" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/encrypted_backup_file_passphrase"
+                    app:layout_constraintEnd_toEndOf="@+id/textView89"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/textView89"
+                    app:layout_constraintTop_toBottomOf="@+id/textView89" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/textView90"
+                app:layout_constraintEnd_toEndOf="@+id/textView89"
+                app:layout_constraintStart_toEndOf="@+id/textView89"
+                app:layout_constraintTop_toTopOf="@+id/textView89"
+                app:srcCompat="@drawable/ic_chevron_right_white_24dp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/externalWalletRestore"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="24dp"
+            android:background="?selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline31"
+            app:layout_constraintStart_toStartOf="@+id/guideline30"
+            app:layout_constraintTop_toBottomOf="@+id/samouraiBackupFileRestore"
+            app:layout_constraintVertical_bias="0.0">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/i_have_an_external_wallet"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline31"
+                    app:layout_constraintStart_toStartOf="@+id/guideline30"
+                    app:layout_constraintTop_toTopOf="@+id/guideline29" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/_12_15_18_24_mnemonic_words"
+                    app:layout_constraintEnd_toEndOf="@+id/textView89"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/textView89"
+                    app:layout_constraintTop_toBottomOf="@+id/textView89" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/textView90"
+                app:layout_constraintEnd_toEndOf="@+id/textView89"
+                app:layout_constraintStart_toEndOf="@+id/textView89"
+                app:layout_constraintTop_toTopOf="@+id/textView89"
+                app:srcCompat="@drawable/ic_chevron_right_white_24dp" />
+
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/restoreFromBackupSnackbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#323232"
+            android:elevation="5dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="274dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:gravity="center_vertical"
+                android:padding="14dp"
+                android:text="@string/encrypted_backup_detected" />
+
+            <TextView
+                android:id="@+id/restoreBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center"
+                android:padding="14dp"
+                android:text="@string/restore"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                android:textColor="@color/accent"
+                android:focusable="true" />
+        </FrameLayout>
+
+        <com.google.android.material.progressindicator.ProgressIndicator
+            android:id="@+id/loaderRestore"
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Circular.Indeterminate"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="20dp"
+            android:visibility="gone"
+            app:indicatorSize="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/restoreFromBackupSnackbar"
+            app:layout_constraintEnd_toEndOf="@+id/restoreFromBackupSnackbar"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/restoreFromBackupSnackbar"
+            app:layout_constraintTop_toTopOf="@+id/restoreFromBackupSnackbar" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
