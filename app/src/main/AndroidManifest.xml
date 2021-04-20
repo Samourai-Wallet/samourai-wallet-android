@@ -54,6 +54,10 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".onboard.RestoreOptionActivity"
+            android:theme="@style/Theme.Samourai.Material"
+            />
+        <activity
             android:name=".onboard.SetUpWalletActivity"
             android:theme="@style/Theme.Samourai.Material" />
         <activity
