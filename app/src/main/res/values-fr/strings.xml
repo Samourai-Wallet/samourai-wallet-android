@@ -855,7 +855,7 @@
 <string name="privacy_addons">Addons de confidentialité</string>
 <string name="ricochet_">Ricochet</string>
 <string name="staggered_delivery">Livraison échelonnée</string>
-<string name="for_extra_privacy_message">Pour une confidentialité accrue et une meilleure résistance à toute tentative d\'analyse, chaque saut apparaîtra dans mempool à une bloc d\'intervalle. 30 mins à 2 heures peuvent être nécessaires pour finaliser la livraison.</string>
+
 
 
 <string name="full_spend_warning">Cette transaction va dépenser la totalité de votre portefeuille. Êtes-vous sûr de vouloir poursuivre ?</string>
@@ -879,7 +879,7 @@
 <string name="waiting_for_cahoots_request">En attente de requête Cahoots...</string>
 
 
-<string name="paynym_follow_message_2">vers votre Suivre immediatement. Suivre PayNym pour prendre part aux transactions\nCoinjoin Cahoots.</string>
+<string name="paynym_follow_message_2">pour suivre immediatement. Suivre ce PayNym pour prendre part aux transactions\nCoinjoin Cahoots.</string>
 <string name="paynym_connect_message">pour générer des adresses privées uniques pour l\'envoi de bitcoin\nà ce contact</string>
 <string name="follow_paynym_fee_free">Frais : Gratuit</string>
 <string name="connect_paynym_fee">Frais : 0.00015 BTC</string>
@@ -893,6 +893,41 @@
 
 <string name="options_soroban_collab">Soroban recevoir/collaborer</string>
 <string name="options_paste_cahoots">Copier/Coller charge utile cahoots</string>
+
+
+
+
+
+
+
+
+<string name="paynym_follow_message">Ces frais couvrent les coûts de création d\'une transaction unique pour un enregistrement sur la blockchain. Ceci maintient les PayNyms décentralisés</string>
+<string name="paynym_follow_fee_message">Des frais uniques de connexion d\'un montant de  seront facturés pour le suivi d\'un contact</string>
+
+
+<string name="backup_password">Définir un mot de passe de sauvegarde: (6–255 caractères)</string>
+
+<string name="enter_backup_password">Saisir le mot de passe de sauvegarde</string>
+<string name="restore_backup">Restaurer la sauvegarde</string>
+<string name="whirlpool_pairing">Appairage Whirlpool</string>
+
+<string name="enter_pairing_password">Saisir appairage mot de passe</string>
+
+
+<string name="add_to_batch">Ajouter au Lot</string>
+<string name="update_to_batch">Mettre à jour le Lot</string>
+<string name="current_batch">Lot Actuel (en cours)</string>
+<string name="have_your_mixing_partner">Demander à votre partenaire de mixing de scanner le code QR pour démarrer.</string>
+<string name="broadcast_transaction">Émettre la transaction</string>
+<string name="broadcasting_transaction">Émission transaction</string>
+
+<string name="recipients">Destinataires</string>
+
+
+<string name="for_extra_privacy_message">Pour une confidentialité accrue et une meilleure résistance à toute tentative d\'analyse, chaque saut apparaîtra dans mempool à un bloc d\'intervalle. Conçu pour être lent. Ne pas activer pour des envois urgents.</string>
+
+<string name="clear_batch_list">Vider Liste Lot</string>
+<string name="confirm_batch_list_clear">Êtes-vous sûr de vouloir vider la Liste Lot ?</string>
 
 
 </resources>
