@@ -96,7 +96,7 @@ class PayNymOnBoardBottomSheet : BottomSheetDialogFragment() {
                     val nymResponse = apiPayNymApiService.getNymInfo()
                     if (nymResponse.isSuccessful) {
                         try {
-                            val data = JSONObject(nymResponse.body()?.string())
+                            val data = JSONObject(nymResponse.body?.string())
                             PayloadUtil.getInstance(context).serializePayNyms(data)
                             val nym = if (data.has("nymName")) data.getString("nymName") else ""
                             PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, true)

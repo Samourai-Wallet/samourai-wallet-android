@@ -42,7 +42,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
     override fun buildClient(url: HttpUrl): OkHttpClient {
         val builder = OkHttpClient.Builder()
 
-        if (url.host().contains("onion")) {
+        if (url.host.contains("onion")) {
             this.getHostNameVerifier(builder)
         }
 
@@ -65,10 +65,10 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
             val newBuilder = original.newBuilder()
             if (!payNymToken.isNullOrEmpty()) {
                 newBuilder
-                        .header("auth-token", payNymToken)
+                        .header("auth-token", payNymToken!!)
                         .header("client", "samourai-wallet")
             }
-            newBuilder.method(original.method(), original.body())
+            newBuilder.method(original.method, original.body)
             chain.proceed(newBuilder.build())
         }
         return builder.build()
@@ -83,7 +83,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         val body: RequestBody = RequestBody.create(JSON, payload.toString())
         val response = this.executeRequest(builder.post(body).build())
         if (response.isSuccessful) {
-            val status = response.body()?.string()
+            val status = response.body?.string()
             val tokenResponse = JSONObject(status)
             if (tokenResponse.has("token")) {
                 this.payNymToken = tokenResponse.getString("token")
@@ -109,7 +109,7 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         builder.url("$URL/claim")
         val response = this.executeRequest(builder.post(body).build())
         if (response.isSuccessful) {
-            val jsonStr = response.body()?.string();
+            val jsonStr = response.body?.string();
             val json = JSONObject(jsonStr);
             if (json.has("token")) {
                 payNymToken = json.getString("token")
@@ -148,14 +148,14 @@ class PayNymApiService(private val paynymCode: String, private val context: Cont
         builder.url("$URL/create")
         val response = this.executeRequest(builder.post(body).build())
         if (response.isSuccessful) {
-            val jsonStr = response.body()?.string()
+            val jsonStr = response.body?.string()
             val jsonObject = JSONObject(jsonStr)
             if (jsonObject.has("token")) {
                 this.payNymToken = jsonObject.getString("token")
             }
             return jsonObject
         } else {
-            val jsonStr = response.body()?.string()
+            val jsonStr = response.body?.string()
             val jsonObject = JSONObject(jsonStr)
             if (jsonObject.has("message")) {
                 throw IOException(jsonObject.getString("message"))

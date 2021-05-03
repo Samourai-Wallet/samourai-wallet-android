@@ -201,7 +201,7 @@ public class APIFactory {
         UTXOFactory.getInstance().clear();
     }
 
-    public String getAccessTokenNotExpired() {
+    public String getAccessTokenNotExpired() throws Exception {
         boolean setupDojo = DojoUtil.getInstance(context).getDojoParams() != null;
 
         String currentAccessToken = getAccessToken();
@@ -231,7 +231,11 @@ public class APIFactory {
 
     public String getAccessToken() {
         if(ACCESS_TOKEN == null && APIFactory.getInstance(context).APITokenRequired())    {
-            getToken(true);
+            try {
+                getToken(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return DojoUtil.getInstance(context).getDojoParams() == null ? "" : ACCESS_TOKEN;
     }
@@ -292,16 +296,25 @@ public class APIFactory {
         if(!AppUtil.getInstance(context).isOfflineMode() && APITokenRequired())    {
 
             if(APIFactory.getInstance(context).getAccessToken() == null)    {
-                APIFactory.getInstance(context).getToken(false);
+                try {
+                    APIFactory.getInstance(context).getToken(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             if(APIFactory.getInstance(context).getAccessToken() != null)    {
                 JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
                 if(jwt != null && jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
-                    if(APIFactory.getInstance(context).getToken(false))  {
-                        return true;
-                    }
-                    else    {
+                    try {
+                        if(APIFactory.getInstance(context).getToken(false))  {
+                            return true;
+                        }
+                        else    {
+                            return false;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         return false;
                     }
                 }
@@ -369,6 +382,9 @@ public class APIFactory {
                         setAccessToken(authObj.getString("access_token"));
                         return true;
                     }
+                }
+                if(jsonObject != null && jsonObject.has("error"))    {
+                    return  false;
                 }
             }
             catch(JSONException je) {

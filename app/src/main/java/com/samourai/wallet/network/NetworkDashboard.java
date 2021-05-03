@@ -443,7 +443,11 @@ public class NetworkDashboard extends AppCompatActivity {
                 DojoUtil.getInstance(NetworkDashboard.this).clear();
                 APIFactory.getInstance(NetworkDashboard.this).setAccessToken(null);
                 APIFactory.getInstance(NetworkDashboard.this).setAppToken(null);
-                APIFactory.getInstance(NetworkDashboard.this).getToken(true);
+                try {
+                    APIFactory.getInstance(NetworkDashboard.this).getToken(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 Looper.loop();
 

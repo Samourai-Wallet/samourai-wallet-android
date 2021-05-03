@@ -476,7 +476,8 @@ public class PinEntryActivity extends AppCompatActivity {
                             String seed = HD_WalletFactory.getInstance(PinEntryActivity.this).get().getMnemonic();
 
                             Intent intent = new Intent(PinEntryActivity.this, RecoveryWordsActivity.class);
-                            intent.putExtra("BIP39_WORD_LIST", seed);
+                            intent.putExtra(RecoveryWordsActivity.WORD_LIST, seed);
+                            intent.putExtra(RecoveryWordsActivity.PASSPHRASE, passphrase);
                             startActivity(intent);
                             finish();
 

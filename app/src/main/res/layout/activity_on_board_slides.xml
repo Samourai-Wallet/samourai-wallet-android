@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/onBoardFrame"
+    tools:context=".onboard.OnBoardSlidesActivity">
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/onBoardViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/sliderIndicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.samourai.wallet.widgets.WormDotsIndicator
+        android:id="@+id/sliderIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:dotsCornerRadius="12dp"
+        app:dotsSize="12dp"
+        app:dotsSpacing="6dp"
+        app:dotsClickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/getStarted"
+        app:layout_constraintEnd_toEndOf="@+id/onBoardViewPager"
+        app:layout_constraintStart_toStartOf="@+id/onBoardViewPager"
+          />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/getStarted"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/get_started"
+        android:paddingTop="18dp"
+        android:textAllCaps="false"
+        android:paddingBottom="18dp"
+        app:cornerRadius="12dp"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/blue_ui_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

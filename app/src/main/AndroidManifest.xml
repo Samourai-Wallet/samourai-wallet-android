@@ -53,10 +53,23 @@
         android:theme="@style/SamouraiAppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".send.batch.BatchSpendActivity"
+        <activity
+            android:name=".onboard.RestoreOptionActivity"
             android:theme="@style/Theme.Samourai.Material"
-            android:label=""
             />
+        <activity
+            android:name=".onboard.SetUpWalletActivity"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
+            android:name=".onboard.OnBoardSlidesActivity"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
+            android:name=".RecoveryWordsActivity"
+            android:theme="@style/Theme.Samourai.Material" />
+        <activity
+            android:name=".send.batch.BatchSpendActivity"
+            android:label=""
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
@@ -114,7 +127,6 @@
             android:label="@string/app_name"
             android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
-
         <activity
             android:name=".settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -129,14 +141,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label=""
             android:theme="@style/SamouraiAppDarkStatusTheme" />
-        <activity
-            android:name=".bip47.BIP47Add"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".bip47.BIP47ShowQR"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
         <activity
             android:name=".ricochet.RicochetActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -171,11 +175,6 @@
             android:screenOrientation="landscape" />
         <activity android:name=".CreateWalletActivity" />
         <activity android:name=".RestoreSeedWalletActivity" />
-        <activity
-            android:name=".LandingActivity"
-            android:label=""
-            android:theme="@style/Theme.Samourai.Material" />
-        <activity android:name=".RecoveryWordsActivity" />
         <!--
                 <receiver
                     android:name=".receivers.BootIntentReceiver"
@@ -232,11 +231,10 @@
         <activity
             android:name=".tx.TxDetailsActivity"
             android:label=" "
-            android:theme="@style/Theme.Samourai.Material" />
-<!--        <activity-->
-<!--            android:name=".tx.TxPrivacyDetailsActivity"-->
-<!--            android:label=""-->
-<!--            android:theme="@style/SamouraiAppTheme" />-->
+            android:theme="@style/Theme.Samourai.Material" /> <!-- <activity -->
+        <!-- android:name=".tx.TxPrivacyDetailsActivity" -->
+        <!-- android:label="" -->
+        <!-- android:theme="@style/SamouraiAppTheme" /> -->
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"

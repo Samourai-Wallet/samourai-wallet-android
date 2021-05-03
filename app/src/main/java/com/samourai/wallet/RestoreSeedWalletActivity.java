@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -89,6 +91,7 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
             restoreMode = getIntent().getStringExtra("mode");
             setUpAdapter();
         }
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.window));
 
         String BIP39_EN = null;
         StringBuilder sb = new StringBuilder();
@@ -497,7 +500,8 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
 
                             String seed = HD_WalletFactory.getInstance(RestoreSeedWalletActivity.this).get().getMnemonic();
                             Intent intent = new Intent(RestoreSeedWalletActivity.this, RecoveryWordsActivity.class);
-                            intent.putExtra("BIP39_WORD_LIST", seed);
+                            intent.putExtra( RecoveryWordsActivity.WORD_LIST, seed);
+                            intent.putExtra(RecoveryWordsActivity.PASSPHRASE, passphrase);
                             startActivity(intent);
                             finish();
 

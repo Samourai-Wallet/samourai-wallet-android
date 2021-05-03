@@ -122,7 +122,7 @@ class PayNymViewModel(application: Application) : AndroidViewModel(application) 
                 loader.postValue(false)
             }
             if (response.isSuccessful) {
-                val responseJson = response.body()?.string()
+                val responseJson = response.body?.string()
                 if (responseJson != null)
                     setPaynymPayload(JSONObject(responseJson))
                 else

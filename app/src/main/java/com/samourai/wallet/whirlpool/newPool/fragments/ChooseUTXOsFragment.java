@@ -360,7 +360,7 @@ public class ChooseUTXOsFragment extends Fragment {
 
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            TextView address, amount, label, section;
+            TextView address, amount;
             LinearLayout tagsLayout;
             CheckBox checkBox;
             ViewGroup rootViewGroup;
@@ -371,7 +371,6 @@ public class ChooseUTXOsFragment extends Fragment {
                 super(itemView);
 
                 amount = itemView.findViewById(R.id.utxo_item_amount);
-                label = itemView.findViewById(R.id.label);
                 address = itemView.findViewById(R.id.utxo_item_address);
                 notesLayout = itemView.findViewById(R.id.utxo_item_notes_layout);
                 tagsLayout = itemView.findViewById(R.id.utxo_item_tags_layout);

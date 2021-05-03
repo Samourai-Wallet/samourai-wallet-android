@@ -170,8 +170,8 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'io.samourai.code.wallet:android-tor-binary:0.4.5.4'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
     testImplementation 'junit:junit:4.12'
 

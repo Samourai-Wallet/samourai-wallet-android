@@ -161,16 +161,30 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
         Disposable disposable = DojoUtil.getInstance(getActivity().getApplicationContext()).setDojoParams(params)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(aBoolean -> {
-                    progressStates.setText("Successfully connected to Dojo Node");
-                    if (this.dojoConfigurationListener != null) {
-                        this.dojoConfigurationListener.onConnect();
-                    }
-                    dojoConnectProgress.setProgress(100);
-                    new Handler().postDelayed(() -> {
-                        Toast.makeText(getActivity(), "Successfully connected to Dojo", Toast.LENGTH_SHORT).show();
+                .subscribe(success -> {
+                    if(success){
+                        progressStates.setText("Successfully connected to Dojo Node");
+                        if (this.dojoConfigurationListener != null) {
+                            this.dojoConfigurationListener.onConnect();
+                        }
+                        dojoConnectProgress.setProgress(100);
+                        new Handler().postDelayed(() -> {
+                            Toast.makeText(getActivity(), "Successfully connected to Dojo", Toast.LENGTH_SHORT).show();
+                            dismissAllowingStateLoss();
+                        }, 800);
+                    }else{
+                        dojoConnectProgress.setVisibility(View.INVISIBLE);
                         dismissAllowingStateLoss();
-                    }, 800);
+                        if (this.dojoConfigurationListener != null) {
+                            this.dojoConfigurationListener.onError();
+                        }
+                        Toast.makeText(requireContext(),getString(R.string.dojo_connection_error), Toast.LENGTH_LONG).show();
+                        DojoUtil.getInstance(getActivity().getApplicationContext()).removeDojoParams();
+                        if (this.dojoConfigurationListener != null) {
+                            this.dojoConfigurationListener.onError();
+                        }
+                    }
+
                 }, error -> {
                     error.printStackTrace();
                     if (this.dojoConfigurationListener != null) {

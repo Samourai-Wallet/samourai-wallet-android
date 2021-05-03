@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -61,6 +63,7 @@ public class CreateWalletActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_wallet);
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.window));
         wallet_create_viewpager = (ViewPager) findViewById(R.id.wallet_create_viewpager);
         pagerIndicatorContainer = (LinearLayout) findViewById(dots);
         forwardButton = (LinearLayout) findViewById(R.id.wizard_forward);
@@ -402,7 +405,8 @@ public class CreateWalletActivity extends FragmentActivity implements
 
                             String seed = HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getMnemonic();
                             Intent intent = new Intent(CreateWalletActivity.this,  RecoveryWordsActivity.class);
-                            intent.putExtra("BIP39_WORD_LIST",seed);
+                            intent.putExtra(RecoveryWordsActivity.WORD_LIST,seed);
+                            intent.putExtra(RecoveryWordsActivity.PASSPHRASE,passphrase);
                             startActivity(intent);
                             finish();
 
