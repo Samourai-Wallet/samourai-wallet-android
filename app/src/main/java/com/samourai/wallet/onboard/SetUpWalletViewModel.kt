@@ -1,7 +1,6 @@
 package com.samourai.wallet.onboard;
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +11,8 @@ import com.samourai.wallet.util.PrefsUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_set_up_wallet.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -53,6 +52,8 @@ class SetUpWalletViewModel : ViewModel() {
                         if (dojoPayload.has("version")) {
                             _dojoApiVersion.postValue(dojoPayload.getString("version"))
                         }
+                        delay(600)
+                        connectToDojo(applicationContext)
                     } else {
                         _errors.postValue(applicationContext.getString(R.string.invalid_dojo_payload))
                     }
