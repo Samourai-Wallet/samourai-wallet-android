@@ -199,7 +199,10 @@ class SetUpWalletActivity : AppCompatActivity() {
 
     private fun connectDojo() {
         val urlPattern = Pattern.compile("^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
-        val apiUrl = setUpWalletAddressInput.text.toString()
+        var apiUrl = setUpWalletAddressInput.text.toString()
+        if(!apiUrl.startsWith("http")){
+            apiUrl = "http://$apiUrl"
+        }
         if (!urlPattern.matcher(apiUrl).matches()) {
             setUpWalletAddressInput.error = getString(R.string.invalid_api_endpoint)
             setUpWalletAddressInput.requestFocus()
