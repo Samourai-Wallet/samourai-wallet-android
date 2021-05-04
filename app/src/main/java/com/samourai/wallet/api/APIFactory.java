@@ -382,8 +382,7 @@ public class APIFactory {
                         setAccessToken(authObj.getString("access_token"));
                         return true;
                     }
-                }
-                if(jsonObject != null && jsonObject.has("error"))    {
+                }else{
                     return  false;
                 }
             }
