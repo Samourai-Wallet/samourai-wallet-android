@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
@@ -17,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.samourai.wallet.BuildConfig
 import com.samourai.wallet.R
 import com.samourai.wallet.util.PrefsUtil
+import io.reactivex.Single
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -82,7 +84,7 @@ object ExternalBackupManager {
 
     @JvmStatic
     fun write(content: String) {
-        scope.launch {
+        scope.launch(Dispatchers.IO){
             if (requireScoped()) {
                 writeScopeStorage(content)
             } else {
@@ -92,10 +94,12 @@ object ExternalBackupManager {
     }
 
     @JvmStatic
-    fun read(): String?= if (requireScoped()) {
-        readScoped()
-    } else {
-       readLegacy()
+    fun read(): Single<String?> = Single.fromCallable {
+        return@fromCallable if (requireScoped()) {
+            readScoped()
+        } else {
+            readLegacy()
+        }
     }
 
     private fun initScopeStorage() {
