@@ -809,5 +809,8 @@
     <string name="recipients">Recipients</string>
     <string name="clear_batch_list">Clear batch list</string>
     <string name="confirm_batch_list_clear">Are you sure want to clear batch list?</string>
+    <string name="choose_directory">Choose directory</string>
+    <string name="permission_dialog_scoped">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device. please choose a directory </string>
+    <string name="permission_alert_dialog_title_external_scoped">Choose backup directory</string>
 
 </resources>

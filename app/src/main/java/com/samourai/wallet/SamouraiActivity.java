@@ -2,8 +2,8 @@ package com.samourai.wallet;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -12,15 +12,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.payload.ExternalBackupManager;
 import com.samourai.wallet.payload.PayloadUtil;
-import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -91,6 +90,11 @@ public class SamouraiActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        ExternalBackupManager.onActivityResult(requestCode, resultCode, data, getApplication());
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     public void hidekeyboard(){
         View view = this.getCurrentFocus();

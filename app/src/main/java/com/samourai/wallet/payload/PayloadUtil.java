@@ -25,6 +25,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -32,7 +33,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
@@ -41,13 +41,11 @@ import com.samourai.wallet.whirlpool.Tx0DisplayUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.codec.DecoderException;
-
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
-
 import org.bitcoinj.params.TestNet3Params;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
@@ -67,15 +65,7 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
@@ -89,8 +79,7 @@ public class PayloadUtil	{
     private final static String strMultiAddrFilename = "samourai.multi";
     private final static String strPayNymFilename = "samourai.paynyms";
     private final static String strMultiAddrMixFilename = "samourai.multi.mix";
-    private final static String strOptionalBackupDir = "/samourai";
-    private final static String strOptionalFilename = "samourai.txt";
+    private final static String strOptionalFilename = "samourai.support.txt";
     private final static String paynymResponseFile = "paynym.res";
 
     private static Context context = null;
@@ -110,23 +99,13 @@ public class PayloadUtil	{
         return instance;
     }
 
-    public File getBackupFile()  {
-        String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = null;
-        if(context.getPackageName().contains("staging"))    {
-            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
-        }
-        else    {
-            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
-        }
-        File file = new File(dir, strOptionalFilename);
-
-        return file;
+    public File getSupportBackupFile()  {
+        File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
+        return new File(dir, strOptionalFilename);
     }
     public File getPaynymResponseFile(){
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
-        File file = new File(dir, paynymResponseFile);
-        return file;
+        return new File(dir, paynymResponseFile);
     }
 
     public JSONObject putPayload(String data, boolean external)    {
@@ -1014,30 +993,22 @@ public class PayloadUtil	{
     }
 
     private synchronized void serialize(String data) throws IOException    {
-
-        String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = null;
-        if(context.getPackageName().contains("staging"))    {
-            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
-        }
-        else    {
-            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
-        }
-        if(!dir.exists())   {
-            dir.mkdirs();
-            dir.setWritable(true, true);
-            dir.setReadable(true, true);
-        }
-        File newfile = new File(dir, strOptionalFilename);
-        newfile.setWritable(true, true);
-        newfile.setReadable(true, true);
-
         JSONObject jsonObj = putPayload(data, false);
         if(jsonObj != null)    {
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newfile), "UTF-8"));
+            try {
+                ExternalBackupManager.write(jsonObj.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(jsonObj != null)    {
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getSupportBackupFile()), "UTF-8"));
             try {
                 out.write(jsonObj.toString());
-            } finally {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
                 out.close();
             }
         }

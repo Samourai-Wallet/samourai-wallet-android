@@ -1,12 +1,7 @@
 package com.samourai.wallet.home;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -22,17 +17,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import androidx.transition.ChangeBounds;
-import androidx.transition.TransitionManager;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
@@ -46,7 +30,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.transition.ChangeBounds;
+import androidx.transition.TransitionManager;
+
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.ProgressIndicator;
 import com.samourai.wallet.BuildConfig;
@@ -54,9 +52,6 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.paynym.fragments.PayNymOnBoardBottomSheet;
-import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
-import com.samourai.wallet.settings.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -72,9 +67,10 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
+import com.samourai.wallet.payload.ExternalBackupManager;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.paynym.PayNymHome;
-import com.samourai.wallet.permissions.PermissionsUtil;
+import com.samourai.wallet.paynym.fragments.PayNymOnBoardBottomSheet;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
@@ -83,8 +79,10 @@ import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
+import com.samourai.wallet.send.soroban.meeting.SorobanMeetingListenActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.settings.SettingsActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AppUtil;
@@ -401,10 +399,10 @@ public class BalanceActivity extends SamouraiActivity {
         IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
 
-        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
+        if(PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.AUTO_BACKUP, true)){
+           if (!ExternalBackupManager.hasPermissions())
+               ExternalBackupManager.askPermission(this);
         }
-
         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) && !PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false)) {
             doFeaturePayNymUpdate();
         } else if (!PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) &&
@@ -412,7 +410,6 @@ public class BalanceActivity extends SamouraiActivity {
              PayNymOnBoardBottomSheet payNymOnBoardBottomSheet = new PayNymOnBoardBottomSheet();
              payNymOnBoardBottomSheet.show(getSupportFragmentManager(),payNymOnBoardBottomSheet.getTag());
         }
-        Log.i(TAG, "onCreate:PAYNYM_REFUSED ".concat(String.valueOf(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false))));
 
         if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
             if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
@@ -858,6 +855,7 @@ public class BalanceActivity extends SamouraiActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
+        ExternalBackupManager.onActivityResult(requestCode,resultCode,data,getApplication());
         if (resultCode == Activity.RESULT_OK && requestCode == SCAN_COLD_STORAGE) {
 
             if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {

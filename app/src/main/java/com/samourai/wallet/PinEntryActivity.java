@@ -29,6 +29,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.ExternalBackupManager;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -49,6 +50,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class PinEntryActivity extends AppCompatActivity {
 
@@ -512,129 +517,120 @@ public class PinEntryActivity extends AppCompatActivity {
 
     void doBackupRestore() {
 
-        File file = PayloadUtil.getInstance(PinEntryActivity.this).getBackupFile();
-        if (file != null && file.exists()) {
 
-            StringBuilder sb = new StringBuilder();
-            try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
-                String str = null;
-                while ((str = in.readLine()) != null) {
-                    sb.append(str);
-                }
-                in.close();
-            } catch (FileNotFoundException fnfe) {
-                ;
-            } catch (IOException ioe) {
-                ;
-            }
+        if (ExternalBackupManager.backupAvailable()) {
+            Disposable disposable = ExternalBackupManager.read()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe((data, throwable) -> {
+                        if(throwable!=null){
+                            Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (data != null && data.length() > 0) {
+                            final EditText passphrase = new EditText(PinEntryActivity.this);
+                            passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                            passphrase.setHint(R.string.passphrase);
 
-            final String data = sb.toString();
-            if (data != null && data.length() > 0) {
-                final EditText passphrase = new EditText(PinEntryActivity.this);
-                passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                passphrase.setHint(R.string.passphrase);
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(PinEntryActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setView(passphrase)
+                                    .setMessage(R.string.restore_wallet_from_backup)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(PinEntryActivity.this)
-                        .setTitle(R.string.app_name)
-                        .setView(passphrase)
-                        .setMessage(R.string.restore_wallet_from_backup)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+                                            final String pw = passphrase.getText().toString();
+                                            if (pw == null || pw.length() < 1) {
+                                                Toast.makeText(PinEntryActivity.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
+                                                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                                finish();
+                                            }
 
-                                final String pw = passphrase.getText().toString();
-                                if (pw == null || pw.length() < 1) {
-                                    Toast.makeText(PinEntryActivity.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
-                                    AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
-                                    finish();
-                                }
-
-                                final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
-                                if (decrypted == null || decrypted.length() < 1) {
-                                    Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                    AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
-                                    finish();
-                                }
+                                            final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
+                                            if (decrypted == null || decrypted.length() < 1) {
+                                                Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                                finish();
+                                            }
 
 
-                                progressBar.setVisibility(View.VISIBLE);
+                                            progressBar.setVisibility(View.VISIBLE);
 
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Looper.prepare();
+                                            new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Looper.prepare();
 
-                                        try {
+                                                    try {
 
-                                            JSONObject json = new JSONObject(decrypted);
-                                            HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json);
-                                            HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
-                                            String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();
-                                            String hash = AccessFactory.getInstance(PinEntryActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
-                                            PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
-                                            PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
-                                            PayloadUtil.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
+                                                        JSONObject json = new JSONObject(decrypted);
+                                                        HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json);
+                                                        HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
+                                                        String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();
+                                                        String hash = AccessFactory.getInstance(PinEntryActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
+                                                        PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
+                                                        PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
+                                                        PayloadUtil.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
 
-                                        } catch (MnemonicException.MnemonicLengthException mle) {
-                                            mle.printStackTrace();
-                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        } catch (DecoderException de) {
-                                            de.printStackTrace();
-                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        } catch (JSONException je) {
-                                            je.printStackTrace();
-                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        } catch (IOException ioe) {
-                                            ioe.printStackTrace();
-                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        } catch (java.lang.NullPointerException npe) {
-                                            npe.printStackTrace();
-                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        } catch (DecryptionException de) {
-                                            de.printStackTrace();
-                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        } finally {
-                                            runOnUiThread(() -> {
-                                                progressBar.setVisibility(View.INVISIBLE);
-                                            });
+                                                    } catch (MnemonicException.MnemonicLengthException mle) {
+                                                        mle.printStackTrace();
+                                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                    } catch (DecoderException de) {
+                                                        de.printStackTrace();
+                                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                    } catch (JSONException je) {
+                                                        je.printStackTrace();
+                                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                    } catch (IOException ioe) {
+                                                        ioe.printStackTrace();
+                                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                    } catch (java.lang.NullPointerException npe) {
+                                                        npe.printStackTrace();
+                                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                    } catch (DecryptionException de) {
+                                                        de.printStackTrace();
+                                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                    } finally {
+                                                        runOnUiThread(() -> {
+                                                            progressBar.setVisibility(View.INVISIBLE);
+                                                        });
 
-                                            new AlertDialog.Builder(PinEntryActivity.this)
-                                                    .setTitle(R.string.app_name)
-                                                    .setMessage(getString(R.string.pin_reminder) + "\n\n" + AccessFactory.getInstance(PinEntryActivity.this).getPIN())
-                                                    .setCancelable(false)
-                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                                        new AlertDialog.Builder(PinEntryActivity.this)
+                                                                .setTitle(R.string.app_name)
+                                                                .setMessage(getString(R.string.pin_reminder) + "\n\n" + AccessFactory.getInstance(PinEntryActivity.this).getPIN())
+                                                                .setCancelable(false)
+                                                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                            dialog.dismiss();
-                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
-                                                            finish();
+                                                                        dialog.dismiss();
+                                                                        AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                                                        finish();
 
-                                                        }
-                                                    }).show();
+                                                                    }
+                                                                }).show();
+
+                                                    }
+
+                                                    Looper.loop();
+
+                                                }
+                                            }).start();
 
                                         }
+                                    }).setNegativeButton(R.string.cancel, (dialog, whichButton) -> {
 
-                                        Looper.loop();
+                                        AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                        finish();
 
-                                    }
-                                }).start();
-
+                                    });
+                            if (!isFinishing()) {
+                                dlg.show();
                             }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
-                                finish();
+                        }
 
-                            }
-                        });
-                if (!isFinishing()) {
-                    dlg.show();
-                }
-
-            }
-
+                    });
         } else {
             Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
