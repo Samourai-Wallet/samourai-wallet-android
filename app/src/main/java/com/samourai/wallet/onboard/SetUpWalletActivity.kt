@@ -25,8 +25,10 @@ import com.samourai.wallet.CreateWalletActivity
 import com.samourai.wallet.R
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.network.dojo.DojoUtil
+import com.samourai.wallet.payload.ExternalBackupManager
 import com.samourai.wallet.permissions.PermissionsUtil
 import com.samourai.wallet.tor.TorManager
+import com.samourai.wallet.util.PrefsUtil
 import io.matthewnelson.topl_service.TorServiceController
 import kotlinx.android.synthetic.main.activity_set_up_wallet.*
 import kotlinx.coroutines.Dispatchers
@@ -54,10 +56,8 @@ class SetUpWalletActivity : AppCompatActivity() {
         waiting = ContextCompat.getColor(this, R.color.warning_yellow)
 
 
-        if (!PermissionsUtil.getInstance(applicationContext).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(applicationContext).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            askPermission()
-        } else {
-            storagePermGranted = true;
+        if(PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.AUTO_BACKUP, true) && !ExternalBackupManager.hasPermissions()){
+            ExternalBackupManager.askPermission(this);
         }
 
         TorManager.getTorStateLiveData().observe(this, {
@@ -138,63 +138,13 @@ class SetUpWalletActivity : AppCompatActivity() {
             connectDojo()
         }
         setUpWalletCreateNewWallet.setOnClickListener {
-            if (!storagePermGranted) {
-                askPermission()
-                return@setOnClickListener
-            }
             val intent = Intent(this, CreateWalletActivity::class.java)
             startActivity(intent)
         }
         setUpWalletRestoreButton.setOnClickListener {
-            if (!storagePermGranted) {
-               askPermission()
-                return@setOnClickListener
-            }
             val intent = Intent(this, RestoreOptionActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    private fun askPermission() {
-
-        val title = getString(R.string.permission_alert_dialog_title_external)
-        val message = getString(R.string.permission_dialog_message_external)
-
-        val permissionDialog = MaterialAlertDialogBuilder(this)
-        permissionDialog.setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
-                    run {
-                        dialog.dismiss()
-                    }
-                }
-
-        var openSettings = false;
-        if (!shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
-                !shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            openSettings = true;
-        }
-        if(!openSettings){
-            permissionDialog .setPositiveButton(R.string.action_settings) { dialog, _ ->
-                run {
-                    dialog.dismiss()
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    intent.data = Uri.parse("package:" + applicationContext.packageName)
-                    startActivity(intent)
-                }
-            }
-        }else{
-            permissionDialog .setPositiveButton(R.string.ok) { dialog, _ ->
-                run {
-                    dialog.dismiss()
-                    ActivityCompat
-                            .requestPermissions(this@SetUpWalletActivity,
-                                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                    PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE)
-                }
-            }
-        }
-        permissionDialog.show()
     }
 
     private fun connectDojo() {
@@ -364,6 +314,11 @@ class SetUpWalletActivity : AppCompatActivity() {
                 .apply {
                     this.start()
                 }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        ExternalBackupManager.onActivityResult(requestCode, resultCode, data, application)
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 }

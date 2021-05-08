@@ -7,18 +7,14 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
+import com.samourai.wallet.payload.ExternalBackupManager;
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.squareup.picasso.Cache;
-import com.squareup.picasso.Downloader;
-import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -40,7 +36,7 @@ public class SamouraiApplication extends Application {
         setUpTorService();
         setUpChannels();
         RxJavaPlugins.setErrorHandler(throwable -> {});
-
+        ExternalBackupManager.attach(this);
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
@@ -125,6 +121,7 @@ public class SamouraiApplication extends Application {
 
     @Override
     public void onTerminate() {
+        ExternalBackupManager.dispose();
         TorServiceController.stopTor();
         super.onTerminate();
     }

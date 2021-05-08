@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.payload.ExternalBackupManager;
 import com.samourai.wallet.widgets.MnemonicSeedEditText;
 
 import java.io.BufferedReader;
@@ -68,7 +68,6 @@ public class ImportWalletFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        backUpFile = PayloadUtil.getInstance(getActivity()).getBackupFile();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
@@ -194,13 +193,13 @@ public class ImportWalletFragment extends Fragment {
     }
 
     private void RestoreFromBackUp() {
-        readFile(backUpFile);
-        if (backUpFile.exists()) {
+
+        if (ExternalBackupManager.backupAvailable()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd yyyy");
             lastUpdatedTextView.setText(getResources()
                     .getString(R.string.last_updated)
                     .concat(" ")
-                    .concat(dateFormat.format(backUpFile.lastModified())));
+                    .concat(dateFormat.format(ExternalBackupManager.lastUpdated())));
             lastUpdatedTextView.setVisibility(View.VISIBLE);
         } else {
             lastUpdatedTextView.setVisibility(View.INVISIBLE);

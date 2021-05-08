@@ -11,12 +11,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.samourai.wallet.R
 import com.samourai.wallet.RestoreSeedWalletActivity
 import com.samourai.wallet.access.AccessFactory
 import com.samourai.wallet.crypto.AESUtil
 import com.samourai.wallet.hd.HD_WalletFactory
+import com.samourai.wallet.payload.ExternalBackupManager
 import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.util.AppUtil
 import com.samourai.wallet.util.CharSequenceX
@@ -57,8 +59,15 @@ class RestoreOptionActivity : AppCompatActivity() {
 
         restoreBtn.setOnClickListener { restoreWalletFromBackup() }
 
+        ExternalBackupManager.getPermissionStateLiveData().observe(this, Observer {
+            if (ExternalBackupManager.backupAvailable()) {
+                restoreFromBackupSnackbar.visibility = View.VISIBLE
+            } else {
+                restoreFromBackupSnackbar.visibility = View.GONE
+            }
+        })
 
-        if (PayloadUtil.getInstance(this).backupFile.exists()) {
+        if (ExternalBackupManager.backupAvailable()) {
             restoreFromBackupSnackbar.visibility = View.VISIBLE
         } else {
             restoreFromBackupSnackbar.visibility = View.GONE
@@ -75,11 +84,11 @@ class RestoreOptionActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun showLoading(show: Boolean){
-        if(show){
+    private fun showLoading(show: Boolean) {
+        if (show) {
             loaderRestore.visibility = View.VISIBLE
             restoreBtn.visibility = View.GONE
-        }else{
+        } else {
             loaderRestore.visibility = View.GONE
             restoreBtn.visibility = View.VISIBLE
         }
@@ -101,10 +110,9 @@ class RestoreOptionActivity : AppCompatActivity() {
 
         suspend fun readBackUp(password: String) = withContext(Dispatchers.IO) {
             try {
-                val file = PayloadUtil.getInstance(applicationContext).backupFile
-                val backupData: String = file.readText()
-                val decrypted = PayloadUtil.getInstance(applicationContext).getDecryptedBackupPayload(backupData, CharSequenceX(password))
-                withContext(Dispatchers.Main) {
+                val backupData = ExternalBackupManager.read()
+                if (backupData != null) {
+                    val decrypted = PayloadUtil.getInstance(applicationContext).getDecryptedBackupPayload(backupData, CharSequenceX(password))
                     if (decrypted != null && decrypted.isNotEmpty()) {
                         val job = async(Dispatchers.IO) {
                             initializeRestore(decrypted)

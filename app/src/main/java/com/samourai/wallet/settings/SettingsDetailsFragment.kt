@@ -1,6 +1,5 @@
 package com.samourai.wallet.settings
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
@@ -21,8 +20,6 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.transition.Transition
-import com.dm.zbar.android.scanner.ZBarConstants
-import com.dm.zbar.android.scanner.ZBarScannerActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.samourai.wallet.*
 import com.samourai.wallet.access.AccessFactory
@@ -32,6 +29,7 @@ import com.samourai.wallet.crypto.DecryptionException
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.hd.HD_WalletFactory
 import com.samourai.wallet.network.dojo.DojoUtil
+import com.samourai.wallet.payload.ExternalBackupManager
 import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.ricochet.RicochetMeta
 import com.samourai.wallet.segwit.BIP49Util
@@ -45,8 +43,9 @@ import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo
-import com.yanzhenjie.zbar.Symbol
 import io.matthewnelson.topl_service.TorServiceController
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import org.apache.commons.io.FileUtils
 import org.bitcoinj.core.Transaction
@@ -62,9 +61,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
     public var targetTransition: Transition? = null
     private var progress: ProgressDialog? = null
-    private val steathActivating = false
-    private val SCAN_HEX_TX = 2011
-    private val scope = CoroutineScope(Dispatchers.IO);
+    private val scope = CoroutineScope(Dispatchers.IO) + SupervisorJob();
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         targetTransition?.addTarget(view)
@@ -305,6 +302,9 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 if (cbPref6.isChecked) {
                     PrefsUtil.getInstance(requireContext()).setValue(PrefsUtil.AUTO_BACKUP, false)
                 } else {
+                    if(!ExternalBackupManager.hasPermissions()){
+                        ExternalBackupManager.askPermission(requireActivity())
+                    }
                     PrefsUtil.getInstance(requireContext()).setValue(PrefsUtil.AUTO_BACKUP, true)
                 }
                 true
@@ -516,50 +516,41 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
     private fun doTroubleshoot() {
         try {
+            if(!ExternalBackupManager.backupAvailable()){
+                Toast.makeText(context, "Backup file is not available. please enable auto-backup to continue", Toast.LENGTH_SHORT).show()
+                return
+            }
             val strExpected = HD_WalletFactory.getInstance(requireContext()).get().passphrase
-            val passphrase = EditText(requireContext())
-            passphrase.isSingleLine = true
-            passphrase.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            val view = layoutInflater.inflate(R.layout.password_input_dialog_layout, null)
+            val password = view.findViewById<EditText>(R.id.restore_dialog_password_edittext)
+            val message = view.findViewById<TextView>(R.id.dialogMessage)
+            message.text = getString(R.string.wallet_passphrase);
             val dlg = MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.app_name)
-                    .setMessage(R.string.wallet_passphrase)
-                    .setView(passphrase)
+                    .setView(view)
                     .setCancelable(false)
                     .setPositiveButton(R.string.ok) { dialog, whichButton ->
-                        val _passphrase39 = passphrase.text.toString()
+                        val _passphrase39 = password.text.toString()
                         if (_passphrase39 == strExpected) {
                             Toast.makeText(requireContext(), R.string.bip39_match, Toast.LENGTH_SHORT).show()
-                            val file = PayloadUtil.getInstance(requireContext()).backupFile
-                            if (file != null && file.exists()) {
+                            if (ExternalBackupManager.backupAvailable()) {
                                 MaterialAlertDialogBuilder(requireContext())
                                         .setTitle(R.string.app_name)
                                         .setMessage(R.string.bip39_decrypt_test)
                                         .setCancelable(false)
                                         .setPositiveButton(R.string.yes) { dialog, whichButton ->
-                                            Thread {
-                                                Looper.prepare()
-                                                val sb = StringBuilder()
-                                                try {
-                                                    val `in` = BufferedReader(InputStreamReader(FileInputStream(file), "UTF8"))
-                                                    var str: String? = null
-                                                    while (`in`.readLine().also { str = it } != null) {
-                                                        sb.append(str)
-                                                    }
-                                                    `in`.close()
-                                                    val data = sb.toString()
-                                                    val decrypted = PayloadUtil.getInstance(requireContext()).getDecryptedBackupPayload(data, CharSequenceX(_passphrase39))
-                                                    if (decrypted == null || decrypted.length < 1) {
+                                            scope.launch(Dispatchers.IO) {
+                                               val data =  ExternalBackupManager.read()
+                                                val decrypted = PayloadUtil.getInstance(requireContext()).getDecryptedBackupPayload(data, CharSequenceX(_passphrase39))
+                                                withContext(Dispatchers.Main){
+                                                    if (decrypted == null || decrypted.isEmpty()) {
                                                         Toast.makeText(requireContext(), R.string.backup_read_error, Toast.LENGTH_SHORT).show()
                                                     } else {
                                                         Toast.makeText(requireContext(), R.string.backup_read_ok, Toast.LENGTH_SHORT).show()
                                                     }
-                                                } catch (fnfe: FileNotFoundException) {
-                                                    Toast.makeText(requireContext(), R.string.backup_read_error, Toast.LENGTH_SHORT).show()
-                                                } catch (ioe: IOException) {
-                                                    Toast.makeText(requireContext(), R.string.backup_read_error, Toast.LENGTH_SHORT).show()
                                                 }
-                                                Looper.loop()
-                                            }.start()
+                                            }
+
                                         }.setNegativeButton(R.string.no) { dialog, whichButton -> }.show()
                             }
                         } else {
@@ -981,5 +972,11 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             scope.cancel(CancellationException())
         }
         super.onDestroy()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        ExternalBackupManager.onActivityResult(requestCode, resultCode, data, requireActivity().application)
+        super.onActivityResult(requestCode, resultCode, data)
+
     }
 }
