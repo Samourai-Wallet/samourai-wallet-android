@@ -824,7 +824,7 @@
     <string name="invalid_api_endpoint">Invalid API endpoint</string>
     <string name="invalid_api_key">Invalid Api key</string>
     <string name="do_you_want_to_unpair">Do you want to unpair dojo ?</string>
-    <string name="dojo_connection_error">Unable to connect dojo. please check the api key or dojo status</string>
+    <string name="dojo_connection_error">Unable to connect dojo. Please check the api key or dojo status</string>
     <string name="invalid_dojo_payload">Invalid dojo payload</string>
     <string name="your_passphrase">Your passphrase</string>
     <string name="your_passphrase_will_not_be_shown_to_you_again">Your passphrase will not be shown to you again.</string>
