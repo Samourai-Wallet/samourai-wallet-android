@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -74,6 +75,7 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
     private ProgressDialog progressDialog = null;
     private Action currentAction = Action.CREATE;
     private String restoreMode = "mnemonic";
+    private boolean isSamouraiImport = false;
     private static final String TAG = "RestoreSeedWalletActivity";
 
     @Override
@@ -90,6 +92,11 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
         if (getIntent().hasExtra("mode")) {
             restoreMode = getIntent().getStringExtra("mode");
             setUpAdapter();
+        }
+        if (getIntent().hasExtra("type")) {
+            if(getIntent().getExtras().getString("type").equals("samourai")){
+                isSamouraiImport = true;
+            }
         }
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.window));
 
@@ -190,6 +197,13 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                         RestoreWalletFromSamouraiBackup(decrypted);
                     }
                 } else {
+                    if(isSamouraiImport && passphrase.trim().isEmpty() ){
+                               Snackbar.make(findViewById(R.id.wizard_nav_container), getText(R.string.passphrase_is_required_for_samourai),Snackbar.LENGTH_LONG)
+                              .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
+                                .setAnchorView(findViewById(R.id.wizard_nav_container))
+                                .show();
+                        return;
+                    }
 
                     MnemonicSeedEditText etMnemonic = (MnemonicSeedEditText) wallet_create_viewpager.findViewById(R.id.mnemonic_code_edittext);
                     String data = etMnemonic.getText().toString().trim();

@@ -42,6 +42,7 @@ class RestoreOptionActivity : AppCompatActivity() {
         samouraiMnemonicRestore.setOnClickListener {
             val intent = Intent(this@RestoreOptionActivity, RestoreSeedWalletActivity::class.java)
             intent.putExtra("mode", "mnemonic")
+            intent.putExtra("type", "samourai")
             startActivity(intent)
         }
         samouraiBackupFileRestore.setOnClickListener {
