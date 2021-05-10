@@ -787,7 +787,7 @@
     <string name="no_cahoots_detected">No cahoots detected. Refresh to search again</string>
     <string name="waiting_for_cahoots_request">Waiting for Cahoots request...</string>
     <string name="follow_paynym_fee_free">Fee : Free</string>
-    <string name="connect_paynym_fee">Fee : 0.00015 BTC</string>
+    <string name="connect_paynym_fee">Fee : 0.00015000 BTC</string>
     <string name="connect">Connect</string>
     <string name="blockchain_connect_with">BlockChain Connect with</string>
     <string name="following">Following</string>

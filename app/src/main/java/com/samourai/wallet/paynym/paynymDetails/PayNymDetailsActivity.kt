@@ -546,7 +546,7 @@ class PayNymDetailsActivity : SamouraiActivity() {
                     progressBar.visibility = View.INVISIBLE
                     var message: String? = getText(R.string.bip47_notif_tx_insufficient_funds_1).toString() + " "
                     val biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 4, FeeUtil.getInstance().lowFee.defaultPerKB)))
-                    val strAmount = MonetaryUtil.getInstance().btcFormat.format(biAmount.toLong().toDouble() / 1e8) + " BTC "
+                    val strAmount = FormatsUtil.formatBTC(biAmount.toLong());
                     message += strAmount
                     message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2)
                     val dlg = MaterialAlertDialogBuilder(this@PayNymDetailsActivity)
