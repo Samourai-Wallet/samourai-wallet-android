@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -496,8 +497,14 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         if (SendParams.getInstance().getAccount() != 0) {
                             _intent.putExtra("_account", SendParams.getInstance().getAccount());
+                            TaskStackBuilder.create(getApplicationContext())
+                                    .addParentStack(BalanceActivity.class)
+                                    .addNextIntent(_intent)
+                                    .startActivities();
+                        }else{
+                            startActivity(_intent);
                         }
-                        startActivity(_intent);
+
                     }
 
                 }, 1000L);
