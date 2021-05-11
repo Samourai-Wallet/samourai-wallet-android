@@ -2,17 +2,12 @@ package com.samourai.wallet.send.batch;
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
 import com.samourai.wallet.R
@@ -22,16 +17,12 @@ import com.samourai.wallet.util.FormatsUtil
 import com.samourai.wallet.util.PrefsUtil
 import java.math.BigInteger
 import java.text.DecimalFormat
-import java.text.NumberFormat
-import java.util.*
 
 class ReviewFragment : Fragment() {
 
-    private val viewModel: BatchSpendViewModel by activityViewModels()
     private val FEE_LOW = 0
     private val FEE_NORMAL = 1
     private val FEE_PRIORITY = 2
-    private val FEE_CUSTOM = 3
     private var FEE_TYPE = FEE_LOW
     private var feeLow: Long = 0L
     private var feeMed: Long = 0L
@@ -93,7 +84,6 @@ class ReviewFragment : Fragment() {
         val feeMedSliderValue = (feeMed * 10000).toInt()
         feeSeekBar.valueTo = (feeHighSliderValue - 10000).toFloat()
         feeSeekBar.valueFrom = 1F
-        feeSeekBar.stepSize = 1F
 
         feeSeekBar.setLabelFormatter {
             "${tvSelectedFeeRate.text}"

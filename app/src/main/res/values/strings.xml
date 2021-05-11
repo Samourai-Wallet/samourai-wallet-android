@@ -845,5 +845,6 @@
     <string name="would_you_like_to_enable_tor">Would you like to enable Tor?</string>
     <string name="would_you_like_to_connect_to">Would you like to connect to your\nown dojo server?</string>
     <string name="passphrase_is_required_for_samourai">Passphrase is required for samourai import</string>
+    <string name="send_cahoots">Send Cahoots</string>
 
 </resources>
