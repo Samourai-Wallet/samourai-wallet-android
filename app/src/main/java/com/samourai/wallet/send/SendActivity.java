@@ -405,6 +405,7 @@ public class SendActivity extends SamouraiActivity {
             } else {
                 selectedCahootsType = SelectCahootsType.type.NONE;
                 cahootsStatusText.setText("Off");
+                strPCode =null;
                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.warning_yellow));
                 hideToAddressForStowaway();
                 validateSpend();
