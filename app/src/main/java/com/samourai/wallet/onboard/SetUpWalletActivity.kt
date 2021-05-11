@@ -243,7 +243,15 @@ class SetUpWalletActivity : AppCompatActivity() {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss()
 
                 try {
-                    setUpWalletViewModel.setDojoParams(code, applicationContext)
+                    setUpWalletViewModel.viewModelScope.launch(Dispatchers.Default) {
+                        withContext(Dispatchers.Main){
+                            setUpWalletViewModel.setDojoParams(code, applicationContext)
+                        }
+                        delay(600)
+                        withContext(Dispatchers.Main){
+                            connectDojo()
+                        }
+                    }
                 } catch (e: Exception) {
                 }
             }
