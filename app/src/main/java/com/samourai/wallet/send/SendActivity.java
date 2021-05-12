@@ -361,12 +361,6 @@ public class SendActivity extends SamouraiActivity {
                             if(type.getCahootsType() == CahootsType.STOWAWAY){
                                 strPCode = pcode;
                             }
-                            if(type.getCahootsMode() == CahootsMode.SOROBAN){
-                                if(!TorManager.INSTANCE.isConnected()){
-                                    TorServiceController.startTor();
-                                    PrefsUtil.getInstance(getApplication()).setValue(PrefsUtil.ENABLE_TOR, true);
-                                }
-                            }
                         }
                         chosen[0] = true;
                         selectedCahootsType = type;
