@@ -23,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.samourai.wallet.CreateWalletActivity
 import com.samourai.wallet.R
+import com.samourai.wallet.SamouraiWallet
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet
 import com.samourai.wallet.network.dojo.DojoUtil
 import com.samourai.wallet.permissions.PermissionsUtil
@@ -73,12 +74,12 @@ class SetUpWalletActivity : AppCompatActivity() {
                 if (DojoUtil.getInstance(applicationContext).dojoParams != null) {
                     setUpWalletTorSwitch.isChecked = true
                     MaterialAlertDialogBuilder(this)
-                            .setMessage(R.string.cannot_disable_tor_dojo)
-                            .setPositiveButton(R.string.ok) { dialog,
-                                                              _ ->
-                                dialog.dismiss()
-                            }
-                            .show()
+                        .setMessage(R.string.cannot_disable_tor_dojo)
+                        .setPositiveButton(R.string.ok) { dialog,
+                                                          _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
                     return@setOnClickListener
                 }
                 TorServiceController.stopTor()
@@ -87,7 +88,7 @@ class SetUpWalletActivity : AppCompatActivity() {
         setUpWalletViewModel.errorsLiveData.observe(this, {
             it?.let {
                 Snackbar.make(setUpWalletContainer, "Error: $it", Snackbar.LENGTH_LONG)
-                        .show()
+                    .show()
             }
         })
         setUpWalletViewModel.apiEndpoint.observe(this, {
@@ -147,7 +148,7 @@ class SetUpWalletActivity : AppCompatActivity() {
         }
         setUpWalletRestoreButton.setOnClickListener {
             if (!storagePermGranted) {
-               askPermission()
+                askPermission()
                 return@setOnClickListener
             }
             val intent = Intent(this, RestoreOptionActivity::class.java)
@@ -162,11 +163,11 @@ class SetUpWalletActivity : AppCompatActivity() {
 
         val permissionDialog = MaterialAlertDialogBuilder(this)
         permissionDialog.setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
-                    run {
-                        dialog.dismiss()
-                    }
+            .setMessage(message)
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                run {
+                    dialog.dismiss()
+                }
                 }
 
         var openSettings = false;
@@ -198,10 +199,18 @@ class SetUpWalletActivity : AppCompatActivity() {
     }
 
     private fun connectDojo() {
-        val urlPattern = Pattern.compile("^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
+        val urlPattern =
+            Pattern.compile("^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
         var apiUrl = setUpWalletAddressInput.text.toString()
-        if(!apiUrl.startsWith("http")){
+        if (!apiUrl.startsWith("http")) {
             apiUrl = "http://$apiUrl"
+        }
+        if (apiUrl.endsWith(".onion") || apiUrl.endsWith(".onion/")) {
+            apiUrl = if(!SamouraiWallet.getInstance().isTestNet){
+                if (apiUrl.last() == '/') "${apiUrl}v2" else "$apiUrl/v2/"
+            }else{
+                if (apiUrl.last() == '/') "${apiUrl}test/v2" else "$apiUrl/test/v2"
+            }
         }
         if (!urlPattern.matcher(apiUrl).matches()) {
             setUpWalletAddressInput.error = getString(R.string.invalid_api_endpoint)
@@ -263,19 +272,19 @@ class SetUpWalletActivity : AppCompatActivity() {
                 if (!isChecked && DojoUtil.getInstance(applicationContext).dojoParams != null) {
                     setUpWalletDojoSwitch.isChecked = true
                     MaterialAlertDialogBuilder(this)
-                            .setTitle(R.string.confirm)
-                            .setMessage(getString(R.string.do_you_want_to_unpair))
-                            .setPositiveButton(R.string.ok) { _,
-                                                              _ ->
-                                run {
-                                    setUpWalletViewModel.unPairDojo(applicationContext)
-                                    setUpWalletDojoSwitch.isChecked = false
-                                }
-                            }.setNegativeButton(R.string.cancel) { dialog,
-                                                                   _ ->
-                                dialog.dismiss()
+                        .setTitle(R.string.confirm)
+                        .setMessage(getString(R.string.do_you_want_to_unpair))
+                        .setPositiveButton(R.string.ok) { _,
+                                                          _ ->
+                            run {
+                                setUpWalletViewModel.unPairDojo(applicationContext)
+                                setUpWalletDojoSwitch.isChecked = false
                             }
-                            .show()
+                        }.setNegativeButton(R.string.cancel) { dialog,
+                                                               _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
                 } else {
                     showDojoInputLayout(isChecked)
                 }
@@ -349,15 +358,15 @@ class SetUpWalletActivity : AppCompatActivity() {
 
     private fun slideDown(view: View): ViewPropertyAnimator? {
         return view.animate()
-                .translationY(100F)
-                .alpha(0f)
-                .setInterpolator(DecelerateInterpolator())
-                .setDuration(200)
-                .withEndAction {
-                    view.visibility = View.GONE
-                }.apply {
-                    this.start()
-                }
+            .translationY(100F)
+            .alpha(0f)
+            .setInterpolator(DecelerateInterpolator())
+            .setDuration(200)
+            .withEndAction {
+                view.visibility = View.GONE
+            }.apply {
+                this.start()
+            }
 
     }
 
@@ -365,13 +374,13 @@ class SetUpWalletActivity : AppCompatActivity() {
         view.visibility = View.VISIBLE
         view.alpha = 0f
         return view.animate()
-                .translationY(0f)
-                .alpha(1f)
-                .setDuration(200)
-                .setInterpolator(AccelerateInterpolator())
-                .apply {
-                    this.start()
-                }
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(200)
+            .setInterpolator(AccelerateInterpolator())
+            .apply {
+                this.start()
+            }
     }
 
 }
