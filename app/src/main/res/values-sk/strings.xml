@@ -567,8 +567,8 @@
     <string name="prune_backup">Orezať payload a záložné súbory?</string>
 
     <string-array name="address_types">
-        <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>
+        <item>Segwit compatibility (P2SH)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 

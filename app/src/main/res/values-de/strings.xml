@@ -554,8 +554,8 @@
     <string name="prune_backup">Nicht unbedingt nötige Daten wirklich aus dem Backup entfernen?</string>
 
     <string-array name="address_types">
-        <item>SegWit Kompatibilität (P2SH)</item>
         <item>SegWit Nativ (bech32)</item>
+        <item>SegWit Kompatibilität (P2SH)</item>
         <item>Veraltet (P2PKH)</item>
     </string-array>
 

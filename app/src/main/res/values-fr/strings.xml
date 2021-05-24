@@ -781,8 +781,8 @@
     <string name="spendable">Dépensable</string>
     <string name="reveal_the_redeem_script_for_this_address">Montrer le script de règlement pour cette adresse</string>
     <string-array name="address_types">
-        <item>Segwit compatibilité (P2SH)</item>
         <item>Segwit native (bech32)</item>
+        <item>Segwit compatibilité (P2SH)</item>
         <item>Originel (P2PKH)</item>
     </string-array>
     <string-array name="account_types">
