@@ -848,5 +848,6 @@
     <string name="send_cahoots">Send Cahoots</string>
     <string name="dojo_config_detected">Dojo configuration detected</string>
     <string name="dojo_config_override">Dojo configuration detected in backup file. do you want to override current configuration?\n\nNote: if you press yes restore process will skip dojo configuration\n</string>
+    <string name="api_key_blank_error">This field cannot be left blank!</string>
 
 </resources>
