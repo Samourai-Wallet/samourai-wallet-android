@@ -217,7 +217,7 @@ class SetUpWalletActivity : AppCompatActivity() {
             setUpWalletAddressInput.requestFocus()
             return
         }
-        if (setUpWalletApiKeyInput.text.toString().length < 1) {
+        if (setUpWalletApiKeyInput.text.toString().isEmpty()) {
             setUpWalletApiKeyInput.error = getString(R.string.api_key_blank_error)
             setUpWalletApiKeyInput.requestFocus()
             return
