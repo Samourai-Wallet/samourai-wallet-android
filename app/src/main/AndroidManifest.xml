@@ -174,7 +174,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
         <activity android:name=".CreateWalletActivity" />
-        <activity android:name=".RestoreSeedWalletActivity" />
+        <activity android:name=".RestoreSeedWalletActivity"   android:theme="@style/Theme.Samourai.Material" />
         <!--
                 <receiver
                     android:name=".receivers.BootIntentReceiver"

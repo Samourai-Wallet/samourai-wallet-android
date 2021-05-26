@@ -88,7 +88,8 @@
                         android:padding="12dp"
                         android:paddingEnd="18dp"
                         android:paddingStart="18dp"
-                        android:textAlignment="center" />
+                        android:textAlignment="center"
+                        tools:ignore="RtlCompat" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -119,14 +120,13 @@
                             android:maxLines="1" />
                     </LinearLayout>
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/add_bip39_password_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:background="@drawable/button_dark"
-                        android:paddingEnd="8dp"
-                        android:paddingStart="8dp"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:textColor="@color/white"
                         android:text="@string/add_bip39_password" />
                 </LinearLayout>
 
@@ -241,23 +241,23 @@
                             android:paddingBottom="8dp"
                             android:paddingTop="8dp">
 
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/choose_file_button"
-                                style="@android:style/Widget.Material.Button.Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:layout_marginEnd="8dp"
                                 android:backgroundTint="@color/primary"
                                 android:text="@string/choose_file" />
 
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/paste_backup_button"
-                                style="@android:style/Widget.Material.Button.Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:backgroundTint="@color/primary"
                                 android:onClick="pasteBackupData"
-                                android:text="@string/paste"
-                                android:theme="@style/AppTheme" />
+                                android:textColor="@color/white"
+                                android:text="@string/paste" />
 
                         </LinearLayout>
                     </LinearLayout>
