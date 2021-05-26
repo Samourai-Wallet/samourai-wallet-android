@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
@@ -25,6 +24,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -32,7 +32,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
@@ -41,13 +40,11 @@ import com.samourai.wallet.whirlpool.Tx0DisplayUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.codec.DecoderException;
-
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
-
 import org.bitcoinj.params.TestNet3Params;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
@@ -67,15 +64,7 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
@@ -456,7 +445,15 @@ public class PayloadUtil	{
         return new HD_Wallet(purpose, mc, params, seed, strPassphrase, SamouraiWallet.NB_ACCOUNTS);
     }
 
-    public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj) throws DecoderException, MnemonicException.MnemonicLengthException {
+    /***
+     * if skipDojo dojo is true restore will ignore dojo config
+     * @param obj
+     * @param skipDojo
+     * @return
+     * @throws DecoderException
+     * @throws MnemonicException.MnemonicLengthException
+     */
+    public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj,boolean skipDojo) throws DecoderException, MnemonicException.MnemonicLengthException {
 
 //        Log.i("PayloadUtil", obj.toString());
 
@@ -707,9 +704,10 @@ public class PayloadUtil	{
                 if(meta.has("user_offline")) {
                     AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
                 }
-                if(meta.has("dojo")) {
-                    DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
-                }
+                if(!skipDojo)
+                    if (meta.has("dojo")) {
+                        DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
+                    }
                 if(meta.has("is_sat")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.IS_SAT, meta.getBoolean("is_sat"));
                 }
@@ -750,7 +748,7 @@ public class PayloadUtil	{
             }
         }
 
-        return restoreWalletfromJSON(obj);
+        return restoreWalletfromJSON(obj,false);
     }
 
     public synchronized boolean walletFileExists()  {

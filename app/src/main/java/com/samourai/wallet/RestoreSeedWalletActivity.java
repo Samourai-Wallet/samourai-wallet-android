@@ -5,20 +5,19 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -27,6 +26,7 @@ import com.samourai.wallet.fragments.ImportWalletFragment;
 import com.samourai.wallet.fragments.PinEntryFragment;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -48,12 +48,10 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
-import io.matthewnelson.topl_service.TorServiceController;
-
 import static com.samourai.wallet.R.id.dots;
 
 
-public class RestoreSeedWalletActivity extends FragmentActivity implements
+public class RestoreSeedWalletActivity extends AppCompatActivity implements
         PinEntryFragment.onPinEntryListener,
         ImportWalletFragment.onRestoreDataSets {
     private ViewPager wallet_create_viewpager;
@@ -194,12 +192,39 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                     if (decrypted == null || decrypted.length() < 1) {
                         Toast.makeText(RestoreSeedWalletActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                     } else {
-                        RestoreWalletFromSamouraiBackup(decrypted);
+                        try {
+                            JSONObject json = new JSONObject(decrypted);
+                            boolean existDojo = false;
+                            if (json.has("meta") && json.getJSONObject("meta").has("dojo")) {
+                                if (json.getJSONObject("meta").getJSONObject("dojo").has("pairing")) {
+                                    existDojo = true;
+                                }
+                            }
+                            if (existDojo && DojoUtil.getInstance(getApplication()).getDojoParams() != null) {
+
+                                new MaterialAlertDialogBuilder(RestoreSeedWalletActivity.this)
+                                        .setTitle(getString(R.string.dojo_config_detected))
+                                        .setMessage(getString(R.string.dojo_config_override))
+                                        .setPositiveButton(R.string.yes, (dialog, which) -> {
+                                            RestoreWalletFromSamouraiBackup(decrypted,true);
+                                        })
+                                        .setNegativeButton(R.string.no, (dialog, which) -> {
+                                            RestoreWalletFromSamouraiBackup(decrypted,false);
+                                        })
+                                        .show();
+                            }else{
+                                RestoreWalletFromSamouraiBackup(decrypted,false);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 } else {
-                    if(isSamouraiImport && passphrase.trim().isEmpty() ){
-                               Snackbar.make(findViewById(R.id.wizard_nav_container), getText(R.string.passphrase_is_required_for_samourai),Snackbar.LENGTH_LONG)
-                              .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
+                    if (isSamouraiImport && passphrase.trim().isEmpty()) {
+                        Snackbar.make(findViewById(R.id.wizard_nav_container), getText(R.string.passphrase_is_required_for_samourai), Snackbar.LENGTH_LONG)
+                                .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
                                 .setAnchorView(findViewById(R.id.wizard_nav_container))
                                 .show();
                         return;
@@ -372,7 +397,7 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
         }
     }
 
-    private void RestoreWalletFromSamouraiBackup(final String decrypted) {
+    private void RestoreWalletFromSamouraiBackup(final String decrypted, boolean skipDojo) {
         toggleLoading();
         new Thread(new Runnable() {
             @Override
@@ -380,7 +405,7 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                 Looper.prepare();
                 try {
                     JSONObject json = new JSONObject(decrypted);
-                    HD_Wallet hdw = PayloadUtil.getInstance(RestoreSeedWalletActivity.this).restoreWalletfromJSON(json);
+                    HD_Wallet hdw = PayloadUtil.getInstance(RestoreSeedWalletActivity.this).restoreWalletfromJSON(json,skipDojo);
                     HD_WalletFactory.getInstance(RestoreSeedWalletActivity.this).set(hdw);
                     String guid = AccessFactory.getInstance(RestoreSeedWalletActivity.this).createGUID();
                     String hash = AccessFactory.getInstance(RestoreSeedWalletActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(RestoreSeedWalletActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);

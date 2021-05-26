@@ -846,5 +846,7 @@
     <string name="would_you_like_to_connect_to">Would you like to connect to your\nown dojo server?</string>
     <string name="passphrase_is_required_for_samourai">Passphrase is required for samourai import</string>
     <string name="send_cahoots">Send Cahoots</string>
+    <string name="dojo_config_detected">Dojo configuration detected</string>
+    <string name="dojo_config_override">Dojo configuration detected in backup file. do you want to override current configuration?\n\nNote: if you press yes restore process will skip dojo configuration\n</string>
 
 </resources>

@@ -569,7 +569,7 @@ public class PinEntryActivity extends AppCompatActivity {
                                         try {
 
                                             JSONObject json = new JSONObject(decrypted);
-                                            HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json);
+                                            HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json,false);
                                             HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
                                             String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();
                                             String hash = AccessFactory.getInstance(PinEntryActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
