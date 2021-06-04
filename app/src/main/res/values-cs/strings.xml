@@ -564,8 +564,8 @@
     <string name="prune_backup">Prune payload a zazálohovat soubory?</string>
 
     <string-array name="address_types">
-        <item>Segwit kompatibilní (P2SH)</item>
         <item>Segwit nativní (bech32)</item>
+        <item>Segwit kompatibilní (P2SH)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 

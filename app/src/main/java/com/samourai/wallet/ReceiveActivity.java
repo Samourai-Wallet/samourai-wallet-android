@@ -202,13 +202,13 @@ public class ReceiveActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0: {
-                        addr = addr49;
-                        idx = idx49;
+                        addr = addr84;
+                        idx = idx84;
                         break;
                     }
                     case 1: {
-                        addr = addr84;
-                        idx = idx84;
+                        addr = addr49;
+                        idx = idx49;
                         break;
                     }
                     case 2: {
@@ -230,9 +230,7 @@ public class ReceiveActivity extends AppCompatActivity {
             }
         });
 
-        if (useSegwit) {
-            addressTypesSpinner.setSelection(1);
-        } else {
+        if (!useSegwit) {
             addressTypesSpinner.setSelection(2);
         }
 
@@ -481,7 +479,7 @@ public class ReceiveActivity extends AppCompatActivity {
     }
 
     private boolean isBIP84Selected() {
-        return addressTypesSpinner.getSelectedItemPosition() == 1;
+        return addressTypesSpinner.getSelectedItemPosition() == 0;
     }
 
     @Override
@@ -785,10 +783,10 @@ public class ReceiveActivity extends AppCompatActivity {
 
         switch (sel) {
             case 0:
-                path += "49'";
+                path += "84'";
                 break;
             case 1:
-                path += "84'";
+                path += "49'";
                 break;
             default:
                 path += "44'";

@@ -553,8 +553,8 @@
     <string name="prune_backup">Biztosan törlöd a pénztárca adatait és a biztonsági mentéseket?</string>
 
     <string-array name="address_types">
-        <item>Segwit (P2SH-csomagolt)</item>
         <item>Segwit (bech32)</item>
+        <item>Segwit (P2SH-csomagolt)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 
