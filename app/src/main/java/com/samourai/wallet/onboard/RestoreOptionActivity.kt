@@ -1,5 +1,6 @@
 package com.samourai.wallet.onboard
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.samourai.wallet.access.AccessFactory
 import com.samourai.wallet.crypto.AESUtil
 import com.samourai.wallet.hd.HD_WalletFactory
 import com.samourai.wallet.payload.ExternalBackupManager
+import com.samourai.wallet.network.dojo.DojoUtil
 import com.samourai.wallet.payload.PayloadUtil
 import com.samourai.wallet.util.AppUtil
 import com.samourai.wallet.util.CharSequenceX
@@ -44,6 +46,7 @@ class RestoreOptionActivity : AppCompatActivity() {
         samouraiMnemonicRestore.setOnClickListener {
             val intent = Intent(this@RestoreOptionActivity, RestoreSeedWalletActivity::class.java)
             intent.putExtra("mode", "mnemonic")
+            intent.putExtra("type", "samourai")
             startActivity(intent)
         }
         samouraiBackupFileRestore.setOnClickListener {
@@ -96,16 +99,62 @@ class RestoreOptionActivity : AppCompatActivity() {
 
     private fun restoreWalletFromBackup() {
 
+        fun initializeRestore(decrypted: String,skipDojo:Boolean){
+            showLoading(true)
+            scope.launch(Dispatchers.IO) {
+                val json = JSONObject(decrypted)
+                val hdw = PayloadUtil.getInstance(applicationContext)
+                    .restoreWalletfromJSON(json, skipDojo)
+                HD_WalletFactory.getInstance(applicationContext).set(hdw)
+                val guid = AccessFactory.getInstance(applicationContext).createGUID()
+                val hash = AccessFactory.getInstance(applicationContext).getHash(
+                    guid,
+                    CharSequenceX(AccessFactory.getInstance(applicationContext).pin),
+                    AESUtil.DefaultPBKDF2Iterations
+                )
+                PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.ACCESS_HASH, hash)
+                PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.ACCESS_HASH2, hash)
+                PayloadUtil.getInstance(applicationContext)
+                    .saveWalletToJSON(CharSequenceX(guid + AccessFactory.getInstance().pin))
+            }.invokeOnCompletion {
+                it?.printStackTrace()
+                scope.launch(Dispatchers.Main) {
+                    showLoading(false)
+                }
+                if (it != null) {
+                    scope.launch(Dispatchers.Main) {
+                        Toast.makeText(this@RestoreOptionActivity, R.string.decryption_error, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    AppUtil.getInstance(this@RestoreOptionActivity).restartApp()
+                }
+            }
+        }
 
-        fun initializeRestore(decrypted: String) {
+        fun checkRestoreOptions(decrypted: String) {
             val json = JSONObject(decrypted)
-            val hdw = PayloadUtil.getInstance(applicationContext).restoreWalletfromJSON(json)
-            HD_WalletFactory.getInstance(applicationContext).set(hdw)
-            val guid = AccessFactory.getInstance(applicationContext).createGUID()
-            val hash = AccessFactory.getInstance(applicationContext).getHash(guid, CharSequenceX(AccessFactory.getInstance(applicationContext).pin), AESUtil.DefaultPBKDF2Iterations)
-            PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.ACCESS_HASH, hash)
-            PrefsUtil.getInstance(applicationContext).setValue(PrefsUtil.ACCESS_HASH2, hash)
-            PayloadUtil.getInstance(applicationContext).saveWalletToJSON(CharSequenceX(guid + AccessFactory.getInstance().pin))
+            var existDojo = false
+            if (json.has("meta") && json.getJSONObject("meta").has("dojo")) {
+                if (json.getJSONObject("meta").getJSONObject("dojo").has("pairing")) {
+                    existDojo = true
+                }
+            }
+            if (existDojo &&  DojoUtil.getInstance(application).dojoParams != null) {
+                MaterialAlertDialogBuilder(this@RestoreOptionActivity)
+                    .setTitle(getString(R.string.dojo_config_detected))
+                    .setMessage(getString(R.string.dojo_config_override))
+                    .setPositiveButton(R.string.yes) { dialog: DialogInterface?, which: Int ->
+                        initializeRestore(decrypted, true)
+                    }
+                    .setNegativeButton(R.string.no) { _: DialogInterface?, _: Int ->
+                        initializeRestore(decrypted, false)
+                    }
+                    .show()
+
+            } else {
+                initializeRestore(decrypted, false)
+            }
+
         }
 
         suspend fun readBackUp(password: String) = withContext(Dispatchers.IO) {
@@ -114,18 +163,15 @@ class RestoreOptionActivity : AppCompatActivity() {
                 if (backupData != null) {
                     val decrypted = PayloadUtil.getInstance(applicationContext).getDecryptedBackupPayload(backupData, CharSequenceX(password))
                     if (decrypted != null && decrypted.isNotEmpty()) {
-                        val job = async(Dispatchers.IO) {
-                            initializeRestore(decrypted)
-                        }
-                        job.invokeOnCompletion {
-                            it?.let {
-                                throw it
-                            }
-                        }
+                        checkRestoreOptions(decrypted)
                     }
+                    return@withContext ;
                 }
+                return@withContext ;
             } catch (e: Exception) {
-                throw CancellationException(e.message)
+                scope.launch(Dispatchers.Main) {
+                    Toast.makeText(this@RestoreOptionActivity, R.string.decryption_error, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -138,20 +184,9 @@ class RestoreOptionActivity : AppCompatActivity() {
         builder.setView(view)
         builder.setPositiveButton(R.string.restore) { dialog, which ->
             dialog.dismiss()
-            showLoading(true)
             scope.launch {
                 readBackUp(password.text.toString())
             }.invokeOnCompletion {
-                it?.printStackTrace()
-                if (it != null) {
-                    scope.launch(Dispatchers.Main) {
-                        showLoading(false)
-                        Toast.makeText(this@RestoreOptionActivity, R.string.decryption_error, Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    AppUtil.getInstance(this@RestoreOptionActivity).restartApp()
-
-                }
 
             }
         }

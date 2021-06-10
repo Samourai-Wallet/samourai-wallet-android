@@ -47,7 +47,7 @@
 
             <TextView
                 android:id="@+id/tx_amount"
-                style="@style/TextAppearance.AppCompat.Display2"
+                style="@style/TextAppearance.MaterialComponents.Headline4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
@@ -55,15 +55,7 @@
                 tools:text="0.00003433"
                 android:textAlignment="center" />
 
-            <TextView
-                android:id="@+id/tx_unit"
-                style="@style/TextAppearance.AppCompat.Display1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="1dp"
-                android:gravity="bottom"
-                android:text="BTC"
-                android:textAlignment="center" />
+
         </LinearLayout>
 
         <com.google.android.material.progressindicator.ProgressIndicator

@@ -57,11 +57,14 @@ public class FormatsUtil extends FormatsUtilGeneric {
 
 
     public static String formatSats(Long sats) {
-        df.setMinimumIntegerDigits(1);
-        df.setMaximumIntegerDigits(16);
-        df.setGroupingUsed(true);
-        df.setGroupingSize(3);
-        return   df.format(sats).concat(" ").concat(MonetaryUtil.getInstance().getSatoshiUnits());
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat _df = new DecimalFormat("#", symbols);
+        _df.setMinimumIntegerDigits(1);
+        _df.setMaximumIntegerDigits(16);
+        _df.setGroupingUsed(true);
+        _df.setGroupingSize(3);
+        return _df.format(sats).concat(" ").concat(MonetaryUtil.getInstance().getSatoshiUnits());
     }
 
     public static String getPoolBTCDecimalFormat(Long sats) {

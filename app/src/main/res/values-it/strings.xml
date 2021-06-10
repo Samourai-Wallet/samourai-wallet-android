@@ -558,8 +558,8 @@
     <string name="prune_backup">Ridurre il payload e backup dei file?</string>
 
     <string-array name="address_types">
-        <item>Compatibile Segwit (P2SH)</item>
         <item>Compatibile Segwit nativo (bech32)</item>
+        <item>Compatibile Segwit (P2SH)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 

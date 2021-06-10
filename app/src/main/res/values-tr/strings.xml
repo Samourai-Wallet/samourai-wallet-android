@@ -553,8 +553,8 @@
     <string name="prune_backup">Yedek dosyalarını temizlemek ister misiniz?</string>
 
     <string-array name="address_types">
+      <item>Yerli segwit (bech32)</item>
         <item>Uyumlu segwit (P2SH)</item>
-        <item>Yerli segwit (bech32)</item>
         <item>Eski (P2PKH)</item>
     </string-array>
 

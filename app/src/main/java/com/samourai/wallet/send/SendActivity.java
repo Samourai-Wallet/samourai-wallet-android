@@ -361,12 +361,6 @@ public class SendActivity extends SamouraiActivity {
                             if(type.getCahootsType() == CahootsType.STOWAWAY){
                                 strPCode = pcode;
                             }
-                            if(type.getCahootsMode() == CahootsMode.SOROBAN){
-                                if(!TorManager.INSTANCE.isConnected()){
-                                    TorServiceController.startTor();
-                                    PrefsUtil.getInstance(getApplication()).setValue(PrefsUtil.ENABLE_TOR, true);
-                                }
-                            }
                         }
                         chosen[0] = true;
                         selectedCahootsType = type;
@@ -405,6 +399,7 @@ public class SendActivity extends SamouraiActivity {
             } else {
                 selectedCahootsType = SelectCahootsType.type.NONE;
                 cahootsStatusText.setText("Off");
+                strPCode =null;
                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.warning_yellow));
                 hideToAddressForStowaway();
                 validateSpend();

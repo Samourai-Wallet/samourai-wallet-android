@@ -33,6 +33,7 @@ import com.samourai.wallet.send.SendActivity
 import com.samourai.wallet.send.boost.CPFPTask
 import com.samourai.wallet.send.boost.RBFTask
 import com.samourai.wallet.util.DateUtil
+import com.samourai.wallet.util.FormatsUtil
 import com.samourai.wallet.widgets.CircleImageView
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
@@ -51,7 +52,6 @@ import java.text.DecimalFormatSymbols
 class TxDetailsActivity : SamouraiActivity() {
     private var payNymAvatar: CircleImageView? = null
     private var payNymUsername: TextView? = null
-    private var btcUnit: TextView? = null
     private var amount: TextView? = null
     private var txStatus: TextView? = null
     private var txId: TextView? = null
@@ -79,7 +79,6 @@ class TxDetailsActivity : SamouraiActivity() {
             }
         }
         payNymUsername = findViewById(R.id.tx_paynym_username)
-        btcUnit = findViewById(R.id.tx_unit)
         amount = findViewById(R.id.tx_amount)
         payNymAvatar = findViewById(R.id.img_paynym_avatar)
         txId = findViewById(R.id.transaction_id)
@@ -91,7 +90,6 @@ class TxDetailsActivity : SamouraiActivity() {
         minerFee = findViewById(R.id.tx_miner_fee_paid)
         minerFeeRate = findViewById(R.id.tx_miner_fee_rate)
         amount?.setOnClickListener { toggleUnits() }
-        btcUnit?.setOnClickListener { toggleUnits() }
         setTx()
         bottomButton?.setOnClickListener {
             if (isBoostingAvailable) {
@@ -315,7 +313,7 @@ class TxDetailsActivity : SamouraiActivity() {
     }
 
     private fun calculateBTCDisplayAmount(value: Long) {
-        BTCDisplayAmount = Coin.valueOf(value).toPlainString()
+        BTCDisplayAmount = FormatsUtil.formatBTC(value)
     }
 
     private fun toggleProgress(Visibility: Int) {
@@ -323,25 +321,16 @@ class TxDetailsActivity : SamouraiActivity() {
     }
 
     private fun toggleUnits() {
-        TransitionManager.beginDelayedTransition(btcUnit!!.rootView.rootView as ViewGroup, AutoTransition())
-        if (btcUnit!!.text == "BTC") {
-            btcUnit!!.text = "sat"
+        TransitionManager.beginDelayedTransition(amount!!.rootView.rootView as ViewGroup, AutoTransition())
+        if (amount?.text?.contains("BTC")!!) {
             amount!!.text = SatDisplayAmount
         } else {
-            btcUnit!!.text = "BTC"
             amount!!.text = BTCDisplayAmount
         }
     }
 
     private fun calculateSatoshiDisplayAmount(value: Long) {
-        val symbols = DecimalFormatSymbols()
-        symbols.groupingSeparator = ' '
-        val df = DecimalFormat("#", symbols)
-        df.minimumIntegerDigits = 1
-        df.maximumIntegerDigits = 16
-        df.isGroupingUsed = true
-        df.groupingSize = 3
-        SatDisplayAmount = df.format(value)
+        SatDisplayAmount = FormatsUtil.formatSats(value)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -555,8 +555,8 @@
     <string name="prune_backup">فشرده‌سازی بار و فایل‌های بکاپ؟ </string>
 
     <string-array name="address_types">
-        <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>
+        <item>Segwit compatibility (P2SH)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 

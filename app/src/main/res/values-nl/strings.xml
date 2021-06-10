@@ -553,8 +553,8 @@
     <string name="prune_backup">Portemonnee- en back-upbestanden trimmen?</string>
 
     <string-array name="address_types">
-        <item>Segwit-compatibel (P2SH)</item>
         <item>Segwit-standaard (bech32)</item>
+        <item>Segwit-compatibel (P2SH)</item>
         <item>Oud formaat (P2PKH)</item>
     </string-array>
 

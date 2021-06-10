@@ -758,8 +758,8 @@
     <string name="only_change_utxos_allowed">Apenas change utxo\'s permitido</string>
     <string name="utxo_is_marked_as_blocked">utxo foi marcado como bloqueado</string>
     <string-array name="address_types">
-        <item>Segwit compatível (P2SH)</item>
         <item>Segwit nativo (bech32)</item>
+        <item>Segwit compatível (P2SH)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 

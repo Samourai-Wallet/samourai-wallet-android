@@ -555,8 +555,8 @@
     <string name="prune_backup">修剪钱包信息并备份？</string>
 
     <string-array name="address_types">
-        <item>隔离见证兼容地址（P2SH）</item>
         <item>隔离见证地址（bech32）</item>
+        <item>隔离见证兼容地址（P2SH）</item>
         <item>旧版地址（P2PKH）</item>
     </string-array>
 

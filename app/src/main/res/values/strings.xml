@@ -725,8 +725,8 @@
     <string name="only_change_utxos_allowed">Only change utxo\'s allowed</string>
     <string name="utxo_is_marked_as_blocked">utxo is marked as blocked</string>
     <string-array name="address_types">
-        <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>
+        <item>Segwit compatibility (P2SH)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 
@@ -787,7 +787,7 @@
     <string name="no_cahoots_detected">No cahoots detected. Refresh to search again</string>
     <string name="waiting_for_cahoots_request">Waiting for Cahoots request...</string>
     <string name="follow_paynym_fee_free">Fee : Free</string>
-    <string name="connect_paynym_fee">Fee : 0.00015 BTC</string>
+    <string name="connect_paynym_fee">Fee : 0.00015000 BTC</string>
     <string name="connect">Connect</string>
     <string name="blockchain_connect_with">BlockChain Connect with</string>
     <string name="following">Following</string>
@@ -844,6 +844,11 @@
     <string name="dojo_onion_address">Dojo onion address</string>
     <string name="would_you_like_to_enable_tor">Would you like to enable Tor?</string>
     <string name="would_you_like_to_connect_to">Would you like to connect to your\nown dojo server?</string>
+    <string name="passphrase_is_required_for_samourai">Passphrase is required for samourai import</string>
+    <string name="send_cahoots">Send Cahoots</string>
+    <string name="dojo_config_detected">Dojo configuration detected</string>
+    <string name="dojo_config_override">Dojo configuration detected in backup file. do you want to override current configuration?\n\nNote: if you press yes restore process will skip dojo configuration\n</string>
+    <string name="api_key_blank_error">This field cannot be left blank!</string>
     <string name="choose_directory">Choose directory</string>
     <string name="permission_dialog_scoped">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device. Please choose a directory.</string>
     <string name="permission_alert_dialog_title_external_scoped">Choose backup directory</string>

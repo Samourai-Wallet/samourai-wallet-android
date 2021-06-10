@@ -52,8 +52,6 @@ class SetUpWalletViewModel : ViewModel() {
                         if (dojoPayload.has("version")) {
                             _dojoApiVersion.postValue(dojoPayload.getString("version"))
                         }
-                        delay(600)
-                        connectToDojo(applicationContext)
                     } else {
                         _errors.postValue(applicationContext.getString(R.string.invalid_dojo_payload))
                     }

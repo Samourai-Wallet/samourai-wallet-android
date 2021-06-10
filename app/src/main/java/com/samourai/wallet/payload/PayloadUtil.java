@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
@@ -435,7 +434,15 @@ public class PayloadUtil	{
         return new HD_Wallet(purpose, mc, params, seed, strPassphrase, SamouraiWallet.NB_ACCOUNTS);
     }
 
-    public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj) throws DecoderException, MnemonicException.MnemonicLengthException {
+    /***
+     * if skipDojo dojo is true restore will ignore dojo config
+     * @param obj
+     * @param skipDojo
+     * @return
+     * @throws DecoderException
+     * @throws MnemonicException.MnemonicLengthException
+     */
+    public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj,boolean skipDojo) throws DecoderException, MnemonicException.MnemonicLengthException {
 
 //        Log.i("PayloadUtil", obj.toString());
 
@@ -686,9 +693,10 @@ public class PayloadUtil	{
                 if(meta.has("user_offline")) {
                     AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
                 }
-                if(meta.has("dojo")) {
-                    DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
-                }
+                if(!skipDojo)
+                    if (meta.has("dojo")) {
+                        DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
+                    }
                 if(meta.has("is_sat")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.IS_SAT, meta.getBoolean("is_sat"));
                 }
@@ -729,7 +737,7 @@ public class PayloadUtil	{
             }
         }
 
-        return restoreWalletfromJSON(obj);
+        return restoreWalletfromJSON(obj,false);
     }
 
     public synchronized boolean walletFileExists()  {

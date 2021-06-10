@@ -256,8 +256,7 @@ public class BalanceActivity extends SamouraiActivity {
                                 message += "\n\n";
                                 message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
                                 message += " ";
-                                message += Coin.valueOf(amount).toPlainString();
-                                message += " BTC\n";
+                                message += FormatsUtil.formatBTC(amount);
                                 message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
                                 message += " ";
                                 message += hash + "-" + idx;

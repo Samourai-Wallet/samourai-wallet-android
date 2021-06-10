@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.samourai.soroban.client.meeting.SorobanMeetingService;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
@@ -47,7 +48,7 @@ public class SorobanMeetingSendActivity extends SamouraiActivity {
     private TextView paynymDisplayName, textViewConnecting;
     private ImageView paynymAvatar;
     private View paynymSelect;
-    private Button sendButton;
+    private MaterialButton sendButton;
     private ProgressBar progressBar;
     private Disposable sorobanDisposable;
 

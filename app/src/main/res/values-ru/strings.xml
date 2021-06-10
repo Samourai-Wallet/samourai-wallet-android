@@ -771,8 +771,8 @@
     <string name="only_change_utxos_allowed">Разрешен только остаток UTXO</string>
     <string name="utxo_is_marked_as_blocked">UTXO отмечен как заблокированный</string>
     <string-array name="address_types">
-        <item>Segwit-совместимый (P2SH)</item>
         <item>Чистый Segwit (bech32)</item>
+        <item>Segwit-совместимый (P2SH)</item>
         <item>Legacy-адрес (P2PKH)</item>
     </string-array>
 
