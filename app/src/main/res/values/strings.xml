@@ -849,7 +849,7 @@
     <string name="dojo_config_detected">Dojo configuration detected</string>
     <string name="dojo_config_override">Dojo configuration detected in backup file. do you want to override current configuration?\n\nNote: if you press yes restore process will skip dojo configuration\n</string>
     <string name="api_key_blank_error">This field cannot be left blank!</string>
-    <string name="choose_directory">Choose directory</string>
+    <string name="choose">Choose</string>
     <string name="permission_dialog_scoped">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device. Please choose a directory.</string>
     <string name="permission_alert_dialog_title_external_scoped">Choose backup directory</string>
 

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
@@ -18,7 +17,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.samourai.wallet.BuildConfig
 import com.samourai.wallet.R
 import com.samourai.wallet.util.PrefsUtil
-import io.reactivex.Single
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -65,7 +63,7 @@ object ExternalBackupManager {
         val builder = MaterialAlertDialogBuilder(activity)
         builder.setTitle(titleId)
                 .setMessage(messageId)
-                .setPositiveButton(if (requireScoped()) R.string.choose_directory else R.string.ok) { dialog, _ ->
+                .setPositiveButton(if (requireScoped()) R.string.choose else R.string.ok) { dialog, _ ->
                     dialog.dismiss()
                     ask()
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
