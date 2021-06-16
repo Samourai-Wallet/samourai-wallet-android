@@ -524,14 +524,16 @@ public class BalanceActivity extends SamouraiActivity {
         boolean is_sat_prefs = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.IS_SAT, false);
 
         balanceViewModel.getBalance().observe(this, balance -> {
+            if(balance==null){
+                return;
+            }
             if (balance < 0) {
                 return;
             }
-            if (balanceViewModel.getSatState().getValue() != null) {
-                setBalance(balance, is_sat_prefs);
-            } else {
-                setBalance(balance, is_sat_prefs);
+            if(progressBar.getVisibility() == View.VISIBLE && balance <= 0){
+                return;
             }
+            setBalance(balance, is_sat_prefs);
         });
         adapter.setTxes(balanceViewModel.getTxs().getValue());
         setBalance(balanceViewModel.getBalance().getValue(), is_sat_prefs);
