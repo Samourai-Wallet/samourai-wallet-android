@@ -63,7 +63,6 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:gravity="right"
-            android:onClick="onClick"
             android:text="Urgent"
             android:textColor="@android:color/white" />
 
@@ -79,6 +78,8 @@
                 android:background="@null"
                 android:digits="0,1,2,3,4,5,6,7,8,9,."
                 android:gravity="end"
+                android:textColor="@color/white"
+                android:enabled="false"
                 android:imeOptions="flagNoPersonalizedLearning"
                 android:inputType="textMultiLine|phone"
                 android:scrollbars="vertical"
