@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
+
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -184,7 +187,10 @@ public class CreateWalletActivity extends FragmentActivity implements
                 break;
             }
             case 1: {
-                wallet_create_viewpager.setCurrentItem(count - 1);
+                if (passPhraseConfirm.equals(passPhrase39) && checkedDisclaimer) {
+                    setForwardButtonEnable(true);
+                }
+                wallet_create_viewpager.setCurrentItem(0);
             }
             case 2: {
                 ((TextView) forwardButton.getChildAt(0)).setText(R.string.next);
@@ -299,6 +305,15 @@ public class CreateWalletActivity extends FragmentActivity implements
             } else {
                 progressDialog.show();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (wallet_create_viewpager.getCurrentItem() != 0) {
+            wizardNavigationBackward(null);
+        }else{
+            super.onBackPressed();
         }
     }
 
