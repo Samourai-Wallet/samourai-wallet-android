@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -97,6 +98,10 @@ public class TxAnimUIActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tx_anim_ui);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().setStatusBarColor(this.getResources().getColor(R.color.green_ui_2));
 
         progressView = findViewById(R.id.transactionProgressView);
         progressView.reset();
@@ -695,4 +700,6 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() { }
 }
