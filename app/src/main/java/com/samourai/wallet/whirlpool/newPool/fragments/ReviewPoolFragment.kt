@@ -143,6 +143,7 @@ class ReviewPoolFragment : Fragment() {
             }
             uncycledAmount?.text = getBTCDisplayAmount((tx0Preview.changeValue));
             feePerUtxo.text = getBTCDisplayAmount(embeddedTotalFees);
+            totalUtxoCreated.text = "${it.nbPremix}";
         }
     }
 
