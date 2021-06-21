@@ -51,6 +51,7 @@ public class FormatsUtil extends FormatsUtilGeneric {
     public static String formatBTCWithoutUnit(Long sats) {
         return   BtcFormat
                 .builder()
+                .locale(Locale.ENGLISH)
                 .fractionDigits(8)
                 .build().format(sats);
     }
