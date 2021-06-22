@@ -1023,7 +1023,7 @@ public class PayloadUtil	{
 
     }
 
-    public String getDecryptedBackupPayload(String data, CharSequenceX password)  {
+    public String getDecryptedBackupPayload(String data, CharSequenceX password) throws Exception {
 
         String encrypted = null;
         int version = 1;
@@ -1053,11 +1053,11 @@ public class PayloadUtil	{
             }
         }
         catch (Exception e) {
-            Toast.makeText(context, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+           throw new Exception("Unable to decrypt");
         }
         finally {
             if (decrypted == null || decrypted.length() < 1) {
-                Toast.makeText(context, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                throw new Exception("Unable to decrypt");
 //                AppUtil.getInstance(context).restartApp();
             }
         }

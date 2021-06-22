@@ -547,7 +547,12 @@ public class PinEntryActivity extends AppCompatActivity {
                                                 finish();
                                             }
 
-                                            final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
+                                            String decrypted =null;
+                                            try {
+                                                decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                             if (decrypted == null || decrypted.length() < 1) {
                                                 Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                                                 AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
@@ -556,7 +561,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
 
                                             progressBar.setVisibility(View.VISIBLE);
-
+                                            final String _decrypted = decrypted;
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -564,7 +569,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
                                                     try {
 
-                                                        JSONObject json = new JSONObject(decrypted);
+                                                        JSONObject json = new JSONObject(_decrypted);
                                                         HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json,false);
                                                         HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
                                                         String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();

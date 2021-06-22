@@ -188,7 +188,13 @@ public class RestoreSeedWalletActivity extends AppCompatActivity implements
         switch (count) {
             case 0: {
                 if (restoreMode.equals("backup")) {
-                    final String decrypted = PayloadUtil.getInstance(RestoreSeedWalletActivity.this).getDecryptedBackupPayload(mBackupData, new CharSequenceX(passphrase));
+                    String decrypted = null;
+                    try {
+                        decrypted = PayloadUtil.getInstance(RestoreSeedWalletActivity.this).getDecryptedBackupPayload(mBackupData, new CharSequenceX(passphrase));
+                    } catch (Exception e) {
+                        Toast.makeText(RestoreSeedWalletActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                    }
+
                     if (decrypted == null || decrypted.length() < 1) {
                         Toast.makeText(RestoreSeedWalletActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                     } else {
@@ -200,16 +206,17 @@ public class RestoreSeedWalletActivity extends AppCompatActivity implements
                                     existDojo = true;
                                 }
                             }
+                            final String _decrypted = decrypted;
                             if (existDojo && DojoUtil.getInstance(getApplication()).getDojoParams() != null) {
 
                                 new MaterialAlertDialogBuilder(RestoreSeedWalletActivity.this)
                                         .setTitle(getString(R.string.dojo_config_detected))
                                         .setMessage(getString(R.string.dojo_config_override))
                                         .setPositiveButton(R.string.yes, (dialog, which) -> {
-                                            RestoreWalletFromSamouraiBackup(decrypted,true);
+                                            RestoreWalletFromSamouraiBackup(_decrypted,true);
                                         })
                                         .setNegativeButton(R.string.no, (dialog, which) -> {
-                                            RestoreWalletFromSamouraiBackup(decrypted,false);
+                                            RestoreWalletFromSamouraiBackup(_decrypted,false);
                                         })
                                         .show();
                             }else{
