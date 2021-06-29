@@ -101,7 +101,6 @@ import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
@@ -314,7 +313,7 @@ public class BalanceActivity extends SamouraiActivity {
         balanceViewModel.setAccount(account);
 
 
-        makePaynymAvatarcache();
+        makePaynymAvatarCache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         TxRecyclerView = findViewById(R.id.rv_txes);
@@ -481,6 +480,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         updateDisplay(false);
         checkDeepLinks();
+        doExternalBackUp();
     }
 
     private void hideProgress() {
@@ -578,8 +578,6 @@ public class BalanceActivity extends SamouraiActivity {
             mCollapsingToolbar.setTitle(displayAmount);
         }
 
-        LogUtil.info(TAG, "setBalance: ".concat(FormatsUtil.formatSats(balance)));
-
     }
 
     @Override
@@ -624,7 +622,7 @@ public class BalanceActivity extends SamouraiActivity {
     }
 
 
-    private void makePaynymAvatarcache() {
+    private void makePaynymAvatarCache() {
         try {
 
             ArrayList<String> paymentCodes = new ArrayList<>(BIP47Meta.getInstance().getSortedByLabels(false, true));
@@ -912,15 +910,7 @@ public class BalanceActivity extends SamouraiActivity {
             AlertDialog alert = builder.create();
 
             alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
-
-                try {
-                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                } catch (JSONException je) {
-                } catch (IOException ioe) {
-                } catch (DecryptionException de) {
-                }
-
+                doExternalBackUp();
                 // disconnect Whirlpool on app back key exit
                 if (WhirlpoolNotificationService.isRunning(getApplicationContext()))
                     WhirlpoolNotificationService.stopService(getApplicationContext());
@@ -942,6 +932,18 @@ public class BalanceActivity extends SamouraiActivity {
         }
     }
 
+    private void doExternalBackUp(){
+        try {
+           Disposable disposable =  Observable.fromCallable(() -> {
+                PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                return true;
+            })       .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(t -> {},throwable -> LogUtil.error(TAG,throwable));
+           compositeDisposable.add(disposable);
+        }catch (Exception exception){
+            LogUtil.error(TAG,exception);   
+        }
+    }
     private void updateDisplay(boolean fromRefreshService) {
         Disposable txDisposable = loadTxes(account)
                 .subscribeOn(Schedulers.io())
