@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -163,11 +164,13 @@ class RestoreOptionActivity : AppCompatActivity() {
                 if (backupData != null) {
                     val decrypted = PayloadUtil.getInstance(applicationContext).getDecryptedBackupPayload(backupData, CharSequenceX(password))
                     if (decrypted != null && decrypted.isNotEmpty()) {
-                        checkRestoreOptions(decrypted)
+                        withContext(Dispatchers.Main){
+                            checkRestoreOptions(decrypted)
+                        }
                     }
-                    return@withContext ;
+                    return@withContext
                 }
-                return@withContext ;
+                return@withContext
             } catch (e: Exception) {
                 scope.launch(Dispatchers.Main) {
                     Toast.makeText(this@RestoreOptionActivity, R.string.decryption_error, Toast.LENGTH_SHORT).show()
