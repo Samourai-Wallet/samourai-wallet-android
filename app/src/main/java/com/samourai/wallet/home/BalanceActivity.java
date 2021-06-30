@@ -934,14 +934,16 @@ public class BalanceActivity extends SamouraiActivity {
 
     private void doExternalBackUp(){
         try {
-           Disposable disposable =  Observable.fromCallable(() -> {
-                PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                return true;
-            })       .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(t -> {},throwable -> LogUtil.error(TAG,throwable));
-           compositeDisposable.add(disposable);
+            if(ExternalBackupManager.hasPermissions() && PrefsUtil.getInstance(getApplication()).getValue(PrefsUtil.AUTO_BACKUP,false)){
+                   Disposable disposable =  Observable.fromCallable(() -> {
+                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                        return true;
+                    })       .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread()).subscribe(t -> {},throwable -> LogUtil.error(TAG,throwable));
+                   compositeDisposable.add(disposable);
+            }
         }catch (Exception exception){
-            LogUtil.error(TAG,exception);   
+            LogUtil.error(TAG,exception);
         }
     }
     private void updateDisplay(boolean fromRefreshService) {
