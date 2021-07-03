@@ -216,12 +216,12 @@ class RestoreOptionActivity : AppCompatActivity() {
 
 
     private fun doSupportCreate() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/section/1-starting-a-new-wallet"))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/wallet/start#create-new-wallet"))
         startActivity(intent)
     }
 
     private fun doSupportRestore() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/category/3-restore-recovery"))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/wallet/restore-recovery"))
         startActivity(intent)
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
