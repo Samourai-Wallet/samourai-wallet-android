@@ -62,13 +62,10 @@ class SorobanMeetingListenActivity : SamouraiActivity() {
                     showSorobanRequest(cahootsRequest)
                 }) { error: Throwable ->
                     Log.i(TAG, "Error: " + error.message)
-                    error.message?.let {
-                        if (it.contains("aborting")) {
-                            menu?.findItem(R.id.action_refresh)?.isVisible = true
-                            progressLoader.visibility = View.GONE
-                            loaderText.text = getString(R.string.no_cahoots_detected)
-                        }
-                    }
+                    // show refresh button on any error
+                    menu?.findItem(R.id.action_refresh)?.isVisible = true
+                    progressLoader.visibility = View.GONE
+                    loaderText.text = getString(R.string.no_cahoots_detected)
                     Toast.makeText(this, "${error.message}", Toast.LENGTH_SHORT).show()
                 }
     }

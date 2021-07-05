@@ -1680,7 +1680,11 @@ public class SendActivity extends SamouraiActivity {
             message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + FormatsUtil.formatBTCWithoutUnit(amount) + " to " + dest + " (fee:" + FormatsUtil.formatBTCWithoutUnit(_fee.longValue()) + ")?\n";
 
             if (selectedCahootsType == SelectCahootsType.type.NONE) {
-                tvTotalFee.setText(FormatsUtil.formatBTC(fee.longValue()));
+                boolean is_sat_prefs = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.IS_SAT, true);
+                if (is_sat_prefs)
+                    tvTotalFee.setText(FormatsUtil.formatSats(fee.longValue())+"s");
+                else
+                    tvTotalFee.setText(FormatsUtil.formatBTC(fee.longValue()));
                 calculateTransactionSize(_fee);
             } else {
                 tvTotalFee.setText("__");
