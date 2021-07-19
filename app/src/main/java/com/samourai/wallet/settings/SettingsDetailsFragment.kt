@@ -917,9 +917,9 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             jsonObj.put("version", "3.0.0")
             jsonObj.put("network", if (SamouraiWallet.getInstance().isTestNet) "testnet" else "mainnet")
             val mnemonic = HD_WalletFactory.getInstance(requireContext()).get().mnemonic
-            jsonObj.put("passphrase", true)
             if (SamouraiWallet.getInstance().hasPassphrase(requireContext())) {
                 val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(HD_WalletFactory.getInstance(requireContext()).get().passphrase), AESUtil.DefaultPBKDF2Iterations)
+                jsonObj.put("passphrase", true)
                 jsonObj.put("mnemonic", encrypted)
                 pairingObj.put("pairing", jsonObj)
                 if (dojoObj.has("url") && dojoObj.has("apikey")) {
@@ -942,6 +942,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                     val pw = password.text.toString()
                     if (pw.length >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length <= AppUtil.MAX_BACKUP_PW_LENGTH) {
                         val encrypted = AESUtil.encrypt(mnemonic, CharSequenceX(pw), AESUtil.DefaultPBKDF2Iterations)
+                        jsonObj.put("passphrase", false)
                         jsonObj.put("mnemonic", encrypted)
                         if (dojoObj.has("url") && dojoObj.has("apikey")) {
                             val apiKey = dojoObj.getString("apikey")
