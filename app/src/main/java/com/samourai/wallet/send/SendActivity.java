@@ -1569,10 +1569,6 @@ public class SendActivity extends SamouraiActivity {
 
             fee = BigInteger.valueOf(inputAmount - outputAmount);
 
-            if(amount+fee.longValue() > balance){
-                return  false;
-            }
-
         } else {
             Toast.makeText(SendActivity.this, R.string.cannot_select_utxo, Toast.LENGTH_SHORT).show();
             return false;
@@ -1613,9 +1609,6 @@ public class SendActivity extends SamouraiActivity {
 
                 } else {
                     fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
-                    if(amount+fee.longValue() > balance){
-                        return  false;
-                    }
                 }
             }
 
@@ -1629,18 +1622,16 @@ public class SendActivity extends SamouraiActivity {
 //                    Log.d("SendActivity", "change:" + change);
 
             if (change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE) {
-                feeSeekBar.setEnabled(false);
+
                 MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.change_is_dust)
                         .setCancelable(false)
-                        .setOnDismissListener(dialog -> {
-                            feeSeekBar.setEnabled(true);
-                        })
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                feeSeekBar.setEnabled(true);
+
                                 dialog.dismiss();
+
                             }
                         });
                 if (!isFinishing()) {
