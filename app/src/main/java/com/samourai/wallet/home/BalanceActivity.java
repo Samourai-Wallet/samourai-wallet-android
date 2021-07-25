@@ -312,6 +312,7 @@ public class BalanceActivity extends SamouraiActivity {
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
         balanceViewModel.setAccount(account);
 
+        ExternalBackupManager.askPermission(this);
 
         makePaynymAvatarCache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
