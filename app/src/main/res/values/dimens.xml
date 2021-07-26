@@ -16,8 +16,11 @@
     <dimen name="list_item_spacing">
         16dp
     </dimen>
-    <dimen name="pin_entry_key_size">
+    <dimen name="pin_entry_key_width">
         76dp
+    </dimen>
+    <dimen name="pin_entry_key_height">
+        82dp
     </dimen>
     <dimen name="list_item_spacing_half">
         8dp

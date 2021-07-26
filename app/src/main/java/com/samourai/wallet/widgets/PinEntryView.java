@@ -28,6 +28,7 @@ public class PinEntryView extends FrameLayout implements View.OnClickListener {
         CLEAR
     }
 
+    private boolean isDisabled = false;
     private Button ta = null;
     private Button tb = null;
     private Button tc = null;
@@ -97,13 +98,13 @@ public class PinEntryView extends FrameLayout implements View.OnClickListener {
             hapticFeedBack();
             pinLen = pinLen--;
 
-            if (clearListener != null) {
+            if (clearListener != null && !isDisabled) {
                 clearListener.onPinClear(KeyClearTypes.CLEAR);
             }
         });
         tback.setOnLongClickListener(view12 -> {
             pinLen = 0;
-            if (clearListener != null) {
+            if (clearListener != null  && !isDisabled) {
                 clearListener.onPinClear(KeyClearTypes.CLEAR_ALL);
             }
             hapticFeedBack();
@@ -115,6 +116,9 @@ public class PinEntryView extends FrameLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if(isDisabled){
+            return;
+        }
         hapticFeedBack();
         if (pinLen <= (AccessFactory.MAX_PIN_LENGTH -1 )) {
             if (this.entryListener != null) {
@@ -179,6 +183,15 @@ public class PinEntryView extends FrameLayout implements View.OnClickListener {
         ti.setOnClickListener(this);
         tj.setText(this.scramble ? Integer.toString(keypad.getMatrix().get(9).getValue()) : "0");
         tj.setOnClickListener(this);
+    }
+
+
+    public void disable(boolean b) {
+        isDisabled = b;
+        if(b){
+            clearListener.onPinClear(KeyClearTypes.CLEAR_ALL);
+        }
+        this.setAlpha(b ? 0.6f : 1f );
     }
 
     public interface pinEntryListener {

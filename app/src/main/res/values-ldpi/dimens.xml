@@ -4,8 +4,10 @@
         24sp
     </dimen>
 
-    <dimen name="pinentry_box_size">
-        44dp
+    <dimen name="pin_entry_key_width">
+        66dp
     </dimen>
-
+    <dimen name="pin_entry_key_height">
+        72dp
+    </dimen>
 </resources>

@@ -7,13 +7,12 @@
     android:columnCount="3"
     tools:context="com.samourai.wallet.fragments.PinEntryFragment">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/ta"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
         android:textSize="42sp"
@@ -52,15 +51,12 @@
         app:layout_constraintGuide_percent="0.5" />
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/tb"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -71,13 +67,12 @@
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="@+id/ta" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/tc"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -88,13 +83,12 @@
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="@+id/tb" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/te"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
         android:textSize="42sp"
@@ -104,15 +98,12 @@
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="@+id/td" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/td"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -123,15 +114,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/tg"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -142,13 +130,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/tf"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -161,10 +148,8 @@
 
     <ImageButton
         android:id="@+id/tback"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:background="?android:attr/selectableItemBackground"
         android:elevation="0dp"
         android:src="@drawable/ic_backspace_white_24dp"
@@ -174,13 +159,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tj" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/th"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -191,13 +175,12 @@
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="@+id/tg" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/ti"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -215,15 +198,12 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.75074184" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        app:backgroundTint="#3a3d43"
+        app:cornerRadius="10dp"
         android:id="@+id/tj"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_rectangle_pinview"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_height"
         android:elevation="0dp"
         android:stateListAnimator="@null"
         android:textColor="@color/primary_light"
@@ -236,10 +216,8 @@
 
     <ImageButton
         android:id="@+id/tconfirm"
-        android:layout_width="@dimen/pin_entry_key_size"
-        android:layout_height="@dimen/pin_entry_key_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="@dimen/pin_entry_key_width"
+        android:layout_height="@dimen/pin_entry_key_width"
         android:background="@drawable/rounded_rectangle_green"
         android:src="@drawable/ic_done_white_24dp"
         android:visibility="gone"
