@@ -141,9 +141,9 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".PinEntryActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|screenSize"
             android:label=""
-            android:theme="@style/SamouraiAppDarkStatusTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".ricochet.RicochetActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -176,7 +176,7 @@
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name=".CreateWalletActivity" />
+        <activity android:name=".CreateWalletActivity" android:theme="@style/Theme.Samourai.Material" />
         <activity android:name=".RestoreSeedWalletActivity"   android:theme="@style/Theme.Samourai.Material" />
         <!--
                 <receiver

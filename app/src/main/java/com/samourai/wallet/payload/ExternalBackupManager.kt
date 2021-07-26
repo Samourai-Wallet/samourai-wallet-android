@@ -93,10 +93,14 @@ object ExternalBackupManager {
     @JvmStatic
     fun write(content: String) {
         scope.launch(Dispatchers.IO){
-            if (requireScoped()) {
-                writeScopeStorage(content)
-            } else {
-                writeLegacyStorage(content)
+            try {
+                if (requireScoped()) {
+                    writeScopeStorage(content)
+                } else {
+                    writeLegacyStorage(content)
+                }
+            } catch (e: Exception) {
+                throw CancellationException(e.message)
             }
         }
     }

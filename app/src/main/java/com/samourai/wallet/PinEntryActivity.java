@@ -3,27 +3,36 @@ package com.samourai.wallet;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Looper;
-import android.os.Vibrator;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputType;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -44,12 +53,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -75,9 +79,11 @@ public class PinEntryActivity extends AppCompatActivity {
 
     private String strUri = null;
 
-    private static int failures = 0;
+    private int failures = 0;
     private PinEntryView pinEntryView;
-    LinearLayout pinEntryMaskLayout;
+    private LinearLayout restoreLayout;
+    private LinearLayout pinEntryMaskLayout;
+    private TextView walletStatusTextView;
     private ProgressBar progressBar;
     private static final String TAG = "PinEntryActivity";
 
@@ -86,17 +92,19 @@ public class PinEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pinentry);
         this.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        if (!BuildConfig.DEBUG)
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         userInput = new StringBuilder();
         pinEntryView = findViewById(R.id.pinentry_view);
-        setSupportActionBar(findViewById(R.id.toolbar_pinEntry));
+        walletStatusTextView = findViewById(R.id.pin_entry_wallet_status);
+        restoreLayout = findViewById(R.id.pin_entry_restore);
+        MaterialButton restoreBtn = findViewById(R.id.pin_entry_restore_btn);
         pinEntryMaskLayout = findViewById(R.id.pin_entry_mask_layout);
         progressBar = findViewById(R.id.progress_pin_entry);
-//        tvUserInput.setText("");
-
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.window));
+        restoreLayout.setVisibility(View.GONE);
         pinEntryView.setEntryListener((key, view) -> {
-            if (userInput.length() <= (AccessFactory.MAX_PIN_LENGTH - 1)){
+            if (userInput.length() <= (AccessFactory.MAX_PIN_LENGTH - 1)) {
                 userInput = userInput.append(key);
                 if (userInput.length() >= AccessFactory.MIN_PIN_LENGTH) {
                     pinEntryView.showCheckButton();
@@ -106,6 +114,7 @@ public class PinEntryActivity extends AppCompatActivity {
                 setPinMaskView();
             }
         });
+        restoreBtn.setOnClickListener(v -> doBackupRestore());
         pinEntryView.setClearListener(clearType -> {
             if (clearType == PinEntryView.KeyClearTypes.CLEAR) {
                 if (userInput.length() != 0)
@@ -140,7 +149,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
 
-        if (extras != null && extras.containsKey("create") && extras.getBoolean("create") == true) {
+        if (extras != null && extras.containsKey("create") && extras.getBoolean("create")) {
 //            tvPrompt.setText(R.string.create_pin);
             scramble = false;
             create = true;
@@ -148,7 +157,7 @@ public class PinEntryActivity extends AppCompatActivity {
             strSeed = extras.getString("seed");
             strPassphrase = extras.getString("passphrase");
             Toast.makeText(PinEntryActivity.this, R.string.pin_5_8, Toast.LENGTH_LONG).show();
-        } else if (extras != null && extras.containsKey("confirm") && extras.getBoolean("confirm") == true) {
+        } else if (extras != null && extras.containsKey("confirm") && extras.getBoolean("confirm")) {
 //            tvPrompt.setText(R.string.confirm_pin);
             scramble = false;
             create = false;
@@ -157,10 +166,12 @@ public class PinEntryActivity extends AppCompatActivity {
             strSeed = extras.getString("seed");
             strPassphrase = extras.getString("passphrase");
             Toast.makeText(PinEntryActivity.this, R.string.pin_5_8_confirm, Toast.LENGTH_LONG).show();
-        } else if (extras != null && extras.containsKey("opendime") && extras.getBoolean("opendime") == true) {
+        } else if (extras != null && extras.containsKey("opendime") && extras.getBoolean("opendime")) {
             isOpenDime = true;
         } else {
-            ;
+            if(isLocked()){
+                startCountDownTimer();
+            }
         }
 
         if (strSeed != null && strSeed.length() < 1) {
@@ -244,8 +255,8 @@ public class PinEntryActivity extends AppCompatActivity {
 
     public void OnNumberPadClick(View view) {
         if (PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true)) {
-            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK,HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-         }
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        }
         userInput.append(((Button) view).getText().toString());
         displayUserInput();
     }
@@ -304,23 +315,22 @@ public class PinEntryActivity extends AppCompatActivity {
 
                     runOnUiThread(() -> {
                         progressBar.setVisibility(View.INVISIBLE);
-
                     });
 
                     if (hdw == null) {
 
                         runOnUiThread(() -> {
                             failures++;
-                            Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
-
+                            userInput = new StringBuilder();
+                            pinEntryMaskLayout.removeAllViews();
+                            pinEntryView.hideCheckButton();
+                            setPinMaskView();
+                            if(failures<=2){
+                                walletStatusTextView.setText( this.getText(R.string.login_error) + ": " + failures + "/3");
+                            }
                             if (failures == 3) {
                                 failures = 0;
-                                doBackupRestore();
-                            } else {
-                                Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
+                                startCountDownTimer();
                             }
                         });
 
@@ -336,7 +346,7 @@ public class PinEntryActivity extends AppCompatActivity {
                             startActivity(intent);
                         });
 
-                    }  else {
+                    } else {
                         AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                         finish();
                     }
@@ -348,27 +358,22 @@ public class PinEntryActivity extends AppCompatActivity {
                 } finally {
                     runOnUiThread(() -> {
                         progressBar.setVisibility(View.INVISIBLE);
-
                     });
                 }
 
             } else {
                 runOnUiThread(() -> {
                     progressBar.setVisibility(View.INVISIBLE);
-                    failures++;
-                    Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
-
-
+                     failures++;
+                    userInput = new StringBuilder();
+                    pinEntryMaskLayout.removeAllViews();
+                    pinEntryView.hideCheckButton();
+                    if(failures<=2){
+                        walletStatusTextView.setText(this.getText(R.string.login_error) + ": " + failures + "/3");
+                    }
                     if (failures == 3) {
                         failures = 0;
-                        doBackupRestore();
-                    } else {
-                        Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        if (getIntent().getExtras() != null)
-                            intent.putExtras(getIntent().getExtras());
-                        startActivity(intent);
-                        finish();
+                        startCountDownTimer();
                     }
                 });
 
@@ -523,18 +528,21 @@ public class PinEntryActivity extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe((data, throwable) -> {
-                        if(throwable!=null){
+                        if (throwable != null) {
                             Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         if (data != null && data.length() > 0) {
+
                             final EditText passphrase = new EditText(PinEntryActivity.this);
                             passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                             passphrase.setHint(R.string.passphrase);
+                            final FrameLayout layout = new FrameLayout(this);
+                            layout.addView(passphrase);
 
-                            AlertDialog.Builder dlg = new AlertDialog.Builder(PinEntryActivity.this)
+                            MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(PinEntryActivity.this)
                                     .setTitle(R.string.app_name)
-                                    .setView(passphrase)
+                                    .setView(layout)
                                     .setMessage(R.string.restore_wallet_from_backup)
                                     .setCancelable(false)
                                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -547,7 +555,7 @@ public class PinEntryActivity extends AppCompatActivity {
                                                 finish();
                                             }
 
-                                            String decrypted =null;
+                                            String decrypted = null;
                                             try {
                                                 decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
                                             } catch (Exception e) {
@@ -570,7 +578,7 @@ public class PinEntryActivity extends AppCompatActivity {
                                                     try {
 
                                                         JSONObject json = new JSONObject(_decrypted);
-                                                        HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json,false);
+                                                        HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json, false);
                                                         HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
                                                         String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();
                                                         String hash = AccessFactory.getInstance(PinEntryActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
@@ -601,7 +609,7 @@ public class PinEntryActivity extends AppCompatActivity {
                                                             progressBar.setVisibility(View.INVISIBLE);
                                                         });
 
-                                                        new AlertDialog.Builder(PinEntryActivity.this)
+                                                        new MaterialAlertDialogBuilder(PinEntryActivity.this)
                                                                 .setTitle(R.string.app_name)
                                                                 .setMessage(getString(R.string.pin_reminder) + "\n\n" + AccessFactory.getInstance(PinEntryActivity.this).getPIN())
                                                                 .setCancelable(false)
@@ -625,25 +633,49 @@ public class PinEntryActivity extends AppCompatActivity {
                                         }
                                     }).setNegativeButton(R.string.cancel, (dialog, whichButton) -> {
 
-                                        AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
-                                        finish();
-
                                     });
-                            if (!isFinishing()) {
-                                dlg.show();
-                            }
+                            dlg.show();
 
                         }
 
                     });
         } else {
-            Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (getIntent().getExtras() != null)
-                intent.putExtras(getIntent().getExtras());
-            startActivity(intent);
-            finish();
+            Toast.makeText(this,"Backup file not available ",Toast.LENGTH_SHORT).show();
+            if (!ExternalBackupManager.hasPermissions()) {
+                ExternalBackupManager.askPermission(this);
+            }
         }
     }
 
+    boolean isLocked() {
+        return PrefsUtil.getInstance(getApplication()).getValue(PrefsUtil.PIN_TIMEOUT,30000L) != 0L;
+    }
+
+    void startCountDownTimer() {
+        TransitionManager.beginDelayedTransition((ViewGroup ) restoreLayout.getRootView() );
+        pinEntryView.disable(true);
+        restoreLayout.setVisibility(View.VISIBLE);
+        long timeoutPref = PrefsUtil.getInstance(getApplication()).getValue(PrefsUtil.PIN_TIMEOUT,0L);
+        new CountDownTimer(  timeoutPref == 0L ? 30000L : timeoutPref, 1000) {
+            public void onTick(long duration) {
+                long secs = (duration / 1000) % 60;
+                PrefsUtil.getInstance(getApplication()).setValue(PrefsUtil.PIN_TIMEOUT,duration);
+                walletStatusTextView.setText(getString(R.string.please_try_again_in).concat(" ").concat(String.valueOf(secs)).concat(" ").concat(getString(R.string.seconds)));
+            }
+
+            public void onFinish() {
+                PrefsUtil.getInstance(getApplication()).setValue(PrefsUtil.PIN_TIMEOUT,0L);
+                pinEntryView.disable(false);
+                TransitionManager.beginDelayedTransition((ViewGroup ) restoreLayout.getRootView() );
+                restoreLayout.setVisibility(View.GONE);
+                walletStatusTextView.setText(R.string.wallet_locked);
+            }
+        }.start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ExternalBackupManager.onActivityResult(requestCode, resultCode, data,getApplication());
+    }
 }
