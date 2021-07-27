@@ -40,27 +40,8 @@ public class SamouraiApplication extends Application {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-        // Write logcat output to a file
         if (BuildConfig.DEBUG) {
             Picasso.get().setIndicatorsEnabled(true);
-
-            try {
-                String logFile = Environment.getExternalStorageDirectory().getAbsolutePath().concat("/Samourai_debug_log.txt");
-                File file = new File(logFile);
-                if (file.exists()) {
-                    // clear log file after accumulating more than 6mb
-                    if (file.length() > 6000000) {
-                        PrintWriter writer = new PrintWriter(file);
-                        writer.flush();
-                        writer.close();
-                    }
-                }
-                Runtime.getRuntime().exec("logcat -f " + logFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // enable debug logs for external libraries (extlibj, whirlpool-client...)
             LogUtil.setLoggersDebug();
         }
     }
