@@ -23,8 +23,11 @@ import java.io.File
 /**
  * samourai-wallet-android
  *
- * Handler utility for managing android scope storage and legacy storage for external backups
+ * Utility for managing android scope storage and legacy storage for external backups
+ *
+ * Refs:
  * https://developer.android.com/about/versions/11/privacy/storage
+ * https://developer.android.com/guide/topics/permissions/overview
  */
 object ExternalBackupManager {
 
@@ -38,8 +41,16 @@ object ExternalBackupManager {
     private val scope = CoroutineScope(Dispatchers.Main) + SupervisorJob()
 
 
+    /**
+     * Shows proper dialog for external storage permission
+     *
+     * Invokes API specific storage requests.
+     * scoped storage for API 29
+     * normal external storage request for API below 29
+     */
     @JvmStatic
     fun askPermission(activity: Activity) {
+
         fun ask() {
             if (requireScoped()) {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
@@ -49,7 +60,12 @@ object ExternalBackupManager {
                 activity.startActivityForResult(intent, STORAGE_REQ_CODE)
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), READ_WRITE_EXTERNAL_PERMISSION_CODE)
+                    activity.requestPermissions(
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ), READ_WRITE_EXTERNAL_PERMISSION_CODE
+                    )
                 }
             }
         }
@@ -60,11 +76,12 @@ object ExternalBackupManager {
             titleId = R.string.permission_alert_dialog_title_external_scoped
             messageId = appContext.getString(R.string.permission_dialog_scoped)
             try {
-                if(backUpDocumentFile!=null){
+                //TODO: debug only- remove this block
+                if (backUpDocumentFile != null) {
                     messageId += "\n\n --DEBUG--- \nRead : ${backUpDocumentFile!!.canRead()}" +
-                            "\n"+
+                            "\n" +
                             "Write : ${backUpDocumentFile!!.canWrite()}" +
-                                    "\n\n Path: ${backUpDocumentFile!!.uri}\n\n---END DEBUG--- "
+                            "\n\n Path: ${backUpDocumentFile!!.uri}\n\n---END DEBUG--- "
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -72,16 +89,20 @@ object ExternalBackupManager {
         }
         val builder = MaterialAlertDialogBuilder(activity)
         builder.setTitle(titleId)
-                .setMessage(messageId)
-                .setPositiveButton(if (requireScoped()) R.string.choose else R.string.ok) { dialog, _ ->
-                    dialog.dismiss()
-                    ask()
-                }.setNegativeButton(R.string.cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }.show()
+            .setMessage(messageId)
+            .setPositiveButton(if (requireScoped()) R.string.choose else R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+                ask()
+            }.setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
 
+    /**
+     * Attach to root application object to retrieve context
+     * Ref: [com.samourai.wallet.SamouraiApplication] onCreate
+     */
     @JvmStatic
     fun attach(application: Application) {
         this.appContext = application
@@ -92,7 +113,7 @@ object ExternalBackupManager {
 
     @JvmStatic
     fun write(content: String) {
-        scope.launch(Dispatchers.IO){
+        scope.launch(Dispatchers.IO) {
             try {
                 if (requireScoped()) {
                     writeScopeStorage(content)
@@ -106,15 +127,16 @@ object ExternalBackupManager {
     }
 
     @JvmStatic
-    fun read(): String? =if (requireScoped()) {
-            readScoped()
-        } else {
-            readLegacy()
+    fun read(): String? = if (requireScoped()) {
+        readScoped()
+    } else {
+        readLegacy()
     }
 
     private fun initScopeStorage() {
         if (PrefsUtil.getInstance(appContext).has(PrefsUtil.BACKUP_FILE_PATH)) {
-            val path: String = PrefsUtil.getInstance(appContext).getValue(PrefsUtil.BACKUP_FILE_PATH, "");
+            val path: String =
+                PrefsUtil.getInstance(appContext).getValue(PrefsUtil.BACKUP_FILE_PATH, "");
             if (path.isNotEmpty()) {
                 if (DocumentFile.fromTreeUri(appContext, path.toUri()) == null) {
                     permissionState.postValue(false)
@@ -122,9 +144,19 @@ object ExternalBackupManager {
                 }
                 val documentsTree = DocumentFile.fromTreeUri(appContext, path.toUri())!!
 
-                if (documentsTree.canRead() && documentsTree.canWrite()) {
-                    permissionState.postValue(true)
+                var hasPerm = false
+
+                appContext.contentResolver.persistedUriPermissions.forEach { uri ->
+                    if (uri.uri.toString() == path) {
+                        permissionState.postValue(true)
+                        hasPerm = true
+                    }
                 }
+
+                if (!hasPerm) {
+                    return
+                }
+
                 documentsTree.listFiles().forEach { doc ->
                     if (BuildConfig.FLAVOR == "staging") {
                         if (doc.isDirectory && doc.name == "staging") {
@@ -211,14 +243,25 @@ object ExternalBackupManager {
         }
     }
 
+    /**
+     * Checks both scoped and non-scoped storage permissions
+     *
+     * For scoped storage method will use persistedUriPermissions array from
+     * contentResolver to compare allowed path that store in the prefs
+     *
+     */
     @JvmStatic
     fun hasPermissions(): Boolean {
         if (requireScoped()) {
             if (backUpDocumentFile == null) {
                 return false
             }
-            if (backUpDocumentFile!!.canRead() && backUpDocumentFile!!.canWrite()) {
-                return true
+            val path: String =
+                PrefsUtil.getInstance(appContext).getValue(PrefsUtil.BACKUP_FILE_PATH, "");
+            appContext.contentResolver.persistedUriPermissions.forEach { uri ->
+                if (uri.uri.toString() == path) {
+                    return true
+                }
             }
             return false
         } else {
@@ -229,10 +272,10 @@ object ExternalBackupManager {
     @JvmStatic
     fun backupAvailable(): Boolean {
         if (requireScoped()) {
-            if (backUpDocumentFile == null) {
+            if (backUpDocumentFile == null ) {
                 return false
             }
-            if (backUpDocumentFile!!.canRead() && backUpDocumentFile!!.canWrite()) {
+            if (backUpDocumentFile!!.canRead()) {
                 return backUpDocumentFile!!.exists()
             }
             return false
@@ -241,20 +284,35 @@ object ExternalBackupManager {
         }
     }
 
+    /**
+     * Handles permission result that received in an activity
+     *
+     * Any Activity that using this class should invoke this method in onActivityResult
+     */
     @JvmStatic
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, application: Application) {
+    fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+        application: Application
+    ) {
         val directoryUri = data?.data ?: return
         if (requestCode == STORAGE_REQ_CODE && resultCode == RESULT_OK) {
-            PrefsUtil.getInstance(application).setValue(PrefsUtil.BACKUP_FILE_PATH, directoryUri.toString())
+            PrefsUtil.getInstance(application)
+                .setValue(PrefsUtil.BACKUP_FILE_PATH, directoryUri.toString())
             this.appContext.contentResolver.takePersistableUriPermission(
-                    directoryUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                directoryUri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
             this.attach(application)
             permissionState.postValue(true)
         }
     }
 
+    /**
+     * For older api's ( below API 29)
+     */
+    @Suppress("DEPRECATION")
     private fun getLegacyBackupFile(): File {
         val directory = Environment.DIRECTORY_DOCUMENTS
         val dir: File? = if (appContext.packageName.contains("staging")) {
@@ -271,10 +329,15 @@ object ExternalBackupManager {
         return backupFile
     }
 
-
     private fun hasPermission(): Boolean {
-        val readPerm = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-        val writePerm = ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        val readPerm = ContextCompat.checkSelfPermission(
+            appContext,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+        val writePerm = ContextCompat.checkSelfPermission(
+            appContext,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
         return (readPerm && writePerm)
     }
 
