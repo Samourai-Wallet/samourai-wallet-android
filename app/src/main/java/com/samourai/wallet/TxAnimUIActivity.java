@@ -90,6 +90,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
     private long signDelay = 2000L;
     private long broadcastDelay = 1599L;
     private long resultDelay = 1500L;
+    private boolean txInProgress = false;
 
     private CompositeDisposable disposables = new CompositeDisposable();
     private Handler resultHandler = null;
@@ -212,12 +213,13 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         offlineTx(R.string.offline_mode, hexTx, strTxHash);
                         return;
                     }
-
+                    txInProgress = true;
 
                     Disposable disposable = pushTx(hexTx, strictModeVouts)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((jsonObject) -> {
+                                txInProgress = false;
                                 debug(TAG, jsonObject.toString());
                                 if (jsonObject.getBoolean("isOk")) {
                                     progressView.showCheck();
@@ -234,6 +236,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                 }
 
                             }, throwable -> {
+                                txInProgress = false;
                                 failTx(R.string.tx_broadcast_ko);
                             });
 
@@ -701,5 +704,9 @@ public class TxAnimUIActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() { }
+    public void onBackPressed() {
+        if(!txInProgress){
+            super.onBackPressed();
+        }
+    }
 }
