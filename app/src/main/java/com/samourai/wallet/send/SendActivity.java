@@ -2207,7 +2207,7 @@ public class SendActivity extends SamouraiActivity {
     private void processPCode(String pcode, String meta) {
 
         final Handler handler = new Handler();
-        handler.postDelayed(() -> setBalance(), 2000);
+        handler.postDelayed(this::setBalance, 2000);
 
         if (FormatsUtil.getInstance().isValidPaymentCode(pcode)) {
 
