@@ -1622,19 +1622,14 @@ public class SendActivity extends SamouraiActivity {
 //                    Log.d("SendActivity", "change:" + change);
 
             if (change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE) {
-
+                feeSeekBar.setEnabled(false);
                 MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.change_is_dust)
                         .setCancelable(false)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                dialog.dismiss();
-
-                            }
-                        });
-                if (!isFinishing()) {
+                        .setOnDismissListener(dialog -> feeSeekBar.setEnabled(true))
+                        .setPositiveButton(R.string.ok, (dialog, whichButton) -> dialog.dismiss());
+                if (!isFinishing() ) {
                     dlg.show();
                 }
 
@@ -1690,6 +1685,25 @@ public class SendActivity extends SamouraiActivity {
                 tvTotalFee.setText("__");
             }
 
+            if(amount +  fee.longValue() > balance){
+                btnSend.setEnabled(false);
+                btnReview.setBackgroundColor(getResources().getColor(R.color.disabled_grey));
+                btnSend.setText(R.string.send);
+                feeSeekBar.setEnabled(false);
+                MaterialAlertDialogBuilder dlg = new MaterialAlertDialogBuilder(SendActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.insufficient_amount_for_fee)
+                        .setCancelable(false)
+                        .setOnDismissListener(dialog -> feeSeekBar.setEnabled(true))
+                        .setPositiveButton(R.string.ok, (dialog, whichButton) -> dialog.dismiss());
+                if (!isFinishing()) {
+                    dlg.show();
+                }
+
+                return false;
+            }
+
+            btnSend.setEnabled(true);
 
             btnSend.setText("send ".concat(FormatsUtil.formatBTC(_fee.add(BigInteger.valueOf(amount)).longValue())));
 
@@ -2193,12 +2207,7 @@ public class SendActivity extends SamouraiActivity {
     private void processPCode(String pcode, String meta) {
 
         final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setBalance();
-            }
-        }, 2000);
+        handler.postDelayed(() -> setBalance(), 2000);
 
         if (FormatsUtil.getInstance().isValidPaymentCode(pcode)) {
 
