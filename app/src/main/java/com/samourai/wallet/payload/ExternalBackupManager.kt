@@ -71,25 +71,14 @@ object ExternalBackupManager {
         }
 
         var titleId = R.string.permission_alert_dialog_title_external
-        var messageId = appContext.getString(R.string.permission_dialog_message_external)
+        var message = appContext.getString(R.string.permission_dialog_message_external)
         if (requireScoped()) {
             titleId = R.string.permission_alert_dialog_title_external_scoped
-            messageId = appContext.getString(R.string.permission_dialog_scoped)
-            try {
-                //TODO: debug only- remove this block
-                if (backUpDocumentFile != null) {
-                    messageId += "\n\n --DEBUG--- \nRead : ${backUpDocumentFile!!.canRead()}" +
-                            "\n" +
-                            "Write : ${backUpDocumentFile!!.canWrite()}" +
-                            "\n\n Path: ${backUpDocumentFile!!.uri}\n\n---END DEBUG--- "
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            message = appContext.getString(R.string.permission_dialog_scoped)
         }
         val builder = MaterialAlertDialogBuilder(activity)
         builder.setTitle(titleId)
-            .setMessage(messageId)
+            .setMessage(message)
             .setPositiveButton(if (requireScoped()) R.string.choose else R.string.ok) { dialog, _ ->
                 dialog.dismiss()
                 ask()
