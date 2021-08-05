@@ -4,9 +4,9 @@
     <string name="alpha_create_wallet">Notez ces mots et gardez-les en lieu sûr. Veillez à ne pas perdre ces mots et mémorisez votre passphrase.</string>
     <string name="alpha_create_confirm_backup">J\'ai noté mes mots</string>
 
-    <string name="creating_wallet">Création du portefeuille en cours. Veuillez patienter...</string>
-    <string name="restoring_wallet">Restauration du portefeuille. Veuillez patienter...</string>
-    <string name="decrypting_bip38">Déchiffrement du mot de passe BIP38. Veuillez patienter...</string>
+    <string name="creating_wallet">Création du portefeuille en cours. Veuillez patienter…</string>
+    <string name="restoring_wallet">Restauration du portefeuille. Veuillez patienter…</string>
+    <string name="decrypting_bip38">Déchiffrement du mot de passe BIP38. Veuillez patienter…</string>
 
     <string name="action_settings">Paramètres</string>
     <string name="action_support">Aide</string>
@@ -510,7 +510,7 @@
     <string name="permission_dialog_message_outgoing">Votre portefeuille a besoin d\'un accès aux appels sortants pour pouvoir utiliser la fonction lancement en mode furtif.</string>
 
     <string name="permission_alert_dialog_title_external">Demande autorisation lire/écrire</string>
-    <string name="permission_dialog_message_external">Votre portefeuille a besoin d\'un accès au stockage de fichiers pour une sauvegarde automatique de votre portefeuille chiffré sur votre appareil.</string>
+    <string name="permission_dialog_message_external">Votre portefeuille a besoin d\'un accès au stockage de fichiers pour une sauvegarde chiffrée automatique de votre portefeuille sur votre appareil.</string>
     <string name="permission_alert_dialog_title_camera">Demande autorisation caméra</string>
     <string name="permission_dialog_message_camera">Votre portefeuille a besoin d\'un accès à la caméra pour pouvoir scanner les codes QR.</string>
 
@@ -527,11 +527,11 @@
     <string name="total_p2wpkh">Total segwit (bech32) :</string>
     <string name="total_blocked">Total verrouillé :</string>
 
-    <string name="tx_creating_ok">Création transaction...</string>
+    <string name="tx_creating_ok">Création transaction…</string>
     <string name="tx_creating_ko">Impossible de créer la transaction</string>
-    <string name="tx_signing_ok">Signature transaction...</string>
+    <string name="tx_signing_ok">Signature transaction…</string>
     <string name="tx_signing_ko">Impossible de signer la transaction</string>
-    <string name="tx_broadcast_ok">Émission transaction...</string>
+    <string name="tx_broadcast_ok">Émission transaction…</string>
     <string name="tx_broadcast_ko">Impossible d\'émettre la transaction</string>
     <string name="tx_sent_ok">Transaction envoyée</string>
     <string name="tx_sent_ko">Transaction non envoyée</string>
@@ -595,7 +595,7 @@
     <string name="_48_hours">48 heures +</string>
     <string name="free">GRATUIT</string>
     <string name="_1_50">1.50%</string>
-    <string name="_0_5_mins">0-5 min</string>
+    <string name="_0_5_mins">0–5 min</string>
     <string name="select_a_cycle_type">Choisissez un cycle</string>
     <string name="supercharge">SuperCharge</string>
     <string name="transaction_broadcast">Émission Transaction</string>
@@ -882,7 +882,7 @@
 <string name="paynym_follow_message_2">pour suivre immediatement. Suivre ce PayNym pour prendre part aux transactions\nCoinjoin Cahoots.</string>
 <string name="paynym_connect_message">pour générer des adresses privées uniques pour l\'envoi de bitcoin\nà ce contact</string>
 <string name="follow_paynym_fee_free">Frais : Gratuit</string>
-<string name="connect_paynym_fee">Frais : 0.00015 BTC</string>
+<string name="connect_paynym_fee">Frais : 0.00015000 BTC</string>
 <string name="connect"> Se connecter</string>
 <string name="blockchain_connect_with">Se connecter avec</string>
 <string name="following">Abonnement</string>
@@ -928,6 +928,64 @@
 
 <string name="clear_batch_list">Vider Liste Lot</string>
 <string name="confirm_batch_list_clear">Êtes-vous sûr de vouloir vider la Liste Lot ?</string>
+
+
+
+<string name="break_free">Affranchissez-vous de la gestion par un tiers. Gardez en permanence le total contrôle de votre portefeuille.</string>
+<string name="perfect_toolbox">La parfaite boîte à outils pour gérer votre expérience bitcoin en privé</string>
+<string name="offline_mode_allows">Le mode hors-ligne vous permet d\'interagir avec vos bitcoin et ce même en absence de connexion réseau</string>
+<string name="connect_your_wallet_to_your_own">Connectez votre portefeuille à votre propre noeud bitcoin complet en un scan QR</string>
+
+<string name="get_started">Démarrer</string>
+<string name="restore_an_existing_wallet">Restaurer un portefeuille existant</string>
+<string name="create_a_new_wallet">Créer un nouveau portefeuille</string>
+<string name="scan_qr">Scanner le code  QR</string>
+<string name="tor_initializing">Initialiser Tor</string>
+<string name="connected">Connecté</string>
+<string name="not_configured">Pas configuré</string>
+<string name="connecting">Connexion en cours…</string>
+<string name="invalid_api_endpoint">Point de terminaison API invalide</string>
+<string name="invalid_api_key">Clé Api invalide</string>
+<string name="do_you_want_to_unpair">Voulez-vous désappairer dojo ?</string>
+<string name="dojo_connection_error">Connexion à dojo impossible. Veuillez vérifier la clé api ou le statut du dojo</string>
+<string name="invalid_dojo_payload">Charge utile dojo invalide</string>
+
+<string name="your_passphrase">Votre passphrase</string>
+<string name="your_passphrase_will_not_be_shown_to_you_again">Nous ne vous montrerons plus votre passphrase.</string>
+<string name="your_passphrase_is_a_required_part_of_your_noffline">Votre passphrase est indispensable pour une\nsauvegarde version papier hors-ligne. Sans elle vous\nne pouvez pas restaurer votre portefeuille</string>
+<string name="write_down_words_down_and_keep_them">Notez les mots et gardez les\nsecrets. Associés à votre passphrase\nils donnent accès à votre portefeuille</string>
+<string name="create_your_offline_paper_backup">Créer votre sauvegarde version papier hors-ligne</string>
+<string name="without_a_backup_your_bitcoin">Sans une sauvegarde, vous exposez votre portefeuille bitcoin à un\nrisque de perte irreversible.\n\nTéléchargez et imprimez le modèle PDF pour\nsimplifier la sauvegarde.</string>
+<string name="download_pdf_template">Télécharger le Modèle PDF</string>
+
+<string name="i_have_an_external_wallet">J\'ai un portefeuille externe</string>
+<string name="_12_15_18_24_mnemonic_words">12/15/18/24 mots de récupération</string>
+<string name="restoring_a_wallet_no_problem_let_s_figure">Restaurer un portefeuille? Pas de problème, voyons quel processus de restauration optimisera sa performance.</string>
+<string name="i_have_a_samourai_backup_file">J\'ai une fichier de sauvegarde Samourai</string>
+<string name="encrypted_backup_file_passphrase">Fichier de sauvegarde chiffré + passphrase</string>
+
+
+<string name="before_anything_else_lets_take_ncare_of">Avant toute chose, attelons-nous à l\'entretien\ndu réseau.</string>
+<string name="dojo_status">Statut du Dojo :</string>
+<string name="api_key">Clé API</string>
+<string name="dojo_onion_address">Adresse onion du Dojo</string>
+<string name="would_you_like_to_enable_tor">Voulez-vous activer Tor ?</string>
+<string name="would_you_like_to_connect_to">Voulez-vous vous connecter à votre\npropre serveur dojo ?</string>
+
+<string name="choose">Choisir</string>
+
+<string name="permission_dialog_scoped">Votre portefeuille a besoin d\'un accès au stockage de fichiers pour une sauvegarde chiffrée automatique de votre portefeuille sur votre appareil. Veuillez choisir un répertoire.</string>
+<string name="permission_alert_dialog_title_external_scoped">Choisir un répertoire de sauvegarde</string>
+
+<string name="passphrase_is_required_for_samourai">Passphrase requise pour une importation samourai</string>
+
+<string name="send_cahoots">Envoyer Cahoots</string>
+
+<string name="dojo_config_detected">Configuration du dojo détectée</string>
+<string name="dojo_config_override">Configuration du dojo détectée dans fichier de sauvegarde. Voulez-vous passer outre la configuration actuelle ?\n\nRemarque: Si vous appuyez sur oui, le processus de restauration sautera l\'étape de configuration du dojo\n</string>
+
+<string name="api_key_blank_error">Champ requis !</string>
+
 
 
 </resources>
