@@ -1,10 +1,7 @@
 package com.samourai.wallet.whirlpool.newPool;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -24,7 +21,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,13 +28,11 @@ import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.backend.beans.UnspentOutput;
-import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
-import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
@@ -346,7 +340,8 @@ public class NewPoolActivity extends AppCompatActivity {
             }
             try {
                 com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.getPoolSupplier().findPoolById(selectedPoolViewModel.getPoolId());
-                Tx0FeeTarget mixFeeTarget = Tx0FeeTarget.BLOCKS_12;
+//                Tx0FeeTarget mixFeeTarget = Tx0FeeTarget.BLOCKS_12;
+                Tx0FeeTarget mixFeeTarget = tx0FeeTarget;
                 Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, tx0FeeTarget, mixFeeTarget);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
