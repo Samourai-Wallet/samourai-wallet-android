@@ -314,7 +314,7 @@ public class PayloadUtil	{
             meta.put("device_model", Build.MODEL == null ? "" : Build.MODEL);
             meta.put("device_product", Build.PRODUCT == null ? "" : Build.PRODUCT);
 
-            meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance()- BlockedUTXO.getInstance().getTotalValueBlocked0());
+            meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance() - BlockedUTXO.getInstance().getTotalValueBlocked0());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("sent_tos_from_bip47", SentToFromBIP47Util.getInstance().toJSON());
             meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
