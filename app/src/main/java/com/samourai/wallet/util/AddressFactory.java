@@ -45,6 +45,10 @@ public class AddressFactory {
     private static int highestBadBankReceiveIdx = 0;
     private static int highestBadBankChangeIdx = 0;
 
+    private static int localBIP44ReceiveIdx = 0;
+    private static int localBIP49ReceiveIdx = 0;
+    private static int localBIP84ReceiveIdx = 0;
+
     private static HashMap<String,Integer> xpub2account = null;
     private static HashMap<Integer,String> account2xpub = null;
 
@@ -89,10 +93,13 @@ public class AddressFactory {
 
         if(hdw != null)    {
             idx = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+            if(localBIP44ReceiveIdx > idx)	{
+                idx = localBIP44ReceiveIdx;
+            }
             addr = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
             if(canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
-                HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
-//                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).setAddrIdx(idx + 1);
+                localBIP44ReceiveIdx = idx + 1;
             }
         }
 
@@ -106,19 +113,20 @@ public class AddressFactory {
         HD_Address addr = null;
         SegwitAddress p2shp2wpkh = null;
 
-//        try	{
-            HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
+        HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
 
-            if(hdw != null)    {
-                idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
-                addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
-                p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                if(canIncBIP49ReceiveAddress(idx))	{
-                    BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
-//                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-                }
+        if(hdw != null)    {
+            idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+            if(localBIP49ReceiveIdx > idx)	{
+                idx = localBIP49ReceiveIdx;
             }
-//        }
+            addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
+            p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+            if(canIncBIP49ReceiveAddress(idx))	{
+                BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).setAddrIdx(idx + 1);
+                localBIP49ReceiveIdx = idx + 1;
+            }
+        }
 
         return Pair.of(idx, p2shp2wpkh);
 
@@ -130,16 +138,18 @@ public class AddressFactory {
         HD_Address addr = null;
         SegwitAddress p2wpkh = null;
 
-//        try	{
         HD_Wallet hdw = BIP84Util.getInstance(context).getWallet();
 
         if(hdw != null)    {
             idx = BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+            if(localBIP84ReceiveIdx > idx)	{
+                idx = localBIP84ReceiveIdx;
+            }
             addr = BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddressAt(idx);
             p2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
             if(canIncBIP84ReceiveAddress(idx))	{
-                BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).incAddrIdx();
-//                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                BIP84Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).setAddrIdx(idx + 1);
+                localBIP84ReceiveIdx = idx + 1;
             }
         }
 
@@ -180,6 +190,30 @@ public class AddressFactory {
     public void setHighestTxChangeIdx(int account, int idx) {
  //       Log.i("AddressFactory", "setting highestTxChangeIdx to " + idx);
         highestTxChangeIdx.put(account, idx);
+    }
+
+    public int getLocalBIP44ReceiveIdx()  {
+        return localBIP44ReceiveIdx;
+    }
+
+    public void setLocalBIP44ReceiveIdx(int idx) {
+        localBIP44ReceiveIdx = idx;
+    }
+
+    public int getLocalBIP49ReceiveIdx()  {
+        return localBIP49ReceiveIdx;
+    }
+
+    public void setLocalBIP49ReceiveIdx(int idx) {
+        localBIP49ReceiveIdx = idx;
+    }
+
+    public int getLocalBIP84ReceiveIdx()  {
+        return localBIP84ReceiveIdx;
+    }
+
+    public void setLocalBIP84ReceiveIdx(int idx) {
+        localBIP84ReceiveIdx = idx;
     }
 
     public int getHighestBIP49ReceiveIdx()  {

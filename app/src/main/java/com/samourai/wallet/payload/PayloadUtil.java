@@ -31,6 +31,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.LocalReceiveIndexes;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
@@ -365,6 +366,7 @@ public class PayloadUtil	{
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
             meta.put("is_sat", PrefsUtil.getInstance(context).getValue(PrefsUtil.IS_SAT, false));
+            meta.put("localIndexes", LocalReceiveIndexes.getInstance(context).toJSON());
 
             if(DojoUtil.getInstance(context).getDojoParams() != null)    {
                 meta.put("dojo", DojoUtil.getInstance(context).toJSON());
@@ -699,6 +701,9 @@ public class PayloadUtil	{
                     }
                 if(meta.has("is_sat")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.IS_SAT, meta.getBoolean("is_sat"));
+                }
+                if(meta.has("localIndexes")) {
+                    LocalReceiveIndexes.getInstance(context).fromJSON((JSONObject) meta.get("localIndexes"));
                 }
 
             }
