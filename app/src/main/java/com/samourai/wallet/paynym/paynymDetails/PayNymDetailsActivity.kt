@@ -554,7 +554,7 @@ class PayNymDetailsActivity : SamouraiActivity() {
                             .setMessage(message)
                             .setCancelable(false)
                             .setPositiveButton(R.string.help) { _, _ ->
-                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/article/58-connecting-to-a-paynym-contact"))
+                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/wallet/usage#follow-paynyms"))
                                 startActivity(browserIntent)
                             }
                             .setNegativeButton(R.string.close) { dialog, _ -> dialog.dismiss() }

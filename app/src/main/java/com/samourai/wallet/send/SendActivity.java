@@ -2449,7 +2449,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void doSupport() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/8-sending-bitcoin"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/wallet/usage#send-1"));
         startActivity(intent);
     }
 
