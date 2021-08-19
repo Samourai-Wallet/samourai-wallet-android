@@ -87,6 +87,24 @@
         />
 
     <Preference
+        android:title="@string/options_xpub44_postmix"
+        android:summary="@string/options_xpub44_postmix2"
+        android:key="zpub_post_x"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
+        />
+
+    <Preference
+        android:title="@string/options_xpub49_postmix"
+        android:summary="@string/options_xpub49_postmix2"
+        android:key="zpub_post_y"
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="true"
+        app:allowDividerAbove="true"
+        />
+
+    <Preference
         android:title="@string/options_xpub84_badbank"
         android:summary="@string/options_xpub84_badbank2"
         android:key="zpub_badbank"

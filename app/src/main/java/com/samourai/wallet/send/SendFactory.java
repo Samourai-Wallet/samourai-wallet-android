@@ -691,10 +691,33 @@ public class SendFactory	{
         }
 
         if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+
             int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
-            String change_address = BIP84Util.getInstance(context).getAddressAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, idx).getBech32AsString();
-            AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
-            return change_address;
+
+            if((type == 44 || type == 49) && PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+
+                debug("SendFactory", "change index:" + idx);
+
+                if(type == 49)    {
+                    HD_Address hd_addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(idx);
+                    SegwitAddress segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    String change_address = segwitAddress.getAddressAsString();
+                    AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
+                    return change_address;
+                }
+                else    {
+                    HD_Address hd_addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(idx);
+                    String change_address = hd_addr.getAddressString();
+                    AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
+                    return change_address;
+                }
+
+            }
+            else    {
+                String change_address = BIP84Util.getInstance(context).getAddressAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, idx).getBech32AsString();
+                AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
+                return change_address;
+            }
         }
         else if(type == 84)    {
             String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(account).getChange().getAddrIdx()).getBech32AsString();
@@ -737,17 +760,31 @@ public class SendFactory	{
                     ecKey = addr.getECKey();
                 }
                 else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                    debug("SendFactory", "address type:" + "bip49");
-                    HD_Address addr = BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
-                    ecKey = addr.getECKey();
+                    if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+                        debug("SendFactory", "address type:" + "post-mix p2sh");
+                        HD_Address addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                        ecKey = addr.getECKey();
+                    }
+                    else    {
+                        debug("SendFactory", "address type:" + "bip49");
+                        HD_Address addr = BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                        ecKey = addr.getECKey();
+                    }
                 }
                 else    {
-                    debug("SendFactory", "address type:" + "bip44");
-                    int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
-                    HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                    String strPrivKey = hd_address.getPrivateKeyString();
-                    DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
-                    ecKey = pk.getKey();
+                    if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+                        debug("SendFactory", "address type:" + "post-mix p2pkh");
+                        HD_Address hd_addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                        ecKey = hd_addr.getECKey();
+                    }
+                    else    {
+                        debug("SendFactory", "address type:" + "bip44");
+                        int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
+                        HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                        String strPrivKey = hd_address.getPrivateKeyString();
+                        DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
+                        ecKey = pk.getKey();
+                    }
                 }
             }
             else    {

@@ -138,6 +138,16 @@ public class AddressCalcActivity extends SamouraiActivity {
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else if(spType.getSelectedItemPosition() == 6)    {
+                        segwitAddress = null;
+                        chain = 1;
+                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolPostmix()).getChain(chain).getAddressAt(index);
+                    }
+                    else if(spType.getSelectedItemPosition() == 7)    {
+                        chain = 1;
+                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolPostmix()).getChain(chain).getAddressAt(index);
+                        segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    }
+                    else if(spType.getSelectedItemPosition() == 8)    {
                         hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolBadBank()).getChain(chain).getAddressAt(index);
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
@@ -148,13 +158,13 @@ public class AddressCalcActivity extends SamouraiActivity {
 
                     final ECKey ecKey;
                     final String strAddress;
-                    if(spType.getSelectedItemPosition() == 2)    {
+                    if(spType.getSelectedItemPosition() == 2 || spType.getSelectedItemPosition() == 6)    {
                         ecKey = hd_addr.getECKey();
                         strAddress = hd_addr.getAddressString();
                     }
                     else    {
                         ecKey = segwitAddress.getECKey();
-                        if(spType.getSelectedItemPosition() == 0)    {
+                        if(spType.getSelectedItemPosition() == 0 || spType.getSelectedItemPosition() == 7)    {
                             strAddress = segwitAddress.getAddressAsString();
                         }
                         else    {

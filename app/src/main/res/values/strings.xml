@@ -40,6 +40,10 @@
     <string name="options_xpub84_premix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool pre-mix.</string>
     <string name="options_xpub84_postmix">Show Whirlpool post-mix ZPUB</string>
     <string name="options_xpub84_postmix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool post-mix.</string>
+    <string name="options_xpub44_postmix">Show Whirlpool post-mix change XPUB</string>
+    <string name="options_xpub44_postmix2">Show extended public key for BIP44 Whirlpool post-mix change account.</string>
+    <string name="options_xpub49_postmix">Show Whirlpool post-mix change YPUB</string>
+    <string name="options_xpub49_postmix2">Show extended public key for BIP49 Segwit account (P2SH-wrapped) Whirlpool post-mix change account.</string>
     <string name="options_xpub84_badbank">Show Whirlpool bad bank ZPUB</string>
     <string name="options_xpub84_badbank2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool bad bank.</string>
     <string name="options_wipe">Secure erase wallet</string>
@@ -738,6 +742,8 @@
         <item>Ricochet Segwit</item>
         <item>Whirlpool Segwit pre-mix</item>
         <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit post-mix BIP44 change address</item>
+        <item>Whirlpool Segwit post-mix BIP49 change address</item>
         <item>Whirlpool Segwit bad bank</item>
     </string-array>
 

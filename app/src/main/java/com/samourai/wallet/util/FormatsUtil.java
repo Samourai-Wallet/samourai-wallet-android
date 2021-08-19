@@ -4,14 +4,19 @@ import android.content.Context;
 
 import com.samourai.wallet.SamouraiWallet;
 
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.utils.BtcFixedFormat;
 import org.bitcoinj.utils.BtcFormat;
 import org.bitcoinj.utils.MonetaryFormat;
 
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class FormatsUtil extends FormatsUtilGeneric {
@@ -91,4 +96,54 @@ public class FormatsUtil extends FormatsUtilGeneric {
         format.setMinimumFractionDigits(fractions);
         return format.format(sats / 1e8);
     }
+
+    public static String xlatXPUB(String xpub, boolean toSegwit) throws AddressFormatException {
+
+        byte[] xpubBytes = Base58.decodeChecked(xpub);
+
+        ByteBuffer bb = ByteBuffer.wrap(xpubBytes);
+        int ver = bb.getInt();
+        if(ver != MAGIC_XPUB && ver != MAGIC_TPUB && ver != MAGIC_YPUB && ver != MAGIC_UPUB && ver != MAGIC_ZPUB && ver != MAGIC_VPUB)   {
+            throw new AddressFormatException("invalid xpub version");
+        }
+
+        int xlatVer = 0;
+        switch(ver)    {
+            case FormatsUtilGeneric.MAGIC_XPUB:
+                xlatVer = toSegwit ? MAGIC_ZPUB : MAGIC_YPUB;
+                break;
+            case FormatsUtilGeneric.MAGIC_YPUB:
+                xlatVer = MAGIC_XPUB;
+                break;
+            case FormatsUtilGeneric.MAGIC_TPUB:
+                xlatVer = toSegwit ? MAGIC_VPUB : MAGIC_UPUB;
+                break;
+            case FormatsUtilGeneric.MAGIC_UPUB:
+                xlatVer = MAGIC_TPUB;
+                break;
+            case FormatsUtilGeneric.MAGIC_ZPUB:
+                xlatVer = toSegwit ? MAGIC_YPUB : MAGIC_XPUB;
+                break;
+            case FormatsUtilGeneric.MAGIC_VPUB:
+                xlatVer = toSegwit ? MAGIC_UPUB : MAGIC_TPUB;
+                break;
+        }
+
+        ByteBuffer b = ByteBuffer.allocate(4);
+        b.putInt(xlatVer);
+        byte[] bVer = b.array();
+
+        System.arraycopy(bVer, 0, xpubBytes, 0, bVer.length);
+
+        // append checksum
+        byte[] checksum = Arrays.copyOfRange(Sha256Hash.hashTwice(xpubBytes), 0, 4);
+        byte[] xlatXpub = new byte[xpubBytes.length + checksum.length];
+        System.arraycopy(xpubBytes, 0, xlatXpub, 0, xpubBytes.length);
+        System.arraycopy(checksum, 0, xlatXpub, xlatXpub.length - 4, checksum.length);
+
+        String ret = Base58.encode(xlatXpub);
+
+        return ret;
+    }
+
 }
