@@ -420,7 +420,7 @@ class BatchSpendActivity : SamouraiActivity() {
     }
 
     private fun doSupport() {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/8-sending-bitcoin")))
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/en/wallet/features/batch-spend")))
     }
 
 

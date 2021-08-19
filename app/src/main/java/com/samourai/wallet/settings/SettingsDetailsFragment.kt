@@ -608,7 +608,7 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
                 jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("user")
             }
             val email = Intent(Intent.ACTION_SEND)
-            email.putExtra(Intent.EXTRA_EMAIL, arrayOf("support@samouraiwallet.com"))
+            email.putExtra(Intent.EXTRA_EMAIL, arrayOf("help@samourai.support"))
             email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet support backup")
             email.putExtra(Intent.EXTRA_TEXT, jsonObject.toString())
             email.type = "message/rfc822"

@@ -1027,7 +1027,7 @@ public class BalanceActivity extends SamouraiActivity {
     }
 
     private void doSupport() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samouraiwallet.com/support"));
         startActivity(intent);
     }
 
