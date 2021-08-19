@@ -633,7 +633,7 @@ public class ReceiveActivity extends AppCompatActivity {
     }
 
     private void doSupport() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/7-receiving-bitcoin"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/wallet/usage#receive-1"));
         startActivity(intent);
     }
 

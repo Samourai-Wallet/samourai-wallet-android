@@ -237,7 +237,7 @@ class PayNymHome : SamouraiActivity() {
     }
 
     private fun doSupport() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/32-paynym"))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.samourai.io/wallet/usage#paynym-1"))
         startActivity(intent)
     }
 
