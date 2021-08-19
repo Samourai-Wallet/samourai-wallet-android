@@ -131,6 +131,18 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
             true
         }
 
+        val zpubPostXPref = findPreference("zpub_post_x") as Preference?
+        zpubPostXPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            getXPUB(44, WhirlpoolMeta.getInstance(requireContext()).whirlpoolPostmix)
+            true
+        }
+
+        val zpubPostYPref = findPreference("zpub_post_y") as Preference?
+        zpubPostYPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            getXPUB(49, WhirlpoolMeta.getInstance(requireContext()).whirlpoolPostmix)
+            true
+        }
+
         val zpubBadBankPref = findPreference("zpub_badbank") as Preference?
         zpubBadBankPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             getXPUB(84, WhirlpoolMeta.getInstance(requireContext()).whirlpoolBadBank)
@@ -474,17 +486,31 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
     private fun getXPUB(purpose: Int, account: Int) {
         var xpub = ""
-        when (purpose) {
-            49 -> xpub = BIP49Util.getInstance(requireContext()).wallet.getAccount(account).ypubstr()
-            84 -> xpub = BIP84Util.getInstance(requireContext()).wallet.getAccountAt(account).zpubstr()
-            else -> try {
-                xpub = HD_WalletFactory.getInstance(requireContext()).get().getAccount(account).xpubstr()
-            } catch (ioe: IOException) {
-                ioe.printStackTrace()
-                Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
-            } catch (mle: MnemonicLengthException) {
-                mle.printStackTrace()
-                Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
+        if((purpose == 44 || purpose == 49) && account == WhirlpoolMeta.getInstance(context).whirlpoolPostmix) {
+
+            var vpub = BIP84Util.getInstance(requireContext()).wallet.getAccountAt(WhirlpoolMeta.getInstance(context).whirlpoolPostmix).zpubstr()
+
+            if(purpose == 49) {
+                xpub = FormatsUtil.xlatXPUB(vpub, true);
+            }
+            else {
+                xpub = FormatsUtil.xlatXPUB(vpub, false);
+            }
+
+        }
+        else {
+            when (purpose) {
+                49 -> xpub = BIP49Util.getInstance(requireContext()).wallet.getAccount(account).ypubstr()
+                84 -> xpub = BIP84Util.getInstance(requireContext()).wallet.getAccountAt(account).zpubstr()
+                else -> try {
+                    xpub = HD_WalletFactory.getInstance(requireContext()).get().getAccount(account).xpubstr()
+                } catch (ioe: IOException) {
+                    ioe.printStackTrace()
+                    Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
+                } catch (mle: MnemonicLengthException) {
+                    mle.printStackTrace()
+                    Toast.makeText(requireContext(), "HD wallet error", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -497,7 +523,15 @@ class SettingsDetailsFragment(private val key: String?) : PreferenceFragmentComp
 
         when (account) {
             WhirlpoolAccount.POSTMIX.accountIndex -> {
-                dialogTitle = "Whirlpool Post-mix ZPUB"
+                if(purpose == 49){
+                    dialogTitle = "Whirlpool Post-mix YPUB"
+                }
+                else if(purpose == 44){
+                    dialogTitle = "Whirlpool Post-mix XPUB"
+                }
+                else{
+                    dialogTitle = "Whirlpool Post-mix ZPUB"
+                }
             }
             WhirlpoolAccount.PREMIX.accountIndex -> {
                 dialogTitle = "Whirlpool Pre-mix ZPUB"

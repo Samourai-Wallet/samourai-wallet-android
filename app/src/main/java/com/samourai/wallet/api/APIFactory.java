@@ -2576,12 +2576,13 @@ public class APIFactory {
                     String path = null;
 
                     try {
-                        String address = Bech32Util.getInstance().getAddressFromScript(script);
+                        String address = outDict.getString("addr");
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
                             path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
+
                             unspentPaths.put(address, path);
                             if(m.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr()))    {
                                 unspentBIP84PostMix.put(address, WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix());
