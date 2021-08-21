@@ -4,23 +4,16 @@ import android.content.Context;
 import android.util.Log;
 
 import com.samourai.wallet.BuildConfig;
-import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.tor.TorManager;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -29,11 +22,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
-import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-import info.guardianproject.netcipher.client.StrongHttpsClient;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -57,16 +45,11 @@ public class WebUtil {
     public static String SAMOURAI_API2_TOR = SAMOURAI_API2_TOR_DIST;
     public static String SAMOURAI_API2_TESTNET_TOR = SAMOURAI_API2_TESTNET_TOR_DIST;
 
-    public static final String VALIDATE_SSL_URL = SAMOURAI_API;
-
     public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;
 
-    private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
-    private static final String strProxyIP = "127.0.0.1";
-    private static final int proxyPort = 9050;
 
     private static WebUtil instance = null;
     private Context context = null;
@@ -338,7 +321,6 @@ public class WebUtil {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
         if (args != null && args.size()!=0) {
-            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
             for (String key : args.keySet()) {
                 formBodyBuilder.add(key, args.get(key));
             }
@@ -422,51 +404,6 @@ public class WebUtil {
             }
             return response.body().string();
 
-        }
-
-    }
-
-    public String tor_deleteURL(String URL, HashMap<String, String> args) throws Exception {
-
-        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
-
-        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
-
-        HttpDelete httpdelete = new HttpDelete(new URI(URL));
-        httpdelete.setHeader("Content-Type", "application/x-www-form-urlencoded");
-        httpdelete.setHeader("charset", "utf-8");
-        httpdelete.setHeader("Accept", "application/json");
-        httpdelete.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-
-        if (args != null) {
-            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-            for (String key : args.keySet()) {
-                urlParameters.add(new BasicNameValuePair(key, args.get(key)));
-            }
-//            httpdelete.setEntity(new UrlEncodedFormEntity(urlParameters));
-        }
-
-        HttpResponse response = httpclient.execute(httpdelete);
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(response.getStatusLine()).append("\n\n");
-
-        InputStream is = response.getEntity().getContent();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-
-        httpclient.close();
-
-        String result = sb.toString();
-//        Log.d("WebUtil", "POST result via Tor:" + result);
-        int idx = result.indexOf("{");
-        if (idx != -1) {
-            return result.substring(idx);
-        } else {
-            return result;
         }
 
     }

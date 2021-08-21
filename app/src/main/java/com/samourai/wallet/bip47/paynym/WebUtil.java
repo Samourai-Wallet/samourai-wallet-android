@@ -7,7 +7,6 @@ import com.samourai.wallet.tor.TorManager;
 
 import java.util.concurrent.TimeUnit;
 
-import info.guardianproject.netcipher.client.StrongHttpsClient;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,9 +21,6 @@ public class WebUtil {
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;
 
-    private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
-    private static final String strProxyIP = "127.0.0.1";
-    private static final int proxyPort = 9050;
 
     private static WebUtil instance = null;
     private Context context = null;
