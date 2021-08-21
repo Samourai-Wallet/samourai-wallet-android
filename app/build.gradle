@@ -113,8 +113,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    implementation 'net.i2p.android.ext:floatingactionbutton:1.9.0'
-    implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     implementation 'com.neovisionaries:nv-websocket-client:1.9'
     implementation 'commons-io:commons-io:2.5'
     implementation 'commons-codec:commons-codec:1.4'
