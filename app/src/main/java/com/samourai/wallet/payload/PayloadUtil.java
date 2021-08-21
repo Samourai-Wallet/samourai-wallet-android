@@ -367,7 +367,7 @@ public class PayloadUtil	{
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
             meta.put("is_sat", PrefsUtil.getInstance(context).getValue(PrefsUtil.IS_SAT, false));
             meta.put("localIndexes", LocalReceiveIndexes.getInstance(context).toJSON());
-            meta.put("xpubpostxreg", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTREG, ""));
+            meta.put("xpubpostxreg", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTREG, false));
 
             if(DojoUtil.getInstance(context).getDojoParams() != null)    {
                 meta.put("dojo", DojoUtil.getInstance(context).toJSON());
@@ -707,7 +707,7 @@ public class PayloadUtil	{
                     LocalReceiveIndexes.getInstance(context).fromJSON((JSONObject) meta.get("localIndexes"));
                 }
                 if(meta.has("xpubpostxreg")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPOSTXREG, meta.getString("xpubpostxreg"));
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPOSTXREG, meta.getBoolean("xpubpostxreg"));
                 }
 
             }
