@@ -1,12 +1,8 @@
 package com.samourai.wallet.fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +12,8 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.transition.MaterialSharedAxis;
 import com.samourai.wallet.R;
-import com.samourai.wallet.home.BalanceActivity;
-import com.samourai.wallet.permissions.PermissionsUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

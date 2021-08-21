@@ -128,8 +128,7 @@
             app:fab_colorNormal="#00bfa5"
             app:fab_colorPressed="#009688"
             app:fab_label="@string/receive"
-            app:fab_size="mini"
-            app:fab_title="@string/receive" />
+            app:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>
 
