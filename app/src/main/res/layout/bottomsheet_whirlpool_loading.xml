@@ -23,15 +23,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.google.android.material.progressindicator.ProgressIndicator
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/whirlpool_loader_progress"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            app:indicatorCornerRadius="4dp"
+            app:trackCornerRadius="4dp"
             app:indicatorSize="4dp"
             app:trackColor="#373737"
-            app:growMode="bidirectional"
             app:indicatorColor="?attr/colorAccent"
             android:indeterminate="false"
             android:layout_marginTop="24dp"

@@ -40,15 +40,13 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <com.google.android.material.progressindicator.ProgressIndicator
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:indicatorCornerRadius="5dp"
-            app:indicatorSize="3dp"
-            app:growMode="bidirectional"
-            app:linearSeamless="true"
+            app:trackCornerRadius="5dp"
+            app:indicatorSize="2dp"
+            app:indicatorColor="?colorAccent"
             app:trackColor="@android:color/transparent"
             android:indeterminate="true"
             android:visibility="visible" />

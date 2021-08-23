@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.auth0.android.jwt.JWT;
-import com.google.android.material.progressindicator.ProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -61,7 +61,7 @@ public class MainActivity2 extends AppCompatActivity {
     private boolean pinEntryActivityLaunched = false;
     private static final String TAG = "MainActivity2";
     private TextView loaderTxView;
-    private ProgressIndicator progressIndicator;
+    private LinearProgressIndicator progressIndicator;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
     protected BroadcastReceiver receiver_restart = new BroadcastReceiver() {
@@ -157,7 +157,6 @@ public class MainActivity2 extends AppCompatActivity {
         if (TorManager.INSTANCE.isRequired() && !AppUtil.getInstance(getApplicationContext()).isOfflineMode() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.INSTANCE.isConnected()) {
             loaderTxView.setText(getText(R.string.initializing_tor));
             progressIndicator.setIndeterminate(false);
-            progressIndicator.setGrowMode(ProgressIndicator.GROW_MODE_BIDIRECTIONAL);
             progressIndicator.setMax(100);
             TorManager.INSTANCE.getTorBootstrapProgress().observe(this,integer -> {
                 progressIndicator.setProgressCompat(integer,true);

@@ -5,9 +5,8 @@
     android:orientation="vertical">
 
 
-    <com.google.android.material.progressindicator.ProgressIndicator
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/loader"
-        style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
         android:layout_width="0dp"
         android:layout_height="26dp"
         android:layout_marginStart="84dp"
@@ -15,8 +14,9 @@
         android:layout_marginEnd="84dp"
         android:layout_marginBottom="32dp"
         app:indicatorColor="@color/accent"
-        app:indicatorCornerRadius="4dp"
+        app:trackCornerRadius="4dp"
         app:indicatorSize="4dp"
+        android:indeterminate="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

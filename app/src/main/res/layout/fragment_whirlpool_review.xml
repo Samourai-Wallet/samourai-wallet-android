@@ -272,15 +272,13 @@
         app:layout_constraintStart_toStartOf="@+id/textView62"
         app:layout_constraintTop_toBottomOf="@+id/textView81" />
 
-    <com.google.android.material.progressindicator.ProgressIndicator
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/loadingFeeDetails"
-        style="@style/Widget.MaterialComponents.ProgressIndicator.Circular.Indeterminate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:indeterminate="true"
-        app:circularInset="8dp"
-        app:circularRadius="8dp"
+        app:indicatorInset="8dp"
         app:indicatorColor="?attr/colorAccent"
         app:indicatorSize="2dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView66"

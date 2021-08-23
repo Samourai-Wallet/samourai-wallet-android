@@ -58,13 +58,12 @@
 
         </LinearLayout>
 
-        <com.google.android.material.progressindicator.ProgressIndicator
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:indicatorColor="@color/accent"
-            app:indicatorCornerRadius="5dp"
+            app:trackCornerRadius="5dp"
             app:indicatorSize="5dp"
             app:trackColor="@android:color/transparent"
             android:layout_marginBottom="-2dp"

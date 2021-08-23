@@ -249,9 +249,8 @@
                 android:focusable="true" />
         </FrameLayout>
 
-        <com.google.android.material.progressindicator.ProgressIndicator
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/loaderRestore"
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Circular.Indeterminate"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_marginEnd="8dp"

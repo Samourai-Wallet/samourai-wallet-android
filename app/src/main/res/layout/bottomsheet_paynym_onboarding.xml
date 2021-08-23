@@ -245,7 +245,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.progressindicator.ProgressIndicator
+            <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/claimProgressIndicator"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -253,7 +253,7 @@
                 android:layout_marginTop="16dp"
                 android:indeterminate="true"
                 app:indicatorColor="@color/white"
-                app:indicatorCornerRadius="5dp"
+                app:trackCornerRadius="5dp"
                 app:indicatorSize="4dp"
                 app:layout_anchorGravity="bottom|center"
                 app:layout_constraintBottom_toBottomOf="parent"

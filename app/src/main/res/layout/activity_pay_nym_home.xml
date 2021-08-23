@@ -143,11 +143,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Syncing payment code 2/15" />
 
-            <com.google.android.material.progressindicator.ProgressIndicator
+            <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progressbar_payment_code_sync"
                 android:layout_width="match_parent"
-                app:indicatorType="linear"
-                app:indicatorCornerRadius="8dp"
+                app:trackCornerRadius="8dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"

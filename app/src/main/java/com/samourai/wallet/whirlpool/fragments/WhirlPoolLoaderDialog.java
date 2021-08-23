@@ -18,7 +18,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.material.progressindicator.ProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
@@ -34,7 +34,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
 
     private static final String TAG = "WhirlPoolLoaderDialog";
     private TextView statusText;
-    private ProgressIndicator statusProgress;
+    private LinearProgressIndicator statusProgress;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private onInitComplete onInitComplete;
 

@@ -117,14 +117,13 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <com.google.android.material.progressindicator.ProgressIndicator
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
             app:indicatorColor="@color/accent"
-            app:indicatorCornerRadius="5dp"
+            app:trackCornerRadius="5dp"
             app:trackColor="@android:color/transparent"
             app:indicatorSize="5dp"
             android:visibility="invisible" />

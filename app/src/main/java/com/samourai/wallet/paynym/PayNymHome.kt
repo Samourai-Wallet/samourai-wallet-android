@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.progressindicator.ProgressIndicator
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.common.base.Splitter
@@ -54,7 +54,7 @@ class PayNymHome : SamouraiActivity() {
     private var paynymTabLayout: TabLayout? = null
     private var payNymViewPager: ViewPager? = null
 
-    private var paynymSync: ProgressIndicator? = null
+    private var paynymSync: LinearProgressIndicator? = null
     private var paynym: TextView? = null
     private var paynymCode: TextView? = null
     private var paymentCodeSyncMessage: TextView? = null
