@@ -4,51 +4,42 @@
     android:id="@id/paynym_list_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/tx_ripples"
+    android:background="?selectableItemBackground"
     android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical">
 
-
-    <ImageView
-        android:id="@+id/TransactionDirection"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/tx_time"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/incoming_tx_green" />
-
-    <TextView
-        android:id="@+id/tvAmount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/roboto_mono"
-        android:text="5.00 BTC"
-        android:textColor="@color/green_ui_2"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tx_pending_status"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toEndOf="@+id/TransactionDirection"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.32999998" />
-
-    <TextView
-        android:id="@+id/tx_time"
+    <LinearLayout
+        android:id="@+id/linearLayout12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="17:10"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView7"
-        app:layout_constraintEnd_toEndOf="@+id/TransactionDirection"
-        app:layout_constraintStart_toStartOf="@+id/TransactionDirection"
-        app:layout_constraintTop_toBottomOf="@+id/tvAmount" />
+        android:layout_marginStart="32dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout9">
+
+
+        <ImageView
+            android:id="@+id/TransactionDirection"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout9"
+            app:srcCompat="@drawable/incoming_tx_green" />
+
+        <TextView
+            android:id="@+id/tx_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="12sp"
+            tools:text="17:10" />
+
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/tx_pending_status"
@@ -56,59 +47,102 @@
         android:layout_height="32dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_chevron_right_white_24dp"
-        android:tint="#7E7E7E"
-        app:layout_constraintBottom_toBottomOf="@+id/tvAmount"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout9"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvAmount" />
+        app:layout_constraintTop_toTopOf="@+id/linearLayout9"
+        app:tint="#7E7E7E" />
 
-    <TextView
-        android:id="@+id/paynymId"
+
+    <LinearLayout
+        android:id="@+id/linearLayout9"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        tools:text="+blackFlower"
-        android:textColor="@color/text_ui2_grey"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvAmount"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvAmount"
-        app:layout_constraintTop_toBottomOf="@+id/tvAmount" />
-
-    <TextView
-        android:id="@+id/tx_note_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        tools:text="TextView"
-        android:ellipsize="end"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="16dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="8dp"
-        android:tint="@color/grey_accent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical"
+        android:minHeight="80dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/paynymId"
-        app:layout_constraintHorizontal_bias="0.29"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/paynymId"
-        app:srcCompat="@drawable/ic_note_black_24dp" />
+        app:layout_constraintEnd_toStartOf="@+id/tx_pending_status"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout12"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/tx_note_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="tx_note_view,imageView7" />
+
+        <TextView
+            android:id="@+id/tvAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:fontFamily="@font/roboto_mono"
+            android:textColor="@color/green_ui_2"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tx_pending_status"
+            app:layout_constraintHorizontal_bias="0.52"
+            app:layout_constraintStart_toEndOf="@+id/TransactionDirection"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.32999998"
+            tools:text="5.00 BTC" />
+
+
+        <TextView
+            android:id="@+id/paynymId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/text_ui2_grey"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvAmount"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tvAmount"
+            app:layout_constraintTop_toBottomOf="@+id/tvAmount"
+            tools:text="+blackFlower"
+            tools:visibility="visible" />
+
+
+        <LinearLayout
+            android:id="@+id/tx_note_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:visibility="visible">
+
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_note_black_24dp"
+                app:tint="@color/grey_accent" />
+
+            <TextView
+                android:id="@+id/tx_note_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView7"
+                app:layout_constraintTop_toTopOf="@+id/imageView7"
+                tools:text="Note textview" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
