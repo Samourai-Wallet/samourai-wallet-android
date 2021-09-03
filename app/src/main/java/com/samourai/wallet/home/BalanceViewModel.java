@@ -72,7 +72,7 @@ public class BalanceViewModel extends AndroidViewModel {
         return this.txs;
     }
 
-    void loadOfflineData() {
+   public void loadOfflineData() {
         boolean is_sat_prefs = PrefsUtil.getInstance(this.mContext).getValue(PrefsUtil.IS_SAT, true);
         try {
             JSONObject response = new JSONObject("{}");

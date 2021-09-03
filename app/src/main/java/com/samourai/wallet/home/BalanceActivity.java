@@ -324,7 +324,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         setSupportActionBar(toolbar);
         TxRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Drawable drawable = this.getResources().getDrawable(R.drawable.divider);
+        Drawable drawable = ContextCompat.getDrawable(this,R.drawable.divider_grey);
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         menuFab = findViewById(R.id.fab_menu);
         txs = new ArrayList<>();
