@@ -14,6 +14,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
@@ -435,7 +436,11 @@ public class SendFactory	{
 
         int changeType = 84;
         int mixedType = 84;
-        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+        boolean useLikeType = PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true);
+        if (DojoUtil.getInstance(context).getDojoParams() != null && !DojoUtil.getInstance(context).isLikeType()) {
+            useLikeType = false;
+        }
+        if(useLikeType)    {
             //
             // inputs are pre-grouped by type
             // type of address for change must match type of address for inputs
@@ -683,7 +688,12 @@ public class SendFactory	{
 
     private String getChangeAddress(int type, int account)    {
 
-        if(type != 44 || PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
+        boolean useLikeType = PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true);
+        if (DojoUtil.getInstance(context).getDojoParams() != null && !DojoUtil.getInstance(context).isLikeType()) {
+            useLikeType = false;
+        }
+
+        if(type != 44 || !useLikeType)    {
             ;
         }
         else    {
@@ -694,7 +704,7 @@ public class SendFactory	{
 
             int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
 
-            if((type == 44 || type == 49) && PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+            if((type == 44 || type == 49) && useLikeType)    {
 
                 debug("SendFactory", "change index:" + idx);
 
