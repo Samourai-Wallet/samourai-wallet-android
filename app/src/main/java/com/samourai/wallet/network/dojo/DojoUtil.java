@@ -18,6 +18,7 @@ public class DojoUtil {
     private static DojoUtil instance = null;
     private static final String TAG = "DojoUtil";
     private static Context context = null;
+    private static String dojoVersion = null;
 
     private DojoUtil()  { ; }
 
@@ -106,6 +107,39 @@ public class DojoUtil {
 
         APIFactory.getInstance(context).setAppToken(null);
 
+
+    }
+
+    public String getDojoVersion()  {
+        return dojoVersion;
+    }
+
+    public void setDojoVersion(String version)  {
+        dojoVersion = version;
+    }
+
+    public boolean isLikeType()  {
+
+        if(dojoParams == null || dojoVersion == null)      {
+            return  false;
+        }
+
+        // version 1.11.x
+        String[] s = dojoVersion.split(".");
+        try {
+            if(s.length >= 1 && Integer.parseInt(s[0]) > 1)    {
+                return true;
+            }
+            else if(s.length >= 2 && Integer.parseInt(s[0]) == 1 && Integer.parseInt(s[1]) >= 11){
+                return true;
+            }
+            else    {
+                return false;
+            }
+        }
+        catch(NumberFormatException nfe)    {
+            return false;
+        }
 
     }
 
