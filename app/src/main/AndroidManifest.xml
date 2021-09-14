@@ -128,7 +128,7 @@
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/SamouraiAppTheme"
+            android:theme="@style/Theme.Samourai.Material"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".settings.SettingsActivity"

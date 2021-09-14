@@ -71,7 +71,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
-public class ReceiveActivity extends AppCompatActivity {
+public class ReceiveActivity extends SamouraiActivity {
 
     private static int imgWidth = 0;
 
