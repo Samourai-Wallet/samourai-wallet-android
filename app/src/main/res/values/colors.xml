@@ -7,7 +7,7 @@
     <item name="disabledRed" type="color">#A82D2D</item>
     <item name="darkgrey" type="color">#121212</item>
 
-    <color name="window">#272c33</color>
+    <color name="window">#343434</color>
     <color name="primary">#FF3d434c</color>
     <color name="primary_dark">#2e343d</color>
     <color name="primary_light">#FFCFD8DC</color>
@@ -24,13 +24,13 @@
     <color name="white">#FAFAFA</color>
     <color name="blue_semi_transparent_pressed">#5C738FFE</color>
     <color name="grey_accent">#6c768b</color>
-    <color name="windowDark">#282d33</color>
+    <color name="windowDark">#343434</color>
     <color name="blue_ui_2">#1561CB</color>
     <color name="txt_grey">#C7CAD1</color>
 
     <color name="cyan_ui_2">#58b9b8</color>
     <color name="green_ui_2">#0ecf96</color>
-    <color name="whirlpoolBlue">#00aaff</color>
+    <color name="whirlpoolBlue">#03A9F4</color>
     <color name="whirlpoolGreen">#90ffee</color>
     <color name="transparent">#00FFFFFF</color>
 
@@ -46,7 +46,8 @@
     <color name="whirlpool_window_dark">#262c33</color>
     <color name="warning_yellow">#B6B260</color>
 
-    <color name="select_overlay">#343B48</color>
+    <color name="select_overlay">#2E2E2E</color>
+    <color name="tag_background">#434343</color>
 
 
     <!--Material theming-->
