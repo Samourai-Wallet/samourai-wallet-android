@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 
 import org.json.JSONObject;
 
@@ -53,6 +57,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     private OnClickListener listener;
     private static final int MAX_CONFIRM_COUNT = 3;
     private final AsyncListDiffer<Tx> mDiffer = new AsyncListDiffer<>(this, DIFF_CALLBACK);
+    private final SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
 
     public interface OnClickListener {
         void onClick(int position, Tx tx);
@@ -61,6 +66,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     public TxAdapter(Context mContext, List<Tx> txes, int account) {
         this.mContext = mContext;
         this.account = account;
+        fmt.setTimeZone(TimeZone.getDefault());
         this.updateList(txes);
     }
 
@@ -69,19 +75,14 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     }
 
     @Override
-    public void onDetachedFromRecyclerView(@NonNull  RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         disposables.dispose();
         super.onDetachedFromRecyclerView(recyclerView);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return mDiffer.getCurrentList().get(position).getTS();
-    }
-
     @NonNull
     @Override
-    public TxViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TxViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
         if (viewType == VIEW_ITEM) {
             view = LayoutInflater.from(parent.getContext())
@@ -114,10 +115,10 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
             holder.tvDateView.setText(sdf.format(tx.getTS() * 1000L));
             if (tx.getPaymentCode() != null) {
-                holder.tvPaynymId.setVisibility(View.VISIBLE);
-                holder.tvPaynymId.setText(BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()));
+                holder.txSubText.setVisibility(View.VISIBLE);
+                holder.txSubText.setText(BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()));
             } else {
-                holder.tvPaynymId.setVisibility(View.GONE);
+                holder.txSubText.setVisibility(View.GONE);
             }
             if (this.listener != null)
                 holder.itemView.setOnClickListener(view -> {
@@ -125,25 +126,37 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 });
             if (tx.getAmount() < 0.0) {
 
-                holder.tvDirection.setImageDrawable( ContextCompat.getDrawable(mContext,R.drawable.out_going_tx_whtie_arrow));
+                holder.tvDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.out_going_tx_whtie_arrow));
 
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.white));
                 holder.tvAmount.setText("-".concat(is_sat_prefs ? FormatsUtil.formatSats(_amount) : FormatsUtil.formatBTC(_amount)));
-
+                if(account==WhirlpoolAccount.POSTMIX.getAccountIndex()){
+                    holder.txSubText.setVisibility(View.VISIBLE);
+                    holder.txSubText.setText("Postmix spend");
+                }else{
+                    holder.txSubText.setVisibility(View.GONE);
+                }
             } else {
                 TransitionManager.beginDelayedTransition((ViewGroup) holder.tvAmount.getRootView(), new ChangeBounds());
 
-                holder.tvDirection.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.incoming_tx_green));
+                holder.tvDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.incoming_tx_green));
                 String amount = is_sat_prefs ? FormatsUtil.formatSats(_amount) : FormatsUtil.formatBTC(_amount);
                 if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
                     amount = amount.concat(mContext.getString(R.string.remix_note_tag));
                 }
                 holder.tvAmount.setText(amount);
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
+                if(account==WhirlpoolAccount.POSTMIX.getAccountIndex() && _amount!=0){
+                    holder.txSubText.setVisibility(View.VISIBLE);
+                    holder.txSubText.setText("Mixed");
+                    holder.tvDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_whirlpool));
+                }else{
+                    holder.txSubText.setVisibility(View.GONE);
+                }
             }
 
-            if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
-                holder.tvDirection.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_repeat_24dp));
+            if (this.account == WhirlpoolAccount.POSTMIX.getAccountIndex() && _amount == 0) {
+                holder.tvDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_repeat_24dp));
             }
 
             if (UTXOUtil.getInstance().getNote(tx.getHash()) != null) {
@@ -154,16 +167,16 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             }
 
         } else {
-            SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-            fmt.setTimeZone(TimeZone.getDefault());
+
             Date date = new Date(tx.getTS());
             if (tx.getTS() == -1L) {
                 holder.tvSection.setText(holder.itemView.getContext().getString(R.string.pending));
-                holder.tvSection.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.warning_yellow));
+                holder.tvSection.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.warning_yellow));
             } else {
-                if(DateUtils.isToday(tx.getTS())){
+                holder.tvSection.setTextColor(ContextCompat.getColor(holder.tvSection.getContext(), R.color.text_primary));
+                if (DateUtils.isToday(tx.getTS())) {
                     holder.tvSection.setText(holder.itemView.getContext().getString(R.string.timeline_today));
-                }else{
+                } else {
                     holder.tvSection.setText(fmt.format(date));
                 }
             }
@@ -224,7 +237,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     class TxViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvSection, tvDateView, tvAmount, tvPaynymId, tvNoteView;
+        private TextView tvSection, tvDateView, tvAmount, txSubText, tvNoteView;
         private ImageView tvDirection;
         private LinearLayout txNoteGroup;
 
@@ -238,7 +251,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 tvDateView = itemView.findViewById(R.id.tx_time);
                 tvDirection = itemView.findViewById(R.id.TransactionDirection);
                 tvAmount = itemView.findViewById(R.id.tvAmount);
-                tvPaynymId = itemView.findViewById(R.id.paynymId);
+                txSubText = itemView.findViewById(R.id.txSubText);
                 txNoteGroup = itemView.findViewById(R.id.tx_note_group);
                 tvNoteView = itemView.findViewById(R.id.tx_note_view);
             }
@@ -253,14 +266,25 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             ArrayList<Long> sectionDates = new ArrayList<>();
             List<Tx> sectioned = new ArrayList<>();
             // for pending state
+            WhirlpoolWallet wallet =   AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWalletOrNull();
             boolean contains_pending = false;
+            boolean containsNonPendingTxForTodaySection = false;
             for (int i = 0; i < txes.size(); i++) {
                 Tx tx = txes.get(i);
                 if (tx.getConfirmations() < MAX_CONFIRM_COUNT) {
                     contains_pending = true;
                 }
-            }
+                if(tx.getConfirmations() >= MAX_CONFIRM_COUNT && DateUtils.isToday(tx.getTS() * 1000)){
+                    containsNonPendingTxForTodaySection = true;
+                }
+                if(wallet !=null ){
+                    for (WhirlpoolUtxo whirlpoolUtxo: wallet.getUtxoSupplier().findUtxos(WhirlpoolAccount.POSTMIX)) {
+                        if(whirlpoolUtxo.getUtxo().tx_hash.equals(tx.getHash())){
 
+                        }
+                    }
+                }
+            }
             for (Tx tx : txes) {
                 Date date = new Date();
                 date.setTime(tx.getTS() * 1000);
@@ -273,7 +297,13 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 calendarDM.set(Calendar.MILLISECOND, 0);
 
                 if (!sectionDates.contains(calendarDM.getTime().getTime())) {
-                    sectionDates.add(calendarDM.getTime().getTime());
+                    if(DateUtils.isToday(calendarDM.getTime().getTime())){
+                        if(containsNonPendingTxForTodaySection){
+                            sectionDates.add(calendarDM.getTime().getTime());
+                        }
+                    }else{
+                        sectionDates.add(calendarDM.getTime().getTime());
+                    }
                 }
 
             }
