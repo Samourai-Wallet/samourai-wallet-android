@@ -15,13 +15,16 @@ android {
         versionName "0.99.96j"
         // Enabling multidex support.
         multiDexEnabled true
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = '1.8'
     }
     buildTypes {
         release {
@@ -51,6 +54,9 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/proguard/androidx-annotations.pro'
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
     productFlavors {
         production {
@@ -75,6 +81,9 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 def getApiKey(key){
@@ -88,13 +97,12 @@ dependencies {
 
     def lifecycle_version = "2.2.0"
     def topl_android_version = "2.1.0"
-    def coroutines_version = '1.3.9'
+    def coroutines_version = '1.5.1'
 
     api fileTree(include: ['*.jar'], dir: 'libs')
     implementation('com.google.zxing:core:3.3.0') {
         transitive = true
     }
-
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
@@ -104,7 +112,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.core:core-ktx:1.3.2"
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
@@ -127,7 +135,7 @@ dependencies {
     implementation 'me.jahnen:java-fs:0.1.4'
     implementation 'com.google.android.material:material:1.5.0-alpha02'
     implementation 'org.hibernate:hibernate-validator:5.4.3.Final'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.github.yuriy-budiyev:code-scanner:2.1.0'
     implementation ('io.samourai.code.whirlpool:whirlpool-client:0.23.29') {
         exclude group:'org.hibernate', module:'hibernate-validator'
@@ -164,8 +172,8 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'io.samourai.code.wallet:android-tor-binary:0.4.5.4'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
 
     testImplementation 'junit:junit:4.12'
 
