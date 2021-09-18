@@ -45,6 +45,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.whirlpool.WhirlpoolHome;
 import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
@@ -444,7 +445,7 @@ public class UTXODetailsActivity extends SamouraiActivity {
                         }
 
                         if (id != null) {
-                            Intent intent = new Intent(getApplicationContext(), WhirlpoolMain.class);
+                            Intent intent = new Intent(getApplicationContext(), WhirlpoolHome.class);
                             intent.putExtra("preselected", id);
                             intent.putExtra("_account", account);
                             startActivity(intent);
