@@ -88,7 +88,7 @@
             android:name=".network.NetworkDashboard"
             android:label="@string/title_activity_network_dashboard"
             android:parentActivityName=".home.BalanceActivity"
-            android:theme="@style/SamouraiAppTheme" />
+            android:theme="@style/Theme.Samourai.Material" />
         <activity
             android:name=".utxos.UTXOSActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

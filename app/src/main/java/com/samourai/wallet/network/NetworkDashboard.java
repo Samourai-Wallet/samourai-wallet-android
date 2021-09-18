@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.api.APIFactory;
 
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
@@ -50,7 +51,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NetworkDashboard extends AppCompatActivity {
+public class NetworkDashboard extends SamouraiActivity {
 
     private final static int SCAN_PAIRING = 2012;
 
