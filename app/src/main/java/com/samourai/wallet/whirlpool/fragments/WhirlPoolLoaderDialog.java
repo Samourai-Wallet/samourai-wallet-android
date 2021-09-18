@@ -3,10 +3,7 @@ package com.samourai.wallet.whirlpool.fragments;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +12,23 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
-import com.samourai.wallet.util.AppUtil;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -70,43 +75,61 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         statusProgress.setProgress(20);
-        statusText.setText("Loading...");
+        statusText.setText(R.string.loading);
         WhirlpoolNotificationService.startService(getActivity());
-        Disposable disposable = AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus()
+        AndroidWhirlpoolWalletService androidWhirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
+        Disposable disposable = androidWhirlpoolWalletService.listenConnectionStatus()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
-                    switch (s) {
+                     switch (s) {
                         case LOADING: {
                             new Handler().postDelayed(() -> {
                                 statusText.setText("initializing whirlpool");
-                                statusProgress.setProgressCompat(35,true);
+                                statusProgress.setProgressCompat(35, true);
                             }, 300);
 
                             break;
                         }
-
                         case STARTING: {
                             new Handler().postDelayed(() -> {
                                 statusText.setText("Connecting to service");
-                                statusProgress.setProgressCompat(65,true);
+                                statusProgress.setProgressCompat(65, true);
                             }, 600);
                             break;
                         }
                         case CONNECTED: {
                             statusText.setText("Connected");
-                            statusProgress.setProgressCompat(100,true);
-                            new Handler().postDelayed(() -> {
-                                dismiss();
-                                if (onInitComplete != null)
-                                    onInitComplete.init();
-                            }, 1200);
+                            statusProgress.setProgressCompat(100, true);
+                            Disposable disposable1 = Observable
+                                    .interval(600, TimeUnit.MILLISECONDS)
+                                    .subscribeOn(Schedulers.io())
+                                    .flatMap(aLong -> Observable.fromCallable(() -> {
+                                        WhirlpoolWallet wallet = androidWhirlpoolWalletService.getWhirlpoolWalletOrNull();
+                                        if (wallet != null) {
+                                            return wallet.isStarted();
+                                        }
+                                        return false;
+                                    }))
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(isInitialized -> {
+                                        WhirlpoolWallet wallet = androidWhirlpoolWalletService.getWhirlpoolWalletOrNull();
+                                        if (wallet != null) {
+                                            if (wallet.isStarted()) {
+                                                onInitComplete.init();
+                                                this.dismiss();
+                                            }
+                                        }
+                                    }, throwable -> {
+                                        LogUtil.error(TAG, throwable);
+                                    });
+                            compositeDisposable.add(disposable1);
                             break;
 
                         }
                         case DISCONNECTED:
                             statusText.setText("Disconnected");
-                            statusProgress.setProgressCompat(0,true);
+                            statusProgress.setProgressCompat(0, true);
                             new Handler().postDelayed(() -> {
                                 // exit on Whirlpool start failure
                                 getActivity().onBackPressed();
