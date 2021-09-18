@@ -1,19 +1,12 @@
 package com.samourai.wallet.whirlpool.newPool;
 
+import static android.graphics.Typeface.BOLD;
+
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
@@ -26,13 +19,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.backend.beans.UnspentOutput;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
@@ -60,16 +65,14 @@ import org.bouncycastle.util.encoders.Hex;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import java8.util.Optional;
 import kotlin.Unit;
-
-import static android.graphics.Typeface.BOLD;
 
 public class NewPoolActivity extends AppCompatActivity {
 
@@ -156,7 +159,7 @@ public class NewPoolActivity extends AppCompatActivity {
         });
 
         reviewPoolFragment.setLoadingListener((aBoolean, e) -> {
-            if(e==null){
+            if (e == null) {
                 enableBroadcastButton(!aBoolean);
             }
             return Unit.INSTANCE;
@@ -177,12 +180,12 @@ public class NewPoolActivity extends AppCompatActivity {
                         Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
                         return;
                     }
-                    calculateTx0(selectedPoolViewModel.getDenomination(),selectedPoolViewModel.getMinerFee());
+                    calculateTx0(selectedPoolViewModel.getDenomination(), selectedPoolViewModel.getMinerFee());
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
-                    confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.green_ui_2));
+                    confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.green_ui_2));
 
-                    reviewPoolFragment.setTx0(tx0,tx0FeeTarget,tx0FeeTarget,selectedPoolViewModel);
+                    reviewPoolFragment.setTx0(tx0, tx0FeeTarget, tx0FeeTarget, selectedPoolViewModel);
                     break;
                 }
                 case 2: {
@@ -190,15 +193,15 @@ public class NewPoolActivity extends AppCompatActivity {
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                     builder.setMessage(R.string.block_tx0_change).setCancelable(false);
                     builder.setTitle(R.string.doxxic_change_warning);
-                    builder.setPositiveButton( getString(R.string.yes), (dialog, id) -> {
+                    builder.setPositiveButton(getString(R.string.yes), (dialog, id) -> {
                         dialog.dismiss();
                         blockChangeOutput = true;
                         processWhirlPool();
                     });
-                    builder.setNeutralButton(R.string.cancel,(dialog, which) -> {
+                    builder.setNeutralButton(R.string.cancel, (dialog, which) -> {
                         dialog.cancel();
                     });
-                    builder.setNegativeButton( getString(R.string.no), new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
                             blockChangeOutput = false;
@@ -273,15 +276,27 @@ public class NewPoolActivity extends AppCompatActivity {
             } else {
                 tx0Progress.setVisibility(View.VISIBLE);
                 confirmButton.setEnabled(false);
-                Disposable tx0Dispo = beginTx0(selectedCoins)
+                Disposable tx0Disposable = beginTx0(selectedCoins)
+                        .delay(500, TimeUnit.MILLISECONDS)
+                        .andThen(Completable.fromCallable(() -> {
+                            AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet().get().refreshUtxos(true);
+                            AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet().get().resync();
+                            return  false;
+                        }))
+                        .delay(100,TimeUnit.MILLISECONDS)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             confirmButton.setEnabled(true);
                             Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "TX0 Successfully broadcasted", Snackbar.LENGTH_LONG).show();
                             tx0Progress.setVisibility(View.GONE);
+                            Intent intent = new Intent(getApplication(), JobRefreshService.class);
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("dragged", true);
+                            intent.putExtra("launch", false);
+                            JobRefreshService.enqueueWork(getApplication(), intent);
                             setResult(Activity.RESULT_OK, getIntent());
-                            new Handler().postDelayed(this::finish, 800);
+                            finish();
                         }, error -> {
                             confirmButton.setEnabled(true);
                             tx0Progress.setVisibility(View.GONE);
@@ -289,7 +304,7 @@ public class NewPoolActivity extends AppCompatActivity {
                             error.printStackTrace();
                         });
 
-                disposables.add(tx0Dispo);
+                disposables.add(tx0Disposable);
             }
 
 
@@ -347,8 +362,8 @@ public class NewPoolActivity extends AppCompatActivity {
                 // tx0 success
                 if (tx0.getChangeOutputs() != null && !tx0.getChangeOutputs().isEmpty()) {
                     TransactionOutput changeOutput = tx0.getChangeOutputs().get(0);
-                    Log.i("NewPoolActivity", "change:" + changeOutput.toString());
-                    Log.i("NewPoolActivity", "change index:" + changeOutput.getIndex());
+                    LogUtil.info("NewPoolActivity", "change:" + changeOutput.toString());
+                    LogUtil.info("NewPoolActivity", "change index:" + changeOutput.getIndex());
                     UTXOUtil.getInstance().add(txHash + "-" + changeOutput.getIndex(), "\u2623 tx0 change\u2623");
                     UTXOUtil.getInstance().addNote(txHash, "tx0");
                     if (blockChangeOutput) {
@@ -365,7 +380,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         Toast.makeText(NewPoolActivity.this, txHash, Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.i("NewPoolActivity", "result:" + txHash);
+                LogUtil.info("NewPoolActivity", "result:" + txHash);
 
             } catch (Exception e) {
                 // tx0 failed
@@ -374,7 +389,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         Toast.makeText(NewPoolActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.i("NewPoolActivity", "result:" + e.getMessage());
+                LogUtil.info("NewPoolActivity", "result:" + e.getMessage());
             }
 
             return true;
@@ -384,7 +399,7 @@ public class NewPoolActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-           onBackPressed();
+            onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -402,7 +417,7 @@ public class NewPoolActivity extends AppCompatActivity {
                 switch (position) {
                     case 0: {
                         enableStep1(true);
-                        confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.blue_ui_2));
+                        confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue_ui_2));
                         confirmButton.setText(R.string.next);
                         break;
                     }
@@ -445,7 +460,7 @@ public class NewPoolActivity extends AppCompatActivity {
                 reviewMessage.length() - 1, spannable.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         );
-        confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.blue_ui_2));
+        confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue_ui_2));
 
         confirmButton.setText(spannable);
     }
@@ -504,22 +519,23 @@ public class NewPoolActivity extends AppCompatActivity {
     private void enableConfirmButton(boolean enable) {
         if (enable) {
             confirmButton.setEnabled(true);
-            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.blue_ui_2));
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue_ui_2));
 
         } else {
             confirmButton.setEnabled(false);
-            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.disabled_grey));
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.disabled_grey));
 
         }
     }
+
     private void enableBroadcastButton(boolean enable) {
         if (enable) {
             confirmButton.setEnabled(true);
-            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.green_ui_2));
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.green_ui_2));
 
         } else {
             confirmButton.setEnabled(false);
-            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.disabled_grey));
+            confirmButton.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.disabled_grey));
 
         }
     }
@@ -623,5 +639,5 @@ public class NewPoolActivity extends AppCompatActivity {
         disposables.dispose();
         super.onDestroy();
     }
-    
+
 }

@@ -3,7 +3,6 @@ package com.samourai.wallet.whirlpool.fragments
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +21,7 @@ import com.samourai.wallet.databinding.WhirlpoolAddCoinsLayoutBinding
 import com.samourai.wallet.databinding.WhirlpoolIntroViewBinding
 import com.samourai.wallet.whirlpool.MixDetailsBottomSheet
 import com.samourai.wallet.whirlpool.WhirlPoolHomeViewModel
+import com.samourai.wallet.whirlpool.WhirlpoolHome
 import com.samourai.wallet.whirlpool.WhirlpoolHome.Companion.NEWPOOL_REQ_CODE
 import com.samourai.wallet.whirlpool.WhirlpoolMain
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity
@@ -58,7 +58,6 @@ class MixListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpList()
         viewModel.onboardStatus.observe(viewLifecycleOwner, { showOnboard ->
-            Log.i(TAG, "onViewCreated:  onboardStatus:::  ${showOnboard}")
             if (showOnboard) {
                 showIntroView()
             } else {
@@ -68,7 +67,6 @@ class MixListFragment : Fragment() {
 
                 mixList.observe(viewLifecycleOwner, { list ->
                     val onBoardingActive  = viewModel.onboardStatus.value ?: showOnboard
-                    Log.i(TAG, "Here: ${list.isEmpty()} ${!showOnboard}")
                     if(onBoardingActive){
                         return@observe
                     }
@@ -133,7 +131,7 @@ class MixListFragment : Fragment() {
         introBinding.whirlpoolIntroGetStarted.setOnClickListener {
             activity?.startActivityForResult(
                 Intent(activity, NewPoolActivity::class.java),
-                WhirlpoolMain.NEWPOOL_REQ_CODE
+                WhirlpoolHome.NEWPOOL_REQ_CODE
             )
         }
 

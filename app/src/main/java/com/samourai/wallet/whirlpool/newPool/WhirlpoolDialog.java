@@ -16,7 +16,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
-import static com.samourai.wallet.whirlpool.WhirlpoolMain.NEWPOOL_REQ_CODE;
+import static com.samourai.wallet.whirlpool.WhirlpoolHome.NEWPOOL_REQ_CODE;
 
 public class WhirlpoolDialog extends BottomSheetDialogFragment {
 
