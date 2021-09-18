@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.tor.TorManager;
 
 import org.apache.commons.io.IOUtils;
@@ -15,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -23,12 +25,15 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import static com.samourai.wallet.util.LogUtil.info;
 
 //import android.util.Log;
 
@@ -357,6 +362,18 @@ public class WebUtil {
         try (Response response = builder.build().newCall(request).execute()) {
             if(response.body() == null){
                 return  "";
+            }
+            else if(DojoUtil.getInstance(context).getDojoParams() != null)   {
+                Headers _headers = response.headers();
+                List<String> values = _headers.values("X-Dojo-Version");
+                if(values != null && values.size() > 0)   {
+                    info("WebUtil", "header:" + values.get(0));
+                    DojoUtil.getInstance(context).setDojoVersion(values.get(0));
+                }
+
+            }
+            else    {
+                ;
             }
             return response.body().string();
 
