@@ -7,5 +7,5 @@
         android:top="8dp"
         android:left="8dp"
         android:right="8dp" />
-    <solid android:color="@color/primary_dark"  />
+    <solid android:color="@color/tag_background"  />
 </shape>
