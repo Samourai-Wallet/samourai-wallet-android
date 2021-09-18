@@ -609,15 +609,10 @@
     <string name="stonewall_increases_deniability">STONEWALL reduce la vinculación de esta transacción.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
     <string name="cycling_bitcoin">Mezclar bitcoins a través de \n whirlpool reducirá el rastro que tus \n transacciones dejan detrás</string>
-    <!-- <string name="metadata_cleaner">metadata cleaner</string> -->
-    <!-- <string name="end_to_end_trustless">end-to-end trustlessness</string> -->
     <string name="your_private_keys"> Tus claves privadas no abandonan\n tu dispositivo en ninún punto\n de la mezcla Whirlpool</string>
     <string name="different_cycles_for">mezclas diferentes para distintas necesidades</string>
     <string name="complete_a_slow_cycle">Paga una pequeña comisión para un mezclado rápido o \n gana una pequeña recompensa en BTC\n cuando completes una mezcla lenta</string>
     <string name="supercharge_whirlpool_desc">Tus monedas se agregarán a la parte superior de la cola para su procesamiento inmediato</string>
-    <!-- <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
-    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
-    <string name="title_activity_cycle">CycleActivity</string> -->
     <string name="standard_whirlpool_desc">Tus monedas se agregarán al final de la cola, pero obtendrán una pequeña recompensa de BTC cuando se complete el ciclo</string>
     <string name="standard">Estándar</string>
     <string name="_48_hours">48 horas +</string>
@@ -625,7 +620,6 @@
     <string name="_1_50">1.50%</string>
     <string name="_0_5_mins">0-5 mins</string>
     <string name="select_a_cycle_type">Selecciona tipo de mezcla</string>
-    <!-- <string name="supercharge">SuperCharge</string> -->
     <string name="transaction_broadcast">Emitir Transacción</string>
     <string name="pending">pendiente</string>
     <string name="transaction_id">ID Transacción</string>
