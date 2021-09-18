@@ -1,8 +1,9 @@
 package com.samourai.wallet.utxos.models;
 
+import androidx.annotation.Nullable;
+
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.util.LogUtil;
 
 /**
  * UTXO model for UI
@@ -10,11 +11,11 @@ import com.samourai.wallet.util.LogUtil;
  * UTXOCoin support extra UI related states like isSelected doNotSpend etc..
  */
 public class UTXOCoin {
-    public String address = null;
+    public String address = "";
     public int id;
     public int account = 0;
     public long amount = 0L;
-    public String hash = null;
+    public String hash = "";
     public String path = "";
     public int idx = 0;
     public boolean doNotSpend = false;
@@ -36,6 +37,19 @@ public class UTXOCoin {
         this.amount = outPoint.getValue().longValue();
         this.hash = outPoint.getTxHash().toString();
         this.idx = outPoint.getTxOutputN();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof UTXOCoin) {
+            UTXOCoin coin = ((UTXOCoin) obj);
+            return (this.id == coin.id &&
+                    this.idx == coin.idx &&
+                    this.amount == coin.amount &&
+                    this.address.equals(coin.address) &&
+                    this.account == coin.account);
+        }
+        return super.equals(obj);
     }
 }
 

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="@drawable/tx_ripples"
     android:clickable="true"
     android:focusable="true"
+    android:background="?selectableItemBackground"
     android:orientation="vertical">
 
     <TextView
@@ -17,7 +17,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:text="TextView"
+        tools:text="TextView"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
