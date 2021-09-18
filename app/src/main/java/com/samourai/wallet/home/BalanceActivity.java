@@ -95,7 +95,6 @@ import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolHome;
-import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ItemDividerDecorator;

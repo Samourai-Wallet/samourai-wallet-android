@@ -23,7 +23,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -56,7 +55,6 @@ import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.utxos.models.UTXOCoinSegment;
 import com.samourai.wallet.whirlpool.WhirlpoolHome;
-import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;

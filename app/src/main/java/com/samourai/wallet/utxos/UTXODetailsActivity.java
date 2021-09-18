@@ -1,6 +1,5 @@
 package com.samourai.wallet.utxos;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -46,7 +45,6 @@ import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolHome;
-import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
@@ -69,7 +67,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

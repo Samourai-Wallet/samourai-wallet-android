@@ -2178,8 +2178,10 @@ public class APIFactory {
         List<Tx> ret = new ArrayList<Tx>();
         for(String key : postmix_txs.keySet())  {
             List<Tx> txs = postmix_txs.get(key);
-            for(Tx tx : txs)   {
-                ret.add(tx);
+            if(txs!=null){
+                for(Tx tx : txs)   {
+                    ret.add(tx);
+                }
             }
         }
 

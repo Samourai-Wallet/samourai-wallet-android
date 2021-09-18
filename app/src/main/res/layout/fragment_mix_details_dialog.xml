@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Mix Details"
+                android:text="@string/mix_details"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_weight="1"
-                        android:text="Mix Amount" />
+                        android:text="@string/mix_amount" />
 
                     <TextView
                         android:id="@+id/mixAmount"
@@ -143,7 +143,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_weight="1"
-                        android:text="Mixes completed" />
+                        android:text="@string/mixes_completed" />
 
                     <TextView
                         android:id="@+id/mixesDone"
@@ -176,7 +176,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Pool" />
+                        android:text="@string/pool" />
 
                     <TextView
                         android:id="@+id/mixPool"
@@ -210,7 +210,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_weight="1"
-                        android:text="Confirmation" />
+                        android:text="@string/confirmation" />
 
                     <TextView
                         android:id="@+id/mixTxConfirmation"
@@ -244,7 +244,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_weight="1"
-                        android:text="Mix Message" />
+                        android:text="@string/mix_message" />
 
                     <TextView
                         android:id="@+id/mixMessage"
@@ -278,7 +278,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_weight="1"
-                        android:text="Mix Error" />
+                        android:text="@string/mix_error" />
 
                     <TextView
                         android:id="@+id/mixError"

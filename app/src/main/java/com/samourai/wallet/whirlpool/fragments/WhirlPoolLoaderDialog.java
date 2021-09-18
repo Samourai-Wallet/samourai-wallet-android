@@ -85,7 +85,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                      switch (s) {
                         case LOADING: {
                             new Handler().postDelayed(() -> {
-                                statusText.setText("initializing whirlpool");
+                                statusText.setText(R.string.initializing_whirlpool);
                                 statusProgress.setProgressCompat(35, true);
                             }, 300);
 
@@ -93,13 +93,13 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                         }
                         case STARTING: {
                             new Handler().postDelayed(() -> {
-                                statusText.setText("Connecting to service");
+                                statusText.setText(R.string.connecting_to_service);
                                 statusProgress.setProgressCompat(65, true);
                             }, 600);
                             break;
                         }
                         case CONNECTED: {
-                            statusText.setText("Connected");
+                            statusText.setText(R.string.connected);
                             statusProgress.setProgressCompat(100, true);
                             Disposable disposable1 = Observable
                                     .interval(600, TimeUnit.MILLISECONDS)
@@ -128,7 +128,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
 
                         }
                         case DISCONNECTED:
-                            statusText.setText("Disconnected");
+                            statusText.setText(R.string.disconnected);
                             statusProgress.setProgressCompat(0, true);
                             new Handler().postDelayed(() -> {
                                 // exit on Whirlpool start failure

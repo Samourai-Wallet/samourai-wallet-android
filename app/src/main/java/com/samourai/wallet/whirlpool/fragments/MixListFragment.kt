@@ -23,7 +23,6 @@ import com.samourai.wallet.whirlpool.MixDetailsBottomSheet
 import com.samourai.wallet.whirlpool.WhirlPoolHomeViewModel
 import com.samourai.wallet.whirlpool.WhirlpoolHome
 import com.samourai.wallet.whirlpool.WhirlpoolHome.Companion.NEWPOOL_REQ_CODE
-import com.samourai.wallet.whirlpool.WhirlpoolMain
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService
 import io.reactivex.disposables.CompositeDisposable
