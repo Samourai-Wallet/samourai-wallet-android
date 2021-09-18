@@ -18,6 +18,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
+            android:focusable="true"
             android:hint="Enter your note here"
             android:inputType="textMultiLine"
             android:lines="4"
