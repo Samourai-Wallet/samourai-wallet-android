@@ -48,6 +48,7 @@
 
     <color name="select_overlay">#2E2E2E</color>
     <color name="tag_background">#434343</color>
+    <color name="pin_entry_button_color">#434343</color>
 
 
     <!--Material theming-->

@@ -40,7 +40,7 @@
             android:id="@+id/pin_entry_mask_layout"
             android:layout_width="0dp"
             android:layout_height="44dp"
-            android:background="#3a3d43"
+            android:background="@color/pin_entry_button_color"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/guideline5"
