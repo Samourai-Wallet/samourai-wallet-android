@@ -5,6 +5,7 @@
         <item name="toolbarStyle">@style/Widget.Samourai.Toolbar</item>
         <item name="colorAccent">@color/accent</item>
         <item name="colorPrimary">@color/white</item>
+        <item name="android:colorPrimary">@color/white</item>
         <item name="colorSecondary">@color/blue</item>
         <item name="colorOnPrimary">@color/primaryDarkColor</item>
         <item name="statusBarBackground">@color/grey_accent</item>
@@ -44,6 +45,15 @@
         <item name="snackbarStyle">@style/Widget.Samourai.SnackBar</item>
         <item name="materialAlertDialogTheme">@style/Theme.Samourai.MaterialDialog.Rounded</item>
     </style>
+
+    <style name="SamouraiAppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="SamouraiAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="SamouraiAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>
