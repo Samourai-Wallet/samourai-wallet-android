@@ -4,8 +4,9 @@
     android:id="@+id/paynym_list_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/tx_ripples"
+    android:background="?selectableItemBackground"
     android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical">
 
 
