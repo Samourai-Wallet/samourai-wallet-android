@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -47,7 +48,7 @@ import java.io.IOException;
 import static com.samourai.wallet.R.id.dots;
 
 
-public class CreateWalletActivity extends FragmentActivity implements
+public class CreateWalletActivity extends AppCompatActivity implements
         PinEntryFragment.onPinEntryListener,
         PassphraseEntryFragment.onPassPhraseListener {
     private ViewPager wallet_create_viewpager;
