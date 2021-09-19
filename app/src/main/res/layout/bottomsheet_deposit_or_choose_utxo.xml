@@ -12,18 +12,20 @@
         android:layout_height="match_parent">
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/whirlpool_dialog_choose_utxos_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/round_blue_button_whirlpool"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:text="Mix UTXOs"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="@string/mix_utxos"
             android:textAllCaps="false"
             android:textColor="@color/white"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:cornerRadius="16dp"
+            app:strokeColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
