@@ -241,6 +241,13 @@ public class PinEntryActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userInput.setLength(0);
+        displayUserInput();
+    }
+
     public void OnNumberPadClick(View view) {
         if (PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true) {
             vibrator.vibrate(55);
