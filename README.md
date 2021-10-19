@@ -2,6 +2,8 @@
 
 # Samourai Wallet
 
+# This repository is now maintained at https://code.samourai.io/wallet/samourai-wallet-android 
+
 ### Features:
 
 [Samourai Wallet features list](Samourai-Wallet-features.md)

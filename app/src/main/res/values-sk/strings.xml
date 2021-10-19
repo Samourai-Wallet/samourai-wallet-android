@@ -21,51 +21,52 @@
     <string name="cancel">Zrušiť</string>
 
     <string name="options_cat_prefs">Blok prieskumník</string>
-    <string name="options_cat_stealth">Krádež</string>
+    <string name="options_cat_stealth">Utajenie</string>
     <string name="options_cat_remote">Diaľkový</string>
     <string name="options_cat_wallet">Peňaženka</string>
 
-    <string name="options_cat_networking">Sieťový</string>
+    <string name="options_cat_networking">Sieť</string>
     <string name="options_cat_other">O peňaženke</string>
 
-    <string name="options_mnemonic">Ukáž frázu</string>
-    <string name="options_mnemonic2">Ukáž 12-slovnú frázu pre túto peňaženku.</string>
-    <string name="options_xpub">Ukáž BIP44 XPUB</string>
-    <string name="options_xpub2">Ukáž rošírený verejný klúč pre BIP44 účet.</string>
-    <string name="options_xpub49">Ukáž Segwit YPUB</string>
-    <string name="options_xpub49_2">Ukáž rošírený verejný klúč pre BIP49 Segwit účet (P2SH-wrapped).</string>
-    <string name="options_xpub84">Ukáž Segwit ZPUB</string>
-    <string name="options_xpub84_2">Ukáž rošírený verejný klúč prer BIP84 Segwit účet (Bech32).</string>
-    <string name="options_xpub84_premix">Ukáž Whirlpool pre-mix ZPUB</string>
-    <string name="options_xpub84_premix2">Ukáž rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool pre-mix.</string>
-    <string name="options_xpub84_postmix">Ukáž Whirlpool post-mix ZPUB</string>
-    <string name="options_xpub84_postmix2">Ukáž rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool post-mix.</string>
-    <string name="options_wipe">Bezpečne odstráň peňaženku</string>
-
-    <string name="options_wipe2">Bezpečne odstráň túto peňaženku z tohoto zariadenia.</string>
-    <string name="options_stealth_display">Utajni aplikáciu</string>
+    <string name="options_mnemonic">Zobraziť frázu</string>
+    <string name="options_mnemonic2">Zobraziť 12-slovnú frázu pre túto peňaženku.</string>
+    <string name="options_xpub">Zobraziť BIP44 XPUB</string>
+    <string name="options_xpub2">Zobraziť rošírený verejný klúč pre BIP44 účet.</string>
+    <string name="options_xpub49">Zobraziť Segwit YPUB</string>
+    <string name="options_xpub49_2">Zobraziť rošírený verejný klúč pre BIP49 Segwit účet (P2SH-wrapped).</string>
+    <string name="options_xpub84">Zobraziť Segwit ZPUB</string>
+    <string name="options_xpub84_2">Zobraziť rošírený verejný klúč prer BIP84 Segwit účet (Bech32).</string>
+    <string name="options_xpub84_premix">Zobraziť Whirlpool pre-mix ZPUB</string>
+    <string name="options_xpub84_premix2">Zobraziť rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool pre-mix.</string>
+    <string name="options_xpub84_postmix">Zobraziť Whirlpool post-mix ZPUB</string>
+    <string name="options_xpub84_postmix2">Zobraziť rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool post-mix.</string>
+    <string name="options_xpub84_badbank">Zobraziť Whirlpool bad bank ZPUB</string>
+    <string name="options_xpub84_badbank2">Zobraziť rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool bad bank.</string>
+    <string name="options_wipe">Bezpečne odstrániť peňaženku</string>
+    <string name="options_wipe2">Bezpečne odstrániť túto peňaženku z tohto zariadenia.</string>
+    <string name="options_stealth_display">Utajenie aplikácie</string>
     <string name="options_stealth_display2">Vymaž Samourai z domovskej obrazovky a zo zoznamu aplikácii. Musíš vytočiť **TVOJ_PIN_KÓD# z aplikacie pre volanie pre spustenie Samourai.</string>
     <string name="options_remote_commands">Povoľ vzdialané príkazy</string>
     <string name="options_remote_commands2">Povoľ vzdialané príkazy cez SMS.</string>
-    <string name="options_blockexplorer">Prieskumník bloku</string>
+    <string name="options_blockexplorer">Blok Prieskumník</string>
     <string name="options_blockexplorer2">Prieskumník bloku použitý na zobrazenie detailov transakcii.</string>
     <string name="options_sim_switch">Ochrana proti výmene SIM karty</string>
     <string name="options_sim_switch2">Pošli SMS na dôveryhodné mobilné číslo v prípade výmeny SIM karty.</string>
-    <string name="options_use_telno">Použi dôveryhodné mobilné číslo pre vzdialený prístup</string>
+    <string name="options_use_telno">Použiť dôveryhodné mobilné číslo pre vzdialený prístup</string>
     <string name="options_use_telno2">Pre vzdialený prístup povoľ iba dôveryhodné mobilné číslo.</string>
     <string name="options_alert_telno">Dôveryhodné mobilné číslor</string>
     <string name="options_alert_telno2">Dôveryhodné mobilné číslo, ktorým môžeš obmedziť vzdialený prístup k (použi medzinárodný formát bez medzier napr.: +421901000000).</string>
     <string name="options_hash">APK hash</string>
-    <string name="options_hash2">Získaj SHA-256 hash tohoto nainštalovaného APK súboru (môže byť skopírované do schránky).</string>
+    <string name="options_hash2">Získaj SHA-256 hash tohoto nainštalovaného APK súboru (môže byť skopírovaný do schránky).</string>
     <string name="options_VPN">VPN</string>
-    <string name="options_VPN2">Spusti OpenVPN pre Android.</string>
-    <string name="options_Tor">Nasmeruj cez Tor?</string>
-    <string name="options_Tor2">Spusti Orbot (Tor).</string>
-    <string name="options_export">Exportuj zálohu peňaženky</string>
-    <string name="options_change_pin">Zmeň PIN</string>
+    <string name="options_VPN2">Spustiť OpenVPN pre Android.</string>
+    <string name="options_Tor">Smerovať cez Tor?</string>
+    <string name="options_Tor2">Spustiť Orbot (Tor).</string>
+    <string name="options_export">Exportovať zálohu peňaženky</string>
+    <string name="options_change_pin">Zmeniť PIN</string>
     <string name="options_change_pin2">Zadaj nový PIN kód; použitý pre otvorenie peňaženky.</string>
     <string name="options_remote_pin">Tajné spustenie a vzdialený PIN</string>
-    <string name="options_remote_pin2">Zadaj alternatívny PIN pre funkcie vzdialaného prístupu.</string>
+    <string name="options_remote_pin2">Zadaj alternatívny PIN pre tajné spustenie a funkcie vzdialaného prístupu.</string>
     <string name="options_autosave_backup">Automaticky ulož zálohu do pamäte telefónu</string>
     <string name="options_autosave_backup2">Pravidelne ulož heslo k enkryptovanej zálohe do pamäťe telefónu.</string>
     <string name="options_version">Verzia</string>
@@ -88,12 +89,12 @@
     <string name="options_fee_provider2">Zvoľ si poskytovateľa pre výpočet približného poplatku.</string>
     <string name="options_broadcast_on">Vysielanie transakcii</string>
     <string name="options_broadcast_on2">Odznač (vysielanie VYPNUTÉ) pre kopírovanie surovej podpísanej transakcie do schránky.</string>
-    <string name="options_segwit">Prijatie do segwit adresy</string>
+    <string name="options_segwit">Prijímať do segwit adresy</string>
     <string name="options_segwit_2">Generuj segwit adresy pre prichádzajúce transakcie.</string>
-    <string name="options_broadcast_hex">Posielaj transakcie hex</string>
+    <string name="options_broadcast_hex">Poslať transakcie hex</string>
     <string name="options_broadcast_hex2">Pošli podpísané transakcie dodané v hex formáte.</string>
-    <string name="options_like_typed_change">Získajte zmenu na podobné výstupy.</string>
-    <string name="options_like_typed_change2">Receive change to same type of address as spend output. Turn OFF to receive only to segwit change addresses.</string>
+    <string name="options_like_typed_change">Prijímať výdavok na výstupy rovnakého typu</string>
+    <string name="options_like_typed_change2">Prijať drobné na rovnaký typ adresy ako výstupná adresa. VYPNITE, ak chcete prijímať iba na segwit adresy.</string>
     <string name="options_haptic">Haptická odozva zadávania PIN-u.</string>
     <string name="options_haptic_2">Vibruj pri každom stlačení klávesy pri zadávaní PIN-u.</string>
     <string name="options_prune">Zrušiť zálohovanie</string>
@@ -124,12 +125,12 @@
     <string name="error_change_output">Chyba pri určovaní výstupnej adresy</string>
 
     <string name="copied_to_clipboard">Skopírované do schránky</string>
-    <string name="send_payment_code">Odošlite kód platby</string>
+    <string name="send_payment_code">Odoslať kód platby</string>
 
-    <string name="ask_you_sure_exit">Ste si istý že chcete ukončit Samourai?</string>
+    <string name="ask_you_sure_exit">Ste si istý, že chcete ukončit Samourai?</string>
     <string name="yes">Áno</string>
     <string name="no">Nie</string>
-    <string name="close">Zavri</string>
+    <string name="close">Zavrieť</string>
 
     <string name="sim_warning">Zariadenie vašej peňaženky Samourai má teraz inú SIM kartu zodpovedajúcu prichádzajúcemu číslu tejto textovej správy.</string>
 
@@ -141,22 +142,22 @@
     <string name="bip38_pw_error">BIP38 chyba hesla</string>
     <string name="bip39_safe">Prosím vytvorte si heslo k peňaženke a nikomu ho neposkytujte. Budete ho potrebovať ak stratíte prístup k vašej peňaženke.</string>
     <string name="bip39_safe2">Prosím potvrdte Vaše heslo. Nikomu ho neposkytujte. Budete ho potrebovať ak stratíte prístup k vašej peňženke.</string>
-    <string name="bip39_restore">Zadaj tvoju frázu pre prístup (alebo hex entropiu) a, ak je to potrebné, tvoje BIP39 prístupové heslo. Pokiaľ nepoužívate BIP39 prístupové heslo, nechajte prázdne.</string>
-    <string name="bip39_must">Tvoja peňaženka musí mať prístupové heslo. Prosím skúste znova.</string>
+    <string name="bip39_restore">Zadajte vašu frázu pre prístup (alebo hex entropiu) a, ak je to potrebné, vaše BIP39 prístupové heslo. Pokiaľ nepoužívate BIP39 prístupové heslo, nechajte prázdne.</string>
+    <string name="bip39_must">Vaša peňaženka musí mať prístupové heslo. Prosím skúste znova.</string>
     <string name="bip39_unmatch">Prístupové heslo sa nezhoduje. Prosím skúste znova.</string>
     <string name="bip39_invalid">Nepoužívajte žiadne medzery v prístupovom hesle. Prosím skúste znova.</string>
     <string name="bip39_empty">Musíte si zvoliť prístupové heslo.</string>
     <string name="please_select">Prosím zvoľte...</string>
-    <string name="create_wallet">Vytvor peňaženku</string>
-    <string name="restore_wallet">Obnov peňaženku</string>
-    <string name="wallet_passphrase">Zadaj prístupové heslo k peňaženke</string>
+    <string name="create_wallet">Vytvoriť peňaženku</string>
+    <string name="restore_wallet">Obnoviť peňaženku</string>
+    <string name="wallet_passphrase">Zadajte prístupové heslo k peňaženke</string>
     <string name="bip39_passphrase">BIP39 prístupové heslo</string>
     <string name="bip39_match">BIP39 prístupové heslo verifikované OK.</string>
     <string name="bip39_decrypt_test">Prístupové heslo k peňaženke verifikované OK. Chcete otestovať dešifrovanie najnovšej automatickej zálohy?</string>
     <string name="backup_read_ok">Súbor zálohy OK.</string>
     <string name="backup_read_error">Chyba pri čítaní súboru zálohy.</string>
     <string name="mnemonic_hex">Mnemonic alebo hex entropia</string>
-    <string name="pin_enter">Zadaj PIN kód</string>
+    <string name="pin_enter">Zadajte PIN kód</string>
     <string name="please_wait">Prosím čakajte...</string>
     <string name="random_key_error">Chyba náhodného tlačidla</string>
     <string name="login_error">Prihlásenie neúspešné</string>
@@ -167,7 +168,7 @@
 
     <string name="address_used_previously">Túto adresu ste už použili predtým! Opätovné použitie adresy môže spôsobiť narušenie súkromia.</string>
 
-    <string name="scan">Skenuj</string>
+    <string name="scan">Skenovať</string>
     <string name="scan_error">Chyba skenovania</string>
     <string name="enter_privkey">Zadaj privátny kľúč</string>
 
@@ -175,7 +176,7 @@
     <string name="destination">Adresa alebo platobný kanál</string>
 
     <string name="insufficient_funds">Nedostatočné prostriedky</string>
-    <string name="tx_length_error">Samourai nezabezpečuje transakcie vačšie ako 100KB. Skúste prosím rozdeliť vašu transakciu.</string>
+    <string name="tx_length_error">Samourai nevie spracovať transakcie väčšie ako 100KB. Skúste prosím rozdeliť vašu transakciu.</string>
     <string name="invalid_amount">Nesprávna suma</string>
     <string name="invalid_address">Nesprávna adresa</string>
     <string name="amount">Suma</string>
@@ -190,17 +191,17 @@
 
     <string name="securely_wiping_wait">Bezpečne vymazať peňaženku. Prosím čakajte.</string>
 
-    <string name="options_scramble_pin">Náhodné tlačidlá pre zadanie PIN-u</string>
+    <string name="options_scramble_pin">Náhodné rozmiestnenie tlačidiel pre zadanie PIN-u</string>
     <string name="options_scramble_pin2">Použi náhodnú číselnú klavesnicu pre prístup do peňaženky. </string>
 
     <string name="you_must_have_orbot">Musíte mať Orbot nainštalovaný a aktivovaný pre proxy prístup. Prajete si ho nainštalovať z Google Play?</string>
 
     <string name="ssl_pinning_invalid">SSL certifikát pinning zlyhal. Toto môže indikovať neoprávnený prístup. Prosím skontrolujte vaše pripojenie k zariadeniu a k internetu.</string>
     <string name="ssl_no_connection">Nie je možné sa pripojiť k hostitelovi a verifikovať SSL certifikát. Prosím skontrolujte vaše pripojenie k zariadeniu a k internetu.</string>
-    <string name="retry">Skús znova</string>
+    <string name="retry">Skúsiť znova</string>
     <string name="exit">Odísť</string>
 
-    <string name="create_pin">Zvoľ PIN kód</string>
+    <string name="create_pin">Zvoľte PIN kód</string>
     <string name="confirm_pin">Potvrďte PIN kód</string>
 
     <string name="auto_fee">NORMÁLNY POPLATOK</string>
@@ -214,22 +215,22 @@
 
     <string name="max_available">Max. dostupné:</string>
 
-    <string name="select_account">Zvoľ účet</string>
+    <string name="select_account">Zvoliť účet</string>
     <string name="received_bitcoin">Prijatý Bitcoin</string>
     <string name="received">Prijatý</string>
     <string name="sent">Transakcia poslaná</string>
     <string name="total">Spolu</string>
     <string name="export_to_clipboard">Exportuj do schránky</string>
     <string name="export_to_email">Exportuj do email-u</string>
-    <string name="encryption_error">Vyskytla sa chyba pri dekryptovaní zálohy peňaženky. Skúste znova.</string>
+    <string name="encryption_error">Vyskytla sa chyba pri šifrovaní zálohy peňaženky. Skúste znova.</string>
     <string name="import_backup">Zo zálohy</string>
     <string name="import_mnemonic">Mnemonic/seed</string>
-    <string name="encrypted_backup">Enkryptované dáta peňaženky</string>
+    <string name="encrypted_backup">Zašifrované dáta peňaženky</string>
     <string name="decryption_error">Vyskytla sa chyba pri dekryptovaní zálohy peňaženky. Skúste znova.</string>
-    <string name="restore_wallet_from_backup">Obnov peňaženku zo zálohy peňaženky</string>
-    <string name="restore_wallet_from_existing_backup">V zariadení nájdená záloha. Pre obnovenie z existujúcej zálohy, stlač \'OK\', alebo skopíruj/prilep inú zálohu a stlač \'OK\'.</string>
+    <string name="restore_wallet_from_backup">Obnov peňaženku zo zálohy</string>
+    <string name="restore_wallet_from_existing_backup">V zariadení bola nájdená záloha. Pre obnovenie z existujúcej zálohy, stlač \'OK\', alebo skopíruj/prilep inú zálohu a stlač \'OK\'.</string>
 
-    <string name="choose_email_client">Vyber emailového klienta:</string>
+    <string name="choose_email_client">Vyberte emailového klienta:</string>
 
     <string name="cannot_launch_app">Samourai peňaženka nemôže byť spustená na tomto zariadení</string>
     <string name="confirm_change_pin">Ste si istý že chcete zmeniť PIN?</string>
@@ -242,23 +243,23 @@
     <string name="error_payment_code">Chyba pri generovaní platobného kódu</string>
 
     <string name="bip47_setup1_title">Vaša PayNym</string>
-    <string name="bip47_setup4_title">Pridaj PayNym kontakt</string>
-    <string name="bip47_setup4_text1">Pridaie tohoto PayNym do tvojích kontaktov vyžaduje jednorázový transakčný poplatok na vytvorenie a zaznamenanie na blockchain.</string>
-    <string name="bip47_setup4_text2">bude stiahnutý z tvojho zostatku na peňaženke.</string>
+    <string name="bip47_setup4_title">Pridať PayNym kontakt</string>
+    <string name="bip47_setup4_text1">Pridanie tohoto PayNym do vašich kontaktov vyžaduje jednorázový transakčný poplatok na vytvorenie a zaznamenanie na blockchain.</string>
+    <string name="bip47_setup4_text2">bude stiahnutý z vášho zostatku na peňaženke.</string>
 
     <string name="bip47_add1_title">Nový kontakt</string>
-    <string name="bip47_add1_text">Skenuj alebo vlož platobný kód pre vytvorenie nového platobného kanálu.</string>
+    <string name="bip47_add1_text">Skenovať alebo vložiť platobný kód pre vytvorenie nového platobného kanálu.</string>
 
-    <string name="paste">Prilep</string>
-    <string name="label">Označ</string>
+    <string name="paste">Prilepiť</string>
+    <string name="label">Označiť</string>
     <string name="next">Ďalej</string>
-    <string name="confirm">Potvrď</string>
+    <string name="confirm">Potvrdiť</string>
     <string name="payment_code">Platobný kód</string>
-    <string name="payment_channel_init">Notifikácia transakcie poslaná. Tvoj platobný kanál bol vytvorený.</string>
+    <string name="payment_channel_init">Notifikačná transakcia bola odoslaná. Váš platobný kanál sa vytvára.</string>
 
-    <string name="bip47_no_label_error">Musíte dodať štítok pre tento platobný kód</string>
+    <string name="bip47_no_label_error">Musíte zadať označenie pre tento platobný kód</string>
 
-    <string name="bip47_status_tbe">Ešte neurčené</string>
+    <string name="bip47_status_tbe">Zatiaľ nie je vytvorené</string>
     <string name="bip47_status_pending">Čakajúci - 0/1 Potvrdení</string>
     <string name="bip47_status_active">Pripravené odoslať</string>
     <string name="bip47_status_incoming">Pripravené prijať</string>
@@ -269,7 +270,7 @@
     <string name="bip47_sign_text2">Podpísaná s použitím mojej BIP47 notifikačnej adresy.</string>
     <string name="bip47_wait_for_confirmation_or_retry">Tento platobný kanál čaká na 1 konfirmáciu pred tým ako sa aktivuje poslanie. Prajete si zrušiť predchádzajúcu požiadavku a znova preposlať notifikáciu?</string>
 
-    <string name="rbf_incoming">Prichádzajúca transakcia je nahradená poplatkom. Zobraz v blok prehliadači?</string>
+    <string name="rbf_incoming">Prichádzajúca transakcia je nahradená poplatkom. Zobraziť v blok prehliadači?</string>
 
     <string name="invalid_passphrase">Nesprávne prístupové heslo</string>
     <string name="passphrase">Prístupové heslo</string>
@@ -281,16 +282,16 @@
     <string name="api_key_error">Nesprávny API klúč.</string>
     <string name="api_token_error">Nesprávny API token.</string>
 
-    <string name="cannot_recognize_privkey">Nemôžem rozpoznať privátny klúč</string>
-    <string name="cannot_sweep_privkey">Chyba sweeping privátneho klúča</string>
+    <string name="cannot_recognize_privkey">Nemožno rozpoznať privátny klúč</string>
+    <string name="cannot_sweep_privkey">Chyba pri odsávaní mincí (sweeping) z privátneho kľúča</string>
     <string name="please_wait_sending">Posielam transakciu, prosím čakajte.</string>
     <string name="please_wait_ricochet">Spracovávam Ricochet frontu, prosím čakajte.</string>
 
-    <string name="change_is_dust">Zmena z tejto transakcie predstavuje množstvo prachu. Skúste to znova a buď upravte sumu výdavkov alebo zadajte celý zostatok.</string>
+    <string name="change_is_dust">Výdavok z tejto transakcie predstavuje príliš malé množstvo drobných. Skúste to znova a buď upravte sumu výdavkov alebo zadajte celý zostatok.</string>
 
     <string name="tor_routing_on">Samourai je smerovaný cez Tor.</string>
     <string name="tor_routing_off">Samourai nie je smerovaný cez Tor. Stlačte pre aktiváciu.</string>
-    <string name="tor_install">Stlačte pre nainštalovanie aplikácie Orbot a smeruj Samourai cez Tor.</string>
+    <string name="tor_install">Stlačte pre nainštalovanie aplikácie Orbot a smerujte Samourai cez Tor.</string>
 
     <string name="premium_addons">Prémium Doplnky</string>
 
@@ -343,17 +344,17 @@
     <string name="fee_bump_not_necessary">Upozorňujeme, že pri tejto transakcii nemusí byť potrebné zaplatiť poplatok.</string>
     <string name="bump_fee">Prajete si navýšiť poplatok ťažiarom pre rýchlejšiu konfirmáciu?\n\nVolitelný poplatok ťažiarom:</string>
 
-    <string name="options_sign">Podpíš správu</string>
+    <string name="options_sign">Podpísať správu</string>
 
     <string name="trusted_node_pow_failed">Dôkaz o práci, ktorý je nahlásený vašim dôveryhodným uzlom, nie je overený. Skontrolujte inštaláciu.</string>
 
-    <string name="options_fees">Ukáž aktuálne poplatky ťažiarov</string>
+    <string name="options_fees">Zobraziť aktuálne poplatky ťažiarom</string>
     <string name="current_fee_selection">Váš poplatok je nastavný na:</string>
     <string name="current_hi_fee_value">Súčasný vyšší poplatok:</string>
     <string name="current_mid_fee_value">Súčasný normálny poplatok:</string>
     <string name="current_lo_fee_value">Súčasný nízky poplatok:</string>
     <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Nastav vlastný poplatok v sat/b.</string>
+    <string name="set_sat">Nastaviť vlastný poplatok v sat/b.</string>
     <string name="custom_fee_too_low">Zvolený poplatok je príliž nízky.</string>
     <string name="custom_fee_too_high">Zvolený poplatok je príliž vysoký.</string>
 
@@ -365,13 +366,13 @@
 
     <string name="error_reading_payload">Chyba pri čítaní užitočného zaťaženia. Prosím skúste neskôr.</string>
 
-    <string name="utxo_sign">Podíš správu</string>
+    <string name="utxo_sign">Podpísať správu</string>
     <string name="utxo_sign_text1">Podpísať správu týmto privátnym kľúčom?</string>
     <string name="utxo_sign_text2">Podpísané použitím utxo.</string>
     <string name="utxo_sign_text3">Podpísané použitím utxo.</string>
 
     <string name="recovery_checkup">Kontrola obnovy</string>
-    <string name="recovery_checkup_message">Obnovovacia fráza a heslo k peňaženke budú zobrazené. Nikomu nedovoľ aby videl túto obrazovku. Toto už nebude viackrát zobrazene.</string>
+    <string name="recovery_checkup_message">Obnovovacia fráza a heslo k peňaženke budú zobrazené. Nedovoľte nikomu, aby videl túto obrazovku. Toto už nebude viackrát zobrazene.</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="recovery_checkup_finish">Bezpečne som si uložil moje informácie potrebné na obnovenie</string>
     <string name="pin_reminder">Pre pripomenutie, Váš PIN kód je:</string>
@@ -382,8 +383,8 @@
     <string name="opendime_valid_key">Platný privátny kľúč v zariadení</string>
     <string name="opendime_not_verified">NIE JE MOŽNÉ VERIFIKOVAŤ</string>
     <string name="opendime_no_valid_key">Nie je možné overiť privátny kľôč v zariadení</string>
-    <string name="opendime_view">POHĽAD</string>
-    <string name="opendime_sweep">POMIEŠAJ</string>
+    <string name="opendime_view">ZOBRAZIŤ</string>
+    <string name="opendime_sweep">VYBRAŤ</string>
     <string name="opendime_topup">DOPLNIŤ</string>
 
     <string name="select_app">Vyberte aplikáciu</string>
@@ -393,13 +394,13 @@
     <string name="replay_unprotected">Nezabezpečené</string>
     <string name="replay_in_progress">Prebieha</string>
     <string name="replay_protected">Zabezpečené</string>
-    <string name="replay_disclaimer">Zistené rozdelenie reťazca</string>
+    <string name="replay_disclaimer">Zistené rozdelenie v blockchaine</string>
     <string name="replay_text">Všetky adresy budú zlúčené do jednej transakcie a odoslané na adresu v peňaženke. Toto sa označuje ako zlúčenie vstupov a môže narušiť vaše súkromie.</string>
-    <string name="replay_ENABLE">Povoliť ochranu pre odpoveďami</string>
+    <string name="replay_ENABLE">POVOLIŤ REPLAY PROTECTION</string>
 
-    <string name="replay_broadcast_to_network">vysielať do sieťe...</string>
-    <string name="replay_seen_on_network">vidieť na sieti...</string>
-    <string name="replay_split_tx_broadcast">rozdel vysielané transakcie...</string>
+    <string name="replay_broadcast_to_network">odoslať do sieťe...</string>
+    <string name="replay_seen_on_network">videné na sieti...</string>
+    <string name="replay_split_tx_broadcast">rozdeľ vysielanie transakcie...</string>
     <string name="replay_description">Vaša peňaženka odošle špeciálnu transakciu, ktorá natrvalo rozdelí mince z druhého reťazca. To vás ochráni pred útokmi na opakované útoky.</string>
     <string name="replay_waiting_for_confirmations">čakám na konfirmácie</string>
     <string name="replay_confirmed">potrdené</string>
@@ -407,7 +408,7 @@
     <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
-    <string name="replay_awaiting_confirmation">Ochrana prehrávania čaká na potvrdenie</string>
+    <string name="replay_awaiting_confirmation">Ochrana REPLAY čaká na potvrdenie</string>
     <string name="replay_dismiss">ZRUŠ VÝSTRAHU</string>
 
     <string name="show_qr">Ukáž QR</string>
@@ -420,7 +421,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Segwit Adresa</string>
-    <string name="segwit_switch_prompt">Prostriedky uložené v Segwit adresách sú účinnejšie pri transakciách. Ponúka znížené poplatky pre ťažiarov pri odosielaní bitcoin-u z vašej peňaženky.</string>
+    <string name="segwit_switch_prompt">Prostriedky uložené v Segwit adresách sú efektívnejšie pri transakciách. Ponúka znížené poplatky pre ťažiarov pri odosielaní bitcoin-u z vašej peňaženky.</string>
 
     <string name="privkey_clipboard">Privátny kľúč bol identifikovaný vo vašej schránke, vymazať obsah schránky?</string>
 
@@ -428,30 +429,30 @@
     <string name="enter_tx_hex">Zadaj transakciu v hex formáte</string>
     <string name="broadcast">Vysielaj transakciu</string>
 
-    <string name="dusting_tx">NEČISTÁ TRANSAKCIA</string>
-    <string name="dusting_attempt">Neočakávaná transakcia s prachom vo vašej peňaženke môže naznačovať pokus o sledovanie vašich peňažných adries a výdavkov. \ N \ nNaznačte, že tento prach je nepostrádateľný na zmiernenie pokusov tretej strany o sledovanie.</string>
+    <string name="dusting_tx">PRÍLIŠ DROBNÁ TRANSAKCIA</string>
+    <string name="dusting_attempt">Neočakávaná transakcia s prachom vo vašej peňaženke môže naznačovať pokus o sledovanie vašich peňažných adries a výdavkov.\n\nTento prach označte ako nemíňatelný, na zmiernenie pokusov o sledovanie od tretej strany.</string>
     <string name="dusting_attempt_amount">Suma:</string>
     <string name="dusting_attempt_id">Hash-Index:</string>
-    <string name="dusting_attempt_ignore">Ignoruj</string>
-    <string name="dusting_attempt_mark_unspendable">Označte nepotrebné</string>
+    <string name="dusting_attempt_ignore">Ignorovať</string>
+    <string name="dusting_attempt_mark_unspendable">Označiť ako nemíňatelné</string>
     <string name="paycode">PAYNYM</string>
     <string name="dust">DUST</string>
     <string name="do_not_spend">Neminuté</string>
     <string name="dusting_tx_unblock">Táto transakcia s prachom je v súčasnosti zablokovaná. Odblokujte túto nevyčerpanú položku na prípadné výdavky?</string>
-    <string name="mark_spend">Označ vyčerpané</string>
-    <string name="mark_do_not_spend">Označ neminuté</string>
-    <string name="mark_utxo_spend">Využite tento nevyčerpaný výstup?</string>
-    <string name="mark_utxo_do_not_spend">Vykonajte nevyčerpané výstupy?</string>
+    <string name="mark_spend">Označiť ako míňateľné</string>
+    <string name="mark_do_not_spend">Označiť ako nemíňať</string>
+    <string name="mark_utxo_spend">Označiť tento nevyčerpaný výstup ako minúteľný?</string>
+    <string name="mark_utxo_do_not_spend">Označiť tieto nevyčerpané výstupy ako nemíňatelné?</string>
 
     <string name="options_sign_a_message">Podpísať správu</string>
     <string name="options_display_redeem_script">Zobraziť skript na vykreslenie</string>
-    <string name="options_view_tx">Zobraz transakciu</string>
-    <string name="options_display_privkey">Zobraz privátny klúč</string>
-    <string name="options_batch">Výdavky v dávkach</string>
+    <string name="options_view_tx">Zobraziť transakciu</string>
+    <string name="options_display_privkey">Zobraziť privátny klúč</string>
+    <string name="options_batch">Viac platieb v dávke</string>
 
-    <string name="do_not_repeat_sent_to">Začiarknite políčko, ak chcete upozorniť na opakovanie odosielania na túto adresu.</string>
+    <string name="do_not_repeat_sent_to">Začiarknite políčko, ak chcete upozorniť na opakované odosielanie na túto adresu.</string>
 
-    <string name="mark_inputs_as_unspendable">Označte nevyčerpané výstupy, ktoré vytvárajú vstupy pre túto transakciu ako nezáväzné?</string>
+    <string name="mark_inputs_as_unspendable">Označiť nevyčerpané výstupy, ktoré vytvárajú vstupy pre túto transakciu ako nemíňatelné?</string>
 
     <string name="copy_to_clipboard">Kopírovať do schánky</string>
 
@@ -476,36 +477,36 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC do peňaženky a skúsiť znova.</string>
     <string name="help">Pomoc</string>
 
-    <string name="passphrase_disclaimer">Porozumel som že Samourai nenesie žiadnu zodpovednosť za stratu vaších prístupových hesiel . Samourai nemá žiadnu vedomosť o Vašom prístupovom hesle.</string>
-    <string name="confirm_pin_code">Potvrď PIN kód</string>
-    <string name="re_enter_your_pin_code">Znovu zadaj PIN kód</string>
-    <string name="re_enter_a_passphrase">Znovu zadaj prístupvé heslo</string>
-    <string name="create_a_passphrase">Vytvor prístupovú frázu</string>
-    <string name="create_a_secure_passphrase_for_your_wallet">Vytvor bezpečnú prístupovú frázu k peňaženke</string>
-    <string name="set_pin_code">Nastav PIN kód</string>
+    <string name="passphrase_disclaimer">Rozumiem, že Samourai nenesie žiadnu zodpovednosť za stratu prístupových hesiel. Samourai nemá žiadnu vedomosť o Vašom prístupovom hesle.</string>
+    <string name="confirm_pin_code">Potvrďte PIN kód</string>
+    <string name="re_enter_your_pin_code">Zadajte znova PIN kód</string>
+    <string name="re_enter_a_passphrase">Zadajte znova prístupvé heslo</string>
+    <string name="create_a_passphrase">Vytvoriť prístupovú frázu</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Vytvorťe bezpečnú prístupové heslo k peňaženke</string>
+    <string name="set_pin_code">Nastaviť PIN kód</string>
     <string name="accept_disclaimer_error">Je potrené akceptovať podmienky používania</string>
-    <string name="import_external_wallet">Importuj externú peňaženku</string>
-    <string name="import_samourai_wallet">Importuj samourai zálohu</string>
+    <string name="import_external_wallet">Importovať externú peňaženku</string>
+    <string name="import_samourai_wallet">Importovať samourai zálohu</string>
     <string name="backup_file">Zálohovací súbor</string>
     <string name="import_an_encrypted_samourai_wallet">importovať šifrovanú zálohu Samourai, aby ste obnovili peňaženku so všetkými neporušenými meta-dátami</string>
-    <string name="back">SPAŤ</string>
+    <string name="back">SPÄŤ</string>
     <string name="finish">skončiť</string>
-    <string name="choose_file">zvoľ súbor</string>
+    <string name="choose_file">zvoliť súbor</string>
 
  
     <string name="hello_blank_fragment">Ahoj prázdny fragment</string>
-    <string name="add_bip39_password">Prdaj bip39 heslo</string>
-    <string name="close_bip39_password">Zatvor bip39 heslo</string>
-    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Zadaj tvoju prístupovú vetu od ineho posyktovateľa.</string>
+    <string name="add_bip39_password">Pridať bip39 heslo</string>
+    <string name="close_bip39_password">Zavrieť bip39 heslo</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Zadajte vašu mnemotechnickú frázu od ineho posyktovateľa.</string>
     <string name="last_updated">Naposledy aktualizované</string>
-    <string name="get_help">Získaj pomoc</string>
+    <string name="get_help">Získať pomoc</string>
     <string name="offline_mode">Offline mód</string>
-    <string name="import_samourai_backup">Importuj Samourai zálohu</string>
+    <string name="import_samourai_backup">Importovať Samourai zálohu</string>
     <string name="samourai_bitcoin_wallet">Samourai Bitcoin Peňaženka</string>
-    <string name="enter_your_wallet_passphrase">Zadaj tvoje prístupové heslo k peňaženke</string>
-    <string name="start_new_wallet">Spusti novú peňaženku</string>
-    <string name="get_help_create">Vytvor peňaženku: Získaj pomoc</string>
-    <string name="get_help_restore">Obnov peňaženku: Získaj pomoc</string>
+    <string name="enter_your_wallet_passphrase">Zadajte svoje prístupové heslo k peňaženke</string>
+    <string name="start_new_wallet">Spustiť novú peňaženku</string>
+    <string name="get_help_create">Vytvorenie peňaženky: Získať pomoc</string>
+    <string name="get_help_restore">Obnovenie peňaženky: Získať pomoc</string>
 
     <string name="fee">Poplatok ťažiarom</string>
     <string name="fee_low_priority">Nízka priorita: približne 24</string>
@@ -519,7 +520,7 @@
     <string name="enter_your_code_here">Zadajte kód tu</string>
 
     <string name="declaimer_recovery_words">Potvrdzujem, že som si napísal vyššie uvedené slová a uložil ich na bezpečnom mieste. Chápem, že každý, kto má prístup k mojim prístupovým frázam a mojim slovám na obnovu, bude mať prístup k mojej peňaženke a všetkým mojim prostriedkom.</string>
-    <string name="return_to_wallet">Vráť sa do peňaženky</string>
+    <string name="return_to_wallet">Vrátiť sa do peňaženky</string>
     <string name="caution_message_recovery_words">Nie je bezpečné uchovať si tieto slová zálohované na vašom počítači alebo v cloude. Napíšte si tieto slová na kus papiera a držte ho v tajnosti a bezpečí.</string>
     <string name="these_words_are">Tieto slová sú zálohou všetkých tajných kľúčov v peňaženke.</string>
     <string name="recovery_words">OBNOVOVACIE SLOVÁ</string>
@@ -536,22 +537,22 @@
 
     <string name="use_bech32">použi bech32 adresu</string>
 
-    <string name="boltzmann_cannot">A STONEWALL výdavky nemôžu byť zložené s vašou aktuálnou sadou nevyčerpaných. Ak potrebujete stráviť STONEWALL, klepnite na \'NO \' a skúste znova s upravenou sadou nevyčerpaných.</string>
-    <string name="boltzmann_like_typed">Be advised that \'Upozorňujeme, že položka \"Prijať zmenu na rovnako napísané výstupy \" je vypnutá a môže mať za následok menej optimálnu štruktúru transakcií pre vaše náklady na STONEWALL.</string>
+    <string name="boltzmann_cannot">STONEWALL výdavky nemôžu byť zložené s vašou aktuálnou sadou nevyčerpaných. Ak potrebujete minúť STONEWALL, klepnite na \'NIE\' a skúste znova s upravenou sadou nevyčerpaných prostriedkov.</string>
+    <string name="boltzmann_like_typed">Upozorňujeme, že položka \'Prijať výdavok výstupy rovnakého typu\' je vypnutá a môže mať za následok menej optimálnu štruktúru transakcií pre vaše náklady na STONEWALL.</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
     <string name="advanced">Rozšírené</string>
     <string name="broadcast_with_txtenna">Vysielaj s TxTenna</string>
-    <string name="show_qr_code">Zobraz QR kód</string>
-    <string name="tx_connectivity_failure_msg">Transakciu nemožno poslať bez dátového pripojenia. Ako by ste chceli pokračovať</string>
+    <string name="show_qr_code">Zobraziť QR kód</string>
+    <string name="tx_connectivity_failure_msg">Transakciu nemožno poslať bez dátového pripojenia. Ako chcete pokračovať</string>
 
     <string name="insufficient_fee">Nedostatočný poplatok</string>
-    <string name="action_utxo_amounts">Zobrazenie čiastok podľa typu adresy</string>
+    <string name="action_utxo_amounts">Zobraziť sumy podľa typu adresy</string>
 
-    <string name="total_p2pkh">Total legacy (p2pkh):</string>
-    <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-    <string name="total_p2wpkh">Total segwit (bech32):</string>
-    <string name="total_blocked">Total blocked:</string>
+    <string name="total_p2pkh">Celkom legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Celkom segwit (p2sh):</string>
+    <string name="total_p2wpkh">Celkom segwit (bech32):</string>
+    <string name="total_blocked">Celkom blokované:</string>
 
 
     <string name="tx_creating_ok">Vytváram transakciu...</string>
@@ -563,7 +564,7 @@
     <string name="tx_sent_ok">Transakcia poslaná</string>
     <string name="tx_sent_ko">Transakcia neposlaná</string>
 
-    <string name="prune_backup">Prerežte užitočné zaťaženie a záložné súbory?</string>
+    <string name="prune_backup">Orezať payload a záložné súbory?</string>
 
     <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
@@ -571,8 +572,8 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
-    <string name="in_offline_mode">Samourai Wallet je v off line móde.</string>
-    <string name="broadcast_off">V tvojej Samourai peňaženke je zasielanie vypnuté.</string>
+    <string name="in_offline_mode">Samourai Wallet je v off-line móde.</string>
+    <string name="broadcast_off">Vo vašej Samourai peňaženke je odosielanie vypnuté.</string>
     <string name="tx_standby">Transakcia v pohotovostnom režime</string>
     <string name="show_hex">Zobraz Hex kód</string>
     <string name="tx_tenna_coming_soon">txTenna na Android čoskoro</string>
@@ -596,26 +597,26 @@
     </string-array>
 
     <string name="chain_id">Reťazec adresy</string>
-    <string name="receive_chain">Prijimajúca adresas</string>
-    <string name="change_chain">Zmeň adresu</string>
+    <string name="receive_chain">Prijimajúca adresa</string>
+    <string name="change_chain">Adresa na výdavok</string>
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
-    <string name="encrypted_backup_detected">Enkryptovaná záloha detekovaná</string>
-    <string name="restore">OBNOV</string>
-    <string name="request_amount">Vyžiadaj čiastku</string>
+    <string name="encrypted_backup_detected">Šifrovaná záloha detekovaná</string>
+    <string name="restore">OBNOVIŤ</string>
+    <string name="request_amount">Vyžiadať čiastku</string>
     <string name="address_type">Typ adresy</string>
     <string name="path">Cesta</string>
 
     <string name="title_activity_send_new_ui">SendNewUIActivity</string>
-    <string name="ricochet_hops_msg">Dodatočný krok medzi vašou peňaženkou a konečným cieľom pre zvýšenú funkčnosť</string>
+    <string name="ricochet_hops_msg">Dodatočné skoky medzi vašou peňaženkou a konečným cieľom pre zvýšenú zameniteľnosť(fungibilitu)</string>
     <string name="review_transaction">POSÚĎ TRANSAKCIU</string>
-    <string name="stonewall_increases_deniability">STONEWALL zvyšuje deniabilitu a znižuje viazanosť tejto transakcie.</string>
+    <string name="stonewall_increases_deniability">STONEWALL zvyšuje deniabilitu a znižuje previazanosť tejto transakcie.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
-    <string name="cycling_bitcoin">Cyklovanie bitcoin cez \n práčku budú pokrývať cestu \n transakcii ktoré nechávaš za sebou</string>
-    <string name="metadata_cleaner">metadata čistič</string>
+    <string name="cycling_bitcoin">Cyklovanie bitcoin cez \n whirlpool práčku kryje stopy,\n ktoré vaše transakcie zanechávajú</string>
+    <string name="metadata_cleaner">čistič metadát</string>
     <string name="end_to_end_trustless">end-to-end dôveryhodnosť</string>
-    <string name="your_private_keys">Vaše súkromné kľúče nikdy neopúšťajú zariadenie \ n v žiadnom bode počas cyklu Whirlpool \ n</string>
+    <string name="your_private_keys">Vaše súkromné kľúče nikdy neopúšťajú zariadenie \n v žiadnom bode počas cyklu Whirlpool \n</string>
     <string name="different_cycles_for">rôzne cykly pre rôzne potreby</string>
-    <string name="complete_a_slow_cycle">aplaťte malý poplatok za rýchly cyklus alebo \ n získate malú odmenu BTC, keď \ n dokončíte pomalý cyklus</string>
+    <string name="complete_a_slow_cycle">aplaťte malý poplatok za rýchly cyklus alebo \n získate malú odmenu BTC, keď \n dokončíte pomalý cyklus</string>
     <string name="supercharge_whirlpool_desc">Vaše mince budú pridané na začiatok fronty na okamžité spracovanie</string>
     <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
     <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
@@ -625,7 +626,7 @@
     <string name="_48_hours">48 hodín +</string>
     <string name="free">BEZPLATNÉ</string>
     <string name="_1_50">1.50%</string>
-    <string name="_0_5_mins">0-5 mins</string>
+    <string name="_0_5_mins">0-5 minút</string>
     <string name="select_a_cycle_type">Zvoľ typ cyklu</string>
     <string name="supercharge">SuperCharge</string>
     <string name="transaction_broadcast">Posielanie transakcie</string>
@@ -633,16 +634,16 @@
     <string name="transaction_id">ID transakcie</string>
     <string name="completed">Dokončené</string>
     <string name="title_activity_received_tx">" "</string>
-    <string name="pay_again">Zaplať znova</string>
+    <string name="pay_again">Zaplatiť znova</string>
     <string name="miner_fee_rate">Sadzba poplatku za ťaženie</string>
     <string name="status">Status</string>
     <string name="title_activity_tx_privacy_details">TxSúkromia Detaily</string>
-    <string name="number_of_deterministic_combinations">Počet deterministických \ nkombinácií</string>
+    <string name="number_of_deterministic_combinations">Počet deterministických \nkombinácií</string>
     <string name="transaction_entropy">Entropia transakcie</string>
     <string name="efficiency_score">Skóre účinnosti</string>
-    <string name="hide_log">Skryť LOG</string>
-    <string name="copy">Kopíruj</string>
-    <string name="show_log">Ukáž Log</string>
+    <string name="hide_log">SKRYŤ LOG</string>
+    <string name="copy">Kopírovať</string>
+    <string name="show_log">Ukázať Log</string>
     <string name="unconfirmed">Nepotvrdené</string>
 
     <string name="title_activity_network_dashboard">
@@ -657,7 +658,7 @@
     <string name="preorder">predobjednaj</string>
     <string name="add_new">Pridaj Nové</string>
     <string name="paynym_follow_message_2">pre automatické vygenerovanie unikátnej privátnej adresy pre poslanie bitcoin-u na tento kontakt</string>
-    <string name="follow">Nasleduj</string>
+    <string name="follow">Nasledovať</string>
     <string name="wallet_locked">Peňaženka uzamknutá</string>
     <string name="address">Addresa</string>
 
@@ -727,14 +728,14 @@
     <string name="normal">Normálne</string>
     <string name="low">Nízke</string>
 
-    <string name="ricochet_nlocktime_ok">Tvoj rozložený Ricochet bol odoslaný. Počkajte, kým výška bloku neumožní vyslanie všetkých transakcií v sérii.</string>
-    <string name="ricochet_nlocktime_ko">Tvoj rozložený Ricochet nemôže byť odoslaný. Prosím skús ešte raz.</string>
+    <string name="ricochet_nlocktime_ok">Váš rozložený Ricochet bol odoslaný. Počkajte, kým výška bloku neumožní vyslanie všetkých transakcií v sérii.</string>
+    <string name="ricochet_nlocktime_ko">Váš rozložený Ricochet nemôže byť odoslaný. Prosím skúste ešte raz.</string>
     <string name="tag_utxo">Štítok UTXO</string>
     <string name="boost_transaction_fee">Navýš transakčný poplatok</string>
     <string name="refund">Refundácia</string>
 
     <string name="not_cahoots">Nesprávne #Cahoots</string>
-    <string name="not_valid_json">JSON rozbor chyby</string>
+    <string name="not_valid_json">Chyba pri parsovani JSON</string>
     <string name="unrecognized_cahoots">Nerozpoznané #Cahoots</string>
     <string name="cannot_compose_cahoots">Nemôžem vytvoriť #Cahoots</string>
     <string name="start_stowaway">Začni Stowaway ako predávajúci</string>
@@ -742,10 +743,10 @@
     <string name="amount_sats">Zadaj hodnotu v satoshi</string>
     <string name="zero_bits">0 bitov</string>
     <string name="not_available">N/A</string>
-    <string name="show_tx">Display transaction</string>
-    <string name="unrecognized_step">Unrecognized #Cahoots step</string>
-    <string name="cannot_process_stowaway">Cannot process Stowaway</string>
-    <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
-    <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
+    <string name="show_tx">Zobraziť transakciu</string>
+    <string name="unrecognized_step">Nerozpoznaný #Cahoots krok</string>
+    <string name="cannot_process_stowaway">Nemožno spracovať Stowaway</string>
+    <string name="cannot_process_stonewall">Nemožno spracovať STONEWALL</string>
+    <string name="cannot_process_cahoots">Nemožno spracovať #Cahoots</string>
 
 </resources>
