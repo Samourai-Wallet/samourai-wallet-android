@@ -768,5 +768,11 @@
     <string name="enter_scode">Enter your Whirlpool SCODE. Se confirmado pressionando \'OK\' o serviço Whirlpool vai fechar. Entre novamente no Whirlpool para ativar o SCODE.</string>
     <string name="this_utxo_is_marked_as_spendable">Este UTXO está marcado como possível de ser gasto</string>
     <string name="this_utxo_is_marked_as_blocked">Este UTXO está marcado como bloqueado</string>
+    <string name="postmix_full_spend">Esta transação gastará a totalidade de sua carteira pós-mix, o que anulará a privacidade obtida por meio da mixagem Whirlpool. Tem certeza que deseja fazer isso?</string>
+
+    <string name="psbt_sign_tx">Assinar transação</string>
+    <string name="display_psbt">Mostrar o PSBT</string>
+    <string name="psbt_error">Erro ao analisar o PSBT</string>
+    <string name="psbt_sign_error">Erro ao assinar transação via PSBT</string>
 
 </resources>
